@@ -1,0 +1,37 @@
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+Copyright (C) 2026 Eldar Shaidullin
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+-------------------------------------------------------------------------------
+
+THIRD-PARTY ICON NOTICES
+
+This application uses icons and graphical assets that are NOT covered by the
+GPL and are subject to their own separate licensing terms:
+
+  • SF Symbols — © Apple Inc. Licensed under the Apple SF Symbols License.
+    Use is permitted only within software distributed on Apple platforms.
+    See: https://developer.apple.com/sf-symbols/
+
+  • Service brand icons (logos of third-party services such as Google, GitHub,
+    Microsoft, etc.) are trademarks or registered trademarks of their respective
+    owners. Their use here is purely for identification purposes within the app's
+    UI and does not imply any affiliation or endorsement. These assets are NOT
+    licensed under the GPL and remain the property of their respective owners.
+
+The GPL license above applies solely to the original source code of this
+project and does not extend to any of the third-party assets listed above.

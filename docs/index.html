@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keya Authenticator — Secure 2FA for iPhone</title>
+  <meta name="description" content="Free, open-source two-factor authentication for iOS. No ads, no tracking, no cloud. Your secrets stay on your device." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── Nav ─────────────────────────────────────────────────────────── -->
+<nav class="nav">
+  <a class="nav-brand" href="index.html">
+    <img class="app-icon" src="icon.png" alt="Keya Authenticator" />
+    Keya Authenticator
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#privacy">Privacy</a></li>
+    <li><a href="#open-source">Open Source</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="privacy.html">Privacy Policy</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-badge">🔒 Open Source · GPL v3</div>
+  <h1>Two-factor authentication<br>you can trust.</h1>
+  <p class="hero-sub">
+    Free, open-source 2FA for iPhone. Your secrets stay on your device —
+    no account, no cloud, no tracking. Ever.
+  </p>
+  <div class="btn-group">
+    <a class="app-store-badge" href="#" aria-label="Download on the App Store">
+      ⬇ Download on the App Store
+    </a>
+    <a class="btn btn-secondary" href="https://github.com/esxx/Keya-Authenticator">
+      View on GitHub
+    </a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── Features ────────────────────────────────────────────────────── -->
+<div class="section" id="features">
+  <div class="section-label">Features</div>
+  <h2>Everything you need.<br>Nothing you don't.</h2>
+  <p class="section-sub">
+    Keya Authenticator generates TOTP and HOTP codes for any service that supports
+    standard two-factor authentication.
+  </p>
+
+  <div class="feature-grid">
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#E8F4FD;">🔑</div>
+      <h3>Keychain Security</h3>
+      <p>All secrets are stored in the iOS Keychain with the strongest protection class — locked to your device and unavailable when the screen is locked.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#F0F9F0;">🫣</div>
+      <h3>Face ID &amp; Touch ID</h3>
+      <p>Unlock your tokens instantly with biometrics. A 6-digit PIN fallback is always available, with automatic lockout after repeated wrong attempts.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#FFF3E8;">📷</div>
+      <h3>QR Code Scanning</h3>
+      <p>Add any account in seconds by scanning a standard otpauth:// QR code. Works with Google, GitHub, Dropbox, Amazon, Microsoft, and hundreds more.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#F9F0FF;">📦</div>
+      <h3>Import &amp; Export</h3>
+      <p>Import from Google Authenticator, Aegis, 2FAS, and Raivo. Export as QR codes, plaintext, or AES-256-GCM encrypted backup files.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#FFF0F0;">⭐️</div>
+      <h3>Favorites &amp; Reorder</h3>
+      <p>Star your most-used accounts so they float to the top. Drag to rearrange the rest — your order is remembered across launches.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#FFFBE8;">⏱️</div>
+      <h3>Next-Code Preview</h3>
+      <p>Before the current code expires, the next one appears early — so you never have to race the countdown timer.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon" style="background:#F0FFF4;">🌍</div>
+      <h3>6 Languages</h3>
+      <p>Available in English, French, Japanese, Korean, Brazilian Portuguese, and Latin American Spanish.</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── Privacy ──────────────────────────────────────────────────────── -->
+<div class="section" id="privacy">
+  <div class="section-label">Privacy</div>
+  <h2>No data leaves your device.</h2>
+  <p class="section-sub">
+    Keya Authenticator was designed from the ground up to collect nothing.
+    There is no server, no account, and no analytics SDK.
+  </p>
+
+  <div class="pillar-grid">
+    <div class="pillar">
+      <span class="icon">🚫</span>
+      <h3>No Ads</h3>
+      <p>No advertising network, no targeting, no third-party SDKs.</p>
+    </div>
+    <div class="pillar">
+      <span class="icon">📡</span>
+      <h3>No Network</h3>
+      <p>The app has no network entitlements. It cannot connect to the internet.</p>
+    </div>
+    <div class="pillar">
+      <span class="icon">☁️</span>
+      <h3>No Cloud</h3>
+      <p>Your secrets never leave your device. No iCloud sync, no backup to any server.</p>
+    </div>
+    <div class="pillar">
+      <span class="icon">📊</span>
+      <h3>No Analytics</h3>
+      <p>Zero tracking. No crash reporters, no usage analytics, no telemetry.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Banner ───────────────────────────────────────────────────────── -->
+<div class="banner" id="open-source">
+  <h2>Proudly open source.</h2>
+  <p>
+    Every line of code is publicly available on GitHub, licensed under GPL v3.
+    Inspect it, audit it, build it yourself. Trust through transparency.
+  </p>
+  <a class="btn" style="background:rgba(255,255,255,.2);color:#fff;border:1.5px solid rgba(255,255,255,.4);"
+     href="https://github.com/esxx/Keya-Authenticator">
+    View Source on GitHub →
+  </a>
+</div>
+
+<!-- ── Footer ───────────────────────────────────────────────────────── -->
+<footer>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="privacy.html">Privacy Policy</a></li>
+    <li><a href="terms.html">Terms of Service</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="https://github.com/esxx/Keya-Authenticator">GitHub</a></li>
+  </ul>
+  <p>© 2026 Eldar SHAIDULLIN — Licensed under GPL v3<br>
+  Keya Authenticator is not affiliated with any of the services it works with.</p>
+</footer>
+
+</body>
+</html>

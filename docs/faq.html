@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ — Keya Authenticator</title>
+  <meta name="description" content="Frequently asked questions about Keya Authenticator." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="index.html">
+    <img class="app-icon" src="icon.png" alt="Keya Authenticator" />
+    Keya Authenticator
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#features">Features</a></li>
+    <li><a href="privacy.html">Privacy Policy</a></li>
+    <li><a href="terms.html">Terms of Service</a></li>
+  </ul>
+</nav>
+
+<div class="section">
+  <div class="section-label">Support</div>
+  <h2>Frequently Asked Questions</h2>
+  <p class="section-sub">Can't find your answer?
+    <a href="https://github.com/esxx/Keya-Authenticator/issues" style="color:var(--blue);text-decoration:none;">Open an issue on GitHub →</a>
+  </p>
+
+  <!-- Getting Started -->
+  <h3 style="font-size:13px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--blue);margin-bottom:12px;">Getting Started</h3>
+  <div class="faq-list" style="margin-bottom:40px;">
+
+    <details>
+      <summary>How do I add my first account?</summary>
+      <div class="faq-answer">
+        Tap the <strong>+</strong> button in the top-right corner. You can scan a QR
+        code from your computer screen, import a QR code saved as a photo, or enter
+        the secret key manually. Most services show a QR code on their
+        "Two-factor authentication setup" page.
+      </div>
+    </details>
+
+    <details>
+      <summary>Which services does Keya Authenticator work with?</summary>
+      <div class="faq-answer">
+        Any service that supports the TOTP standard (RFC 6238) or HOTP standard
+        (RFC 4226). This includes Google, GitHub, Dropbox, Twitter/X, Amazon AWS,
+        Microsoft, Facebook, Apple ID, and hundreds more.
+      </div>
+    </details>
+
+    <details>
+      <summary>Does it work without an internet connection?</summary>
+      <div class="faq-answer">
+        Yes — completely. TOTP codes are generated mathematically from your secret
+        and the current time. No network connection is ever needed, and the app has
+        no network entitlements at all.
+      </div>
+    </details>
+
+  </div>
+
+  <!-- Security -->
+  <h3 style="font-size:13px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--blue);margin-bottom:12px;">Security</h3>
+  <div class="faq-list" style="margin-bottom:40px;">
+
+    <details>
+      <summary>Where are my secrets stored?</summary>
+      <div class="faq-answer">
+        All 2FA secrets are stored in the iOS Keychain using
+        <code>kSecAttrAccessibleWhenUnlockedThisDeviceOnly</code>. This means they
+        are encrypted by the secure enclave, unavailable when the screen is locked,
+        and cannot be transferred to another device via backup.
+      </div>
+    </details>
+
+    <details>
+      <summary>What happens if I lose my phone?</summary>
+      <div class="faq-answer">
+        <strong>Your codes are gone unless you have a backup.</strong> This is by
+        design — the strict Keychain protection that keeps your secrets safe also
+        means they cannot be silently copied. Use <strong>Settings → Export (Backup)</strong>
+        regularly and store the backup file somewhere safe (encrypted external drive,
+        password manager, etc.).
+      </div>
+    </details>
+
+    <details>
+      <summary>Is my PIN stored on the device?</summary>
+      <div class="faq-answer">
+        Never in plaintext. Your PIN is hashed using PBKDF2-HMAC-SHA256 with
+        100,000 iterations and stored in the Keychain. The original PIN cannot be
+        recovered from the stored hash.
+      </div>
+    </details>
+
+    <details>
+      <summary>What is the biometric change detection?</summary>
+      <div class="faq-answer">
+        Keya Authenticator records a fingerprint of the biometric database when you
+        set your PIN. If new fingerprints or Face ID scans are added to your device,
+        the app detects the change and disables biometric unlock as a security
+        precaution. You can re-enable it in <strong>Settings → App Lock</strong>
+        after confirming the change was made by you.
+      </div>
+    </details>
+
+  </div>
+
+  <!-- Backup & Transfer -->
+  <h3 style="font-size:13px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--blue);margin-bottom:12px;">Backup &amp; Transfer</h3>
+  <div class="faq-list" style="margin-bottom:40px;">
+
+    <details>
+      <summary>How do I transfer tokens to a new iPhone?</summary>
+      <div class="faq-answer">
+        Go to <strong>Settings → Export (Backup)</strong> and create an encrypted
+        backup. Save the file to Files, AirDrop it to your new phone, then open ES
+        Authenticator on the new device and import the backup.
+        Alternatively, export individual tokens as QR codes and scan them on the
+        new device.
+      </div>
+    </details>
+
+    <details>
+      <summary>Can I import from Google Authenticator?</summary>
+      <div class="faq-answer">
+        Yes. In Google Authenticator, go to <strong>Transfer accounts → Export accounts</strong>
+        and scan the QR code(s) with Keya Authenticator's import function. All tokens
+        will be imported in one step.
+      </div>
+    </details>
+
+    <details>
+      <summary>Which apps can I import from?</summary>
+      <div class="faq-answer">
+        Keya Authenticator supports importing from:
+        <ul style="margin-top:8px;">
+          <li>Google Authenticator (migration QR codes)</li>
+          <li>Aegis (JSON export)</li>
+          <li>2FAS (JSON export)</li>
+          <li>Raivo (JSON export)</li>
+          <li>LastPass Authenticator</li>
+          <li>Keya Authenticator encrypted or plaintext JSON backups</li>
+          <li>Any plain <code>otpauth://</code> URI or QR code</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>Is the encrypted backup format open?</summary>
+      <div class="faq-answer">
+        Yes. Backups use AES-256-GCM encryption with a PBKDF2-HMAC-SHA256 derived
+        key (100,000 iterations). The format is documented in the source code and
+        can be decrypted with any standard cryptographic tool given the password.
+      </div>
+    </details>
+
+  </div>
+
+  <!-- Open Source -->
+  <h3 style="font-size:13px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--blue);margin-bottom:12px;">Open Source &amp; Pricing</h3>
+  <div class="faq-list">
+
+    <details>
+      <summary>Is Keya Authenticator really free?</summary>
+      <div class="faq-answer">
+        Yes, completely and permanently. All features are available with no purchase.
+        The optional tip jar in Settings lets you support development if you find the
+        app valuable, but it is entirely voluntary and unlocks nothing.
+      </div>
+    </details>
+
+    <details>
+      <summary>Where is the source code?</summary>
+      <div class="faq-answer">
+        On GitHub at
+        <a href="https://github.com/esxx/Keya-Authenticator">github.com/esxx/keya-authenticator</a>,
+        licensed under GPL v3. You can read it, audit it, compile it yourself, or
+        contribute.
+      </div>
+    </details>
+
+    <details>
+      <summary>Can I contribute?</summary>
+      <div class="faq-answer">
+        Absolutely. Open an issue or a pull request on GitHub. Please note that by
+        contributing you agree that your code will be licensed under GPL v3.
+      </div>
+    </details>
+
+  </div>
+</div>
+
+<footer>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="privacy.html">Privacy Policy</a></li>
+    <li><a href="terms.html">Terms of Service</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="https://github.com/esxx/Keya-Authenticator">GitHub</a></li>
+  </ul>
+  <p>© 2026 Eldar SHAIDULLIN — Licensed under GPL v3</p>
+</footer>
+
+</body>
+</html>
