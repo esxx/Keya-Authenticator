@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidad — Keya Authenticator</title>
+  <meta name="description" content="Política de privacidad de Keya Authenticator. No recopilamos ningún dato personal." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="index.html">
+    <img class="app-icon" src="icon.png" alt="Keya Authenticator" />
+    Keya Authenticator
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#features">Funciones</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="terms.html">Términos de uso</a></li>
+  </ul>
+</nav>
+
+<article class="prose">
+  <div class="lang-switcher">
+    <a href="privacy.html">EN</a>
+    <a href="privacy-fr.html">FR</a>
+    <a href="privacy-ko.html">한국어</a>
+    <a href="privacy-ja.html">日本語</a>
+    <a href="privacy-pt-BR.html">PT</a>
+    <a href="privacy-es.html" class="active">ES</a>
+  </div>
+  <h1>Política de Privacidad</h1>
+  <span class="meta">Fecha de entrada en vigor: 1 de mayo de 2026</span>
+
+  <div class="callout">
+    <strong>Resumen:</strong> Keya Authenticator no recopila ningún dato personal.
+    Nada de lo que ingreses o generes abandona jamás tu dispositivo.
+  </div>
+
+  <h2>1. Sin recopilación de datos</h2>
+  <p>Keya Authenticator no recopila, transmite, almacena ni comparte ninguna información personal.
+  La aplicación no tiene permisos de red y no puede conectarse a internet.</p>
+
+  <h2>2. Lo que permanece en tu dispositivo</h2>
+  <p>Los siguientes datos se almacenan únicamente de forma local en tu dispositivo:</p>
+  <ul>
+    <li><strong>Secretos 2FA</strong> — almacenados en el llavero de iOS con
+    <code>kSecAttrAccessibleWhenUnlockedThisDeviceOnly</code>. No se pueden leer con la pantalla
+    bloqueada y no se incluyen en las copias de seguridad de iCloud o iTunes.</li>
+    <li><strong>Configuración de la app</strong> — almacenada en UserDefaults (tema, orden,
+    preferencias de bloqueo). No contiene secretos.</li>
+    <li><strong>Hash del PIN</strong> — almacenado en el llavero usando PBKDF2-HMAC-SHA256 con
+    100,000 iteraciones. Tu PIN nunca se almacena en texto plano.</li>
+  </ul>
+
+  <h2>3. Sin SDKs de terceros</h2>
+  <p>Keya Authenticator no contiene análisis, publicidad, informes de fallos ni ningún otro SDK
+  de terceros. Los únicos frameworks del sistema utilizados son los proporcionados por Apple
+  (CryptoKit, LocalAuthentication, Security, StoreKit).</p>
+
+  <h2>4. Compras dentro de la app</h2>
+  <p>El sistema de propinas opcional usa el framework StoreKit de Apple. Las compras son
+  procesadas íntegramente por Apple. Keya Authenticator no recibe datos de pago ni información
+  de identificación personal como resultado de una propina.</p>
+
+  <h2>5. Cámara y fototeca</h2>
+  <p>El acceso a la cámara solo se solicita cuando eliges escanear un código QR. El acceso a la
+  fototeca solo se solicita cuando eliges importar un código QR desde una imagen guardada.
+  Ni el feed de la cámara ni las imágenes se almacenan o transmiten.</p>
+
+  <h2>6. Face ID / Touch ID</h2>
+  <p>La autenticación biométrica es gestionada íntegramente por iOS. Keya Authenticator nunca
+  tiene acceso a tus datos biométricos. Solo recibe un resultado booleano de éxito/fallo
+  del sistema operativo.</p>
+
+  <h2>7. Código abierto</h2>
+  <p>Keya Authenticator es completamente de código abierto bajo la
+  <a href="https://github.com/esxx/Keya-Authenticator/blob/main/LICENSE">licencia GPL v3</a>.
+  Cualquiera puede auditar el código fuente completo para verificar estas afirmaciones.</p>
+
+  <h2>8. Privacidad de los menores</h2>
+  <p>Keya Authenticator no recopila ningún dato de nadie, incluidos los menores de 13 años.
+  No hay nada que recopilar.</p>
+
+  <h2>9. Cambios en esta política</h2>
+  <p>Si esta política cambia, la versión actualizada se publicará en esta URL con una nueva fecha
+  de entrada en vigor. Dado que no se recopilan datos, los cambios materiales son improbables.</p>
+
+  <h2>10. Contacto</h2>
+  <p>¿Preguntas sobre esta política?
+  <a href="https://github.com/esxx/Keya-Authenticator/issues">Abre un issue en GitHub</a>
+  o envía un correo a <a href="mailto:KeyaAuthenticator@exx.ee">KeyaAuthenticator@exx.ee</a>.</p>
+</article>
+
+<footer>
+  <ul class="footer-links">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="privacy-es.html">Política de Privacidad</a></li>
+    <li><a href="terms.html">Términos de uso</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="https://github.com/esxx/Keya-Authenticator">GitHub</a></li>
+  </ul>
+  <p>© 2026 Eldar SHAIDULLIN — Bajo licencia GPL v3</p>
+</footer>
+
+</body>
+</html>

@@ -287,6 +287,31 @@ body {
 .pillar h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
 .pillar p  { font-size: 13px; color: var(--gray-3); line-height: 1.5; }
 
+/* ─── Language Switcher ──────────────────────────────────────────────── */
+.lang-switcher {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.lang-switcher a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-3);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 100px;
+  border: 1px solid var(--gray-5);
+  transition: color .15s, border-color .15s, background .15s;
+}
+.lang-switcher a:hover { color: var(--blue); border-color: var(--blue); }
+.lang-switcher a.active {
+  color: var(--blue);
+  border-color: var(--blue);
+  background: rgba(0,122,255,.08);
+  font-weight: 600;
+}
+
 /* ─── Prose (privacy / terms) ────────────────────────────────────────── */
 .prose {
   max-width: 720px;
@@ -448,6 +473,9 @@ footer p {
 
   .divider { background: #3A3A3C; }
   footer { border-top-color: #3A3A3C; }
+
+  .lang-switcher a { color: #AEAEB2; border-color: #3A3A3C; }
+  .lang-switcher a.active { color: var(--blue); border-color: var(--blue); background: rgba(0,122,255,.15); }
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────── */

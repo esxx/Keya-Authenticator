@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>개인정보 처리방침 — Keya Authenticator</title>
+  <meta name="description" content="Keya Authenticator 개인정보 처리방침. 개인 데이터를 수집하지 않습니다." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-brand" href="index.html">
+    <img class="app-icon" src="icon.png" alt="Keya Authenticator" />
+    Keya Authenticator
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#features">기능</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="terms.html">이용약관</a></li>
+  </ul>
+</nav>
+
+<article class="prose">
+  <div class="lang-switcher">
+    <a href="privacy.html">EN</a>
+    <a href="privacy-fr.html">FR</a>
+    <a href="privacy-ko.html" class="active">한국어</a>
+    <a href="privacy-ja.html">日本語</a>
+    <a href="privacy-pt-BR.html">PT</a>
+    <a href="privacy-es.html">ES</a>
+  </div>
+  <h1>개인정보 처리방침</h1>
+  <span class="meta">시행일: 2026년 5월 1일</span>
+
+  <div class="callout">
+    <strong>요약:</strong> Keya Authenticator는 개인 데이터를 수집하지 않습니다.
+    입력하거나 생성한 내용은 어떤 것도 기기 밖으로 나가지 않습니다.
+  </div>
+
+  <h2>1. 데이터 수집 없음</h2>
+  <p>Keya Authenticator는 어떠한 개인 정보도 수집, 전송, 저장 또는 공유하지 않습니다.
+  앱에는 네트워크 권한이 없으며 인터넷에 연결할 수 없습니다.</p>
+
+  <h2>2. 기기에만 저장되는 정보</h2>
+  <p>다음 데이터는 기기에만 로컬로 저장됩니다:</p>
+  <ul>
+    <li><strong>2FA 비밀 키</strong> — <code>kSecAttrAccessibleWhenUnlockedThisDeviceOnly</code>로
+    iOS 키체인에 저장됩니다. 화면이 잠긴 상태에서는 읽을 수 없으며 iCloud 또는 iTunes
+    백업에 포함되지 않습니다.</li>
+    <li><strong>앱 설정</strong> — UserDefaults에 저장됩니다 (테마, 정렬 순서, 잠금 설정).
+    비밀 키를 포함하지 않습니다.</li>
+    <li><strong>PIN 해시</strong> — 100,000회 반복의 PBKDF2-HMAC-SHA256을 사용하여 키체인에
+    저장됩니다. PIN은 평문으로 저장되지 않습니다.</li>
+  </ul>
+
+  <h2>3. 서드파티 SDK 없음</h2>
+  <p>Keya Authenticator에는 분석, 광고, 충돌 보고 또는 기타 서드파티 SDK가 포함되어 있지 않습니다.
+  사용되는 유일한 시스템 프레임워크는 Apple이 제공하는 것들입니다
+  (CryptoKit, LocalAuthentication, Security, StoreKit).</p>
+
+  <h2>4. 인앱 구매</h2>
+  <p>선택적 팁 기능은 Apple의 StoreKit 프레임워크를 사용합니다. 구매는 Apple이 전적으로
+  처리합니다. Keya Authenticator는 팁의 결과로 결제 정보나 개인 식별 정보를 받지 않습니다.</p>
+
+  <h2>5. 카메라 및 사진 보관함</h2>
+  <p>카메라 접근은 QR 코드를 스캔하기로 선택한 경우에만 요청됩니다. 사진 보관함 접근은
+  저장된 이미지에서 QR 코드를 가져오기로 선택한 경우에만 요청됩니다. 카메라 피드나
+  이미지는 저장되거나 전송되지 않습니다.</p>
+
+  <h2>6. Face ID / Touch ID</h2>
+  <p>생체 인증은 iOS가 전적으로 처리합니다. Keya Authenticator는 생체 데이터에 접근하지
+  않습니다. 운영 체제로부터 성공/실패 결과만 받습니다.</p>
+
+  <h2>7. 오픈소스</h2>
+  <p>Keya Authenticator는
+  <a href="https://github.com/esxx/Keya-Authenticator/blob/main/LICENSE">GPL v3 라이선스</a>
+  하에 완전히 오픈소스입니다. 누구든지 전체 소스 코드를 감사하여 이러한 내용을 확인할 수 있습니다.</p>
+
+  <h2>8. 아동 개인정보 보호</h2>
+  <p>Keya Authenticator는 13세 미만 아동을 포함하여 누구로부터도 데이터를 수집하지 않습니다.
+  수집할 것이 없습니다.</p>
+
+  <h2>9. 방침 변경</h2>
+  <p>이 방침이 변경되면 업데이트된 버전이 새로운 시행일과 함께 이 URL에 게시됩니다.
+  데이터를 수집하지 않으므로 중요한 변경은 거의 없을 것입니다.</p>
+
+  <h2>10. 문의</h2>
+  <p>이 방침에 대한 질문이 있으신가요?
+  <a href="https://github.com/esxx/Keya-Authenticator/issues">GitHub에서 이슈를 열거나</a>
+  <a href="mailto:KeyaAuthenticator@exx.ee">KeyaAuthenticator@exx.ee</a>로 이메일을 보내세요.</p>
+</article>
+
+<footer>
+  <ul class="footer-links">
+    <li><a href="index.html">홈</a></li>
+    <li><a href="privacy-ko.html">개인정보 처리방침</a></li>
+    <li><a href="terms.html">이용약관</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="https://github.com/esxx/Keya-Authenticator">GitHub</a></li>
+  </ul>
+  <p>© 2026 Eldar SHAIDULLIN — GPL v3 라이선스</p>
+</footer>
+
+</body>
+</html>
