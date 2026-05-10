@@ -1,0 +1,78 @@
+# SwiftLint Configuration for Keya Authenticator - Solo Developer Edition
+
+# Only enable rules that catch real bugs or serious issues
+opt_in_rules:
+  - empty_count
+  - empty_string
+  - fatal_error_message
+  - first_where
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - last_where
+  - legacy_random
+  - modifier_order
+  - overridden_super_call
+  - prohibited_super_call
+  - redundant_nil_coalescing
+  - unavailable_function
+  - untyped_error_in_catch
+  - yoda_condition
+
+# Disable style rules that don't affect correctness
+disabled_rules:
+  - identifier_name
+  - type_name
+  - function_body_length
+  - type_body_length
+  - file_length
+  - line_length
+  - cyclomatic_complexity
+  - function_parameter_count
+  - trailing_whitespace
+  - vertical_whitespace
+  - nesting
+  - opening_brace
+  - large_tuple                       # parsing tuples in OTP URI parser are intentional
+  - force_cast                        # custom no_force_cast rule below handles this as a warning
+  - colon                             # 311 style-only hits; not a correctness concern
+  - comma                             # pure formatting noise
+  - trailing_comma                    # pure formatting noise
+  - statement_position                # pure formatting noise
+  - switch_case_alignment             # pure formatting noise
+  - redundant_string_enum_value       # noise in generated/simple enums
+  - implicit_optional_initialization  # `= nil` is intentional for clarity in many places
+  - sorted_imports                    # enforced by Xcode organise imports when needed
+  - operator_usage_whitespace         # pure formatting noise
+  - number_separator                  # cosmetic; conflicts with test vectors
+  - non_optional_string_data_conversion  # `data(using:)` with `!` is common in tests
+
+# (length configs removed — those rules are disabled above)
+
+# File exclusions
+excluded:
+  - Carthage
+  - Pods
+  - DerivedData
+  - .build
+  - "**/*.generated.swift"
+  - "**/Resources/"
+  - "**/Preview Content/"
+
+# Critical custom rules
+custom_rules:
+  no_print_in_production:
+    regex: '(?<!\w)print\('
+    message: "Use Logger for debugging — remove print() before release"
+    severity: warning
+  no_force_cast:
+    regex: 'as!'
+    message: "Use conditional casting (as?) with proper error handling"
+    severity: warning
+
+# Reporter
+reporter: "xcode"
+
+# Analyzer rules (find dead code)
+analyzer_rules:
+  - unused_import
+  - unused_declaration

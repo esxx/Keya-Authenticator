@@ -1,0 +1,116 @@
+import Foundation
+import SwiftUI
+
+@Observable
+final class AppCoordinator {
+    // MARK: - Dependencies
+
+    private let tokenStore: TokenStore
+    private let authenticationManager: AuthenticationManager
+    private let settings: AppSettings
+
+    // MARK: - Published Properties
+
+    var appState: AppState = .loading
+    var showPrivacyOverlay = false
+
+    // MARK: - Child ViewModels
+
+    var mainContentViewModel: MainContentViewModel
+
+    // MARK: - App State
+
+    enum AppState {
+        case loading
+        case pinSetup
+        case appUnlock
+        case main
+    }
+
+    // MARK: - Initialization
+
+    init(tokenStore: TokenStore, authenticationManager: AuthenticationManager, settings: AppSettings) {
+        self.tokenStore = tokenStore
+        self.authenticationManager = authenticationManager
+        self.settings = settings
+        mainContentViewModel = MainContentViewModel(
+            tokenStore: tokenStore,
+            authenticationManager: authenticationManager,
+            settings: settings
+        )
+    }
+
+    // MARK: - App Lifecycle
+
+    func determineInitialState() {
+        if !KeychainManager.isPINSet() {
+            appState = .pinSetup
+        } else if settings.isAuthenticationEnabled {
+            checkGracePeriodAndLock()
+            appState = .appUnlock
+        } else {
+            tokenStore.load()
+            appState = .main
+        }
+    }
+
+    func handleAppBackground() {
+        KeychainManager.saveBackgroundTimestamp(Date())
+        ClipboardManager.shared.clearClipboard()
+
+        if settings.isAuthenticationEnabled, settings.lockGracePeriod == 0 {
+            performLock()
+        }
+
+        showPrivacyOverlay = true
+    }
+
+    func handleAppBecameActive() {
+        checkGracePeriodAndLock()
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            showPrivacyOverlay = false
+        }
+    }
+
+    private func checkGracePeriodAndLock() {
+        defer { KeychainManager.deleteBackgroundTimestamp() }
+        guard let bg = KeychainManager.loadBackgroundTimestamp() else { return }
+        let elapsed = Date().timeIntervalSince(bg)
+        if settings.isAuthenticationEnabled, elapsed >= TimeInterval(settings.lockGracePeriod) {
+            performLock()
+        }
+    }
+
+    private func performLock() {
+        guard settings.isAuthenticationEnabled, appState == .main else { return }
+        tokenStore.clear()
+        withAnimation {
+            appState = .appUnlock
+        }
+    }
+
+    // MARK: - State Transitions
+
+    func completePINSetup() {
+        settings.isAuthenticationEnabled = true
+        tokenStore.load()
+        withAnimation { appState = .main }
+    }
+
+    func completeUnlock() {
+        tokenStore.load()
+        withAnimation { appState = .main }
+    }
+
+    func requestReset() {
+        withAnimation { appState = .pinSetup }
+    }
+
+    // MARK: - Reset Everything
+
+    func resetEverything() {
+        authenticationManager.performReset(tokenStore: tokenStore, settings: settings)
+        withAnimation { appState = .pinSetup }
+    }
+}

@@ -1,0 +1,140 @@
+{
+  "identifier" : "7E3A1B2C-4D5E-6F7A-8B9C-0D1E2F3A4B5C",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "identifier" : "ee.exx.KeyaAuthenticator.tip.small",
+      "localizations" : [
+        {
+          "description" : "Thank you — every tip means a lot!",
+          "displayName" : "Coffee",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "Merci — chaque pourboire compte énormément !",
+          "displayName" : "Café",
+          "locale" : "fr_FR"
+        },
+        {
+          "description" : "ありがとう — 応援がとても励みになります！",
+          "displayName" : "コーヒー",
+          "locale" : "ja_JP"
+        },
+        {
+          "description" : "감사합니다 — 응원이 큰 힘이 됩니다!",
+          "displayName" : "커피",
+          "locale" : "ko_KR"
+        },
+        {
+          "description" : "Obrigado — cada apoio significa muito!",
+          "displayName" : "Café",
+          "locale" : "pt_BR"
+        },
+        {
+          "description" : "Gracias — cada apoyo significa mucho!",
+          "displayName" : "Café",
+          "locale" : "es_MX"
+        }
+      ],
+      "productID" : "ee.exx.KeyaAuthenticator.tip.small",
+      "referenceName" : "Coffee",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "identifier" : "ee.exx.KeyaAuthenticator.tip.medium",
+      "localizations" : [
+        {
+          "description" : "You're wonderful — thank you so much!",
+          "displayName" : "Pizza",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "Vous êtes formidable — un grand merci !",
+          "displayName" : "Pizza",
+          "locale" : "fr_FR"
+        },
+        {
+          "description" : "素敵な方ですね — 本当にありがとうございます！",
+          "displayName" : "ピザ",
+          "locale" : "ja_JP"
+        },
+        {
+          "description" : "정말 멋진 분이세요 — 진심으로 감사합니다!",
+          "displayName" : "피자",
+          "locale" : "ko_KR"
+        },
+        {
+          "description" : "Você é incrível — muito obrigado!",
+          "displayName" : "Pizza",
+          "locale" : "pt_BR"
+        },
+        {
+          "description" : "Eres increíble — ¡muchas gracias!",
+          "displayName" : "Pizza",
+          "locale" : "es_MX"
+        }
+      ],
+      "productID" : "ee.exx.KeyaAuthenticator.tip.medium",
+      "referenceName" : "Pizza",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "29.99",
+      "familyShareable" : false,
+      "identifier" : "ee.exx.KeyaAuthenticator.tip.large",
+      "localizations" : [
+        {
+          "description" : "You are a genuinely generous person!",
+          "displayName" : "Family Dinner",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "Vous êtes d'une générosité rare, merci !",
+          "displayName" : "Dîner en famille",
+          "locale" : "fr_FR"
+        },
+        {
+          "description" : "あなたは本当に心の広い方です！",
+          "displayName" : "ファミリーディナー",
+          "locale" : "ja_JP"
+        },
+        {
+          "description" : "정말 너그러운 분이십니다, 감사합니다!",
+          "displayName" : "가족 만찬",
+          "locale" : "ko_KR"
+        },
+        {
+          "description" : "Você é uma pessoa genuinamente generosa!",
+          "displayName" : "Jantar em Família",
+          "locale" : "pt_BR"
+        },
+        {
+          "description" : "Eres una persona genuinamente generosa.",
+          "displayName" : "Cena Familiar",
+          "locale" : "es_MX"
+        }
+      ],
+      "productID" : "ee.exx.KeyaAuthenticator.tip.large",
+      "referenceName" : "Family Dinner",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_allowSimulatedUnlimitedCustomerConsent" : true,
+    "_customerGroupName" : "Standard",
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 2,
+    "minor" : 0,
+    "patch" : 0
+  }
+}
