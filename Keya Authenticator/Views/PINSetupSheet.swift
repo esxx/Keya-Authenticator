@@ -17,7 +17,7 @@ struct PINSetupSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text(mode == .changeExisting ? "Change PIN" : "Set PIN")) {
+                Section {
                     if mode == .changeExisting {
                         SecureField("Current PIN", text: $currentPIN)
                             .keyboardType(.numberPad)
@@ -37,6 +37,8 @@ struct PINSetupSheet: View {
                             .font(.caption)
                             .foregroundColor(.orange)
                     }
+                } header: {
+                    Text(mode == .changeExisting ? "Change PIN" : "Set PIN").textCase(.uppercase)
                 }
 
                 if let errorMessage {

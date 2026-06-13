@@ -50,10 +50,7 @@ extension KeychainManager {
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let reservedAccounts: Set<String> = [
-            "app_pin", "pin_lockout_state", KeychainManager.securitySettingsAccount,
-            "biometric_fingerprint", "biometric_lockout", "app_background_timestamp",
-        ]
+        let reservedAccounts = Token.reservedKeychainAccounts
 
         var allTokens: [Token] = []
         for item in items {

@@ -45,12 +45,16 @@ struct SettingsView: View {
                         }
                     }
                     .foregroundColor(.primary)
+                    .listRowBackground(Constants.Colors.background)
+                    .listRowSeparator(.visible)
 
                     Toggle(isOn: $settings.hideCodesByDefault) {
                         settingsRow(icon: "eye.slash.fill", iconBg: .gray, title: "Hide tokens")
                     }
+                    .listRowBackground(Constants.Colors.background)
+                    .listRowSeparator(.visible)
 
-                } header: { Text("Security") }
+                } header: { Text("Security").textCase(.uppercase) }
 
                 // MARK: - Data
 
@@ -68,8 +72,10 @@ struct SettingsView: View {
                         }
                     }
                     .foregroundColor(.primary)
+                    .listRowBackground(Constants.Colors.background)
+                    .listRowSeparator(.visible)
                 } header: {
-                    Text("Data")
+                    Text("Data").textCase(.uppercase)
                 } footer: {
                     if let date = settings.lastBackupDate {
                         Text("Last export (backup): \(date.formatted(date: .abbreviated, time: .shortened))")
@@ -88,7 +94,9 @@ struct SettingsView: View {
                     } label: {
                         settingsRow(icon: "paintbrush.fill", iconBg: .pink, title: "Theme")
                     }
-                } header: { Text("Preferences") }
+                    .listRowBackground(Constants.Colors.background)
+                    .listRowSeparator(.visible)
+                } header: { Text("Preferences").textCase(.uppercase) }
 
                 // MARK: - Support
 
@@ -110,26 +118,34 @@ struct SettingsView: View {
                             settingsRow(icon: "info.circle.fill", iconBg: .blue, title: "About")
                         }
                         .foregroundColor(.primary)
+                        .listRowBackground(Constants.Colors.background)
+                        .listRowSeparator(.visible)
                     }
                     if let url = Constants.privacyPolicyURL {
                         Link(destination: url) {
                             settingsRow(icon: "hand.raised.fill", iconBg: .indigo, title: "Privacy Policy")
                         }
                         .foregroundColor(.primary)
+                        .listRowBackground(Constants.Colors.background)
+                        .listRowSeparator(.visible)
                     }
                     if let url = Constants.termsOfServiceURL {
                         Link(destination: url) {
                             settingsRow(icon: "doc.text.fill", iconBg: .gray, title: "Terms of Service")
                         }
                         .foregroundColor(.primary)
+                        .listRowBackground(Constants.Colors.background)
+                        .listRowSeparator(.visible)
                     }
                     if let url = Constants.faqURL {
                         Link(destination: url) {
                             settingsRow(icon: "questionmark.circle.fill", iconBg: .orange, title: "FAQ")
                         }
                         .foregroundColor(.primary)
+                        .listRowBackground(Constants.Colors.background)
+                        .listRowSeparator(.visible)
                     }
-                } header: { Text("We're open-source — learn more") }
+                } header: { Text("We're open-source — learn more").textCase(.uppercase) }
 
                 // MARK: - Danger Zone
 
@@ -140,6 +156,8 @@ struct SettingsView: View {
                     } label: {
                         settingsRow(icon: "trash.fill", iconBg: .red, title: "Delete all data")
                     }
+                    .listRowBackground(Constants.Colors.background)
+                    .listRowSeparator(.visible)
                 } footer: {
                     Text("This will permanently delete all your tokens and settings. This cannot be undone.")
                         .font(.caption)

@@ -1109,3 +1109,52 @@ final class AuthenticationManagerStressTests: XCTestCase {
         XCTAssertThrowsError(try manager.setPIN("12345", confirmPin: "12345"))
     }
 }
+
+// MARK: - Migration URI security tests
+
+/// Regression tests for the protobuf length-overflow crash in parseMigrationURI.
+/// Before the fix, a crafted varint encoding Int.max+1 as a field length caused
+/// Int(length) to trap at runtime (Swift overflow). After the fix the parser
+/// returns nil cleanly.
+final class MigrationURISecurityTests: XCTestCase {
+
+    /// Outer protobuf field 1, wire 2, with a length varint encoding
+    /// 9223372036854775808 (Int.max + 1 = 0x8000_0000_0000_0000).
+    /// Before fix: runtime trap on Int(length). After fix: nil.
+    func testOuterFieldOverflowLengthReturnsNil() {
+        // Tag: field 1, wire 2 → 0x0A
+        // Varint for 0x8000_0000_0000_0000: nine 0x80 continuation bytes + 0x01
+        let bytes: [UInt8] = [0x0A, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01]
+        let base64 = Data(bytes).base64EncodedString()
+        let uri = "otpauth-migration://offline?data=\(base64)"
+
+        XCTAssertNil(uri.parseMigrationURI(),
+                     "Parser must return nil for overflow-length outer field, not trap")
+    }
+
+    /// A valid-length outer field (11 bytes), but the inner OtpParameters message
+    /// carries field 1 (secret) with a length overflow. Before fix: trap in
+    /// parseOtpParameters. After fix: nil.
+    func testInnerFieldOverflowLengthReturnsNil() {
+        let innerBytes: [UInt8] = [0x0A, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01]
+        // Outer field 1, wire 2, length = innerBytes.count
+        var outer: [UInt8] = [0x0A, UInt8(innerBytes.count)]
+        outer.append(contentsOf: innerBytes)
+        let base64 = Data(outer).base64EncodedString()
+        let uri = "otpauth-migration://offline?data=\(base64)"
+
+        XCTAssertNil(uri.parseMigrationURI(),
+                     "Parser must return nil for overflow-length inner field, not trap")
+    }
+
+    /// Sanity check: a well-formed migration URI with a 10-byte TOTP secret must parse
+    /// successfully. Proves the URL-parsing pipeline is not vacuously returning nil.
+    /// Protobuf: outer field 1 (len=12) → OtpParameters field 1 (secret = "HelloWorld").
+    /// URL-safe base64 without padding to avoid '=' ambiguity in query values.
+    func testValidMigrationURI_parsesSuccessfully() {
+        let uri = "otpauth-migration://offline?data=CgwKCkhlbGxvV29ybGQ"
+        let result = uri.parseMigrationURI()
+        XCTAssertNotNil(result, "Known-valid migration URI must parse at least one token")
+        XCTAssertEqual(result?.count, 1)
+    }
+}

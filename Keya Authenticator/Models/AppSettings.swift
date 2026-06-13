@@ -88,6 +88,7 @@ final class AppSettings {
     init() {
         registerDefaults()
         clearStaleKeychainIfReinstalled()
+        KeychainManager.migrateTokensToSharedKeychainGroupIfNeeded()
         loadFromUserDefaults()
     }
 
@@ -134,12 +135,18 @@ final class AppSettings {
     private func loadFromUserDefaults() {
         let sec = KeychainManager.loadSecuritySettings()
         isAuthenticationEnabled = sec.isAuthenticationEnabled
-        useBiometricAuthentication = sec.useBiometricAuthentication
 
         let ud = UserDefaults.standard
         hideCodesByDefault = ud.bool(forKey: Keys.hideCodesByDefault)
         appTheme = AppTheme(rawValue: ud.string(forKey: Keys.appTheme) ?? "") ?? .auto
         biometricActivated = ud.bool(forKey: Keys.biometricActivated)
+
+        // Guard against Keychain/UserDefaults desync after app reinstall.
+        // The Keychain survives app deletion but UserDefaults is wiped, so
+        // useBiometricAuthentication can be true in the Keychain while
+        // biometricActivated is false in UserDefaults.  Require both to agree:
+        // if they don't, biometric was never confirmed this install, so treat it as off.
+        useBiometricAuthentication = sec.useBiometricAuthentication && biometricActivated
 
         if let keychainGrace = sec.lockGracePeriod {
             lockGracePeriod = AppSettings.clampLockPeriod(keychainGrace)

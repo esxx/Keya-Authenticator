@@ -43,10 +43,20 @@ final class AddTokenViewModel {
 
     // MARK: - Initialization
 
-    init(tokenStore: TokenStore, settings: AppSettings) {
+    init(tokenStore: TokenStore, settings: AppSettings, prefillURI: String? = nil) {
         self.tokenStore = tokenStore
         self.settings = settings
         importManager = ExportImportManager(tokenStore: tokenStore)
+        if let uri = prefillURI, let p = uri.extractOTPParameters() {
+            tokenType = p.type
+            name = p.name
+            issuer = p.issuer ?? ""
+            secret = p.secret
+            algorithm = p.algorithm
+            digits = (p.digits == 6 || p.digits == 8) ? p.digits : 6
+            period = p.period.map { ($0 >= 15 && $0 <= 300) ? $0 : 30 } ?? 30
+            counter = p.counter ?? 0
+        }
     }
 
     // MARK: - Token Creation (manual form)
@@ -144,9 +154,9 @@ final class AddTokenViewModel {
                     issuer: $0.issuer,
                     secret: $0.secret,
                     algorithm: $0.algorithm,
-                    digits: $0.digits,
+                    digits: ($0.digits == 6 || $0.digits == 8) ? $0.digits : 6,
                     type: $0.type,
-                    period: $0.period,
+                    period: $0.period.map { p in (p >= 15 && p <= 300) ? p : 30 } ?? 30,
                     counter: $0.counter
                 )
             }
@@ -159,8 +169,10 @@ final class AddTokenViewModel {
             persistImported([Token(
                 name: p.name.isEmpty ? "Imported Token" : p.name,
                 issuer: p.issuer?.isEmpty == true ? nil : p.issuer,
-                secret: secretData, algorithm: p.algorithm, digits: p.digits, type: p.type,
-                period: p.type == .totp ? (p.period ?? 30) : nil,
+                secret: secretData, algorithm: p.algorithm,
+                digits: (p.digits == 8) ? 8 : 6,
+                type: p.type,
+                period: p.type == .totp ? (p.period.map { ($0 >= 15 && $0 <= 300) ? $0 : 30 } ?? 30) : nil,
                 counter: p.type == .hotp ? (p.counter ?? 0) : nil
             )])
         } else {
@@ -192,9 +204,9 @@ final class AddTokenViewModel {
                         issuer: $0.issuer,
                         secret: $0.secret,
                         algorithm: $0.algorithm,
-                        digits: $0.digits,
+                        digits: ($0.digits == 6 || $0.digits == 8) ? $0.digits : 6,
                         type: $0.type,
-                        period: $0.period,
+                        period: $0.period.map { p in (p >= 15 && p <= 300) ? p : 30 } ?? 30,
                         counter: $0.counter
                     )
                 }

@@ -11,6 +11,8 @@ A privacy-first, open-source two-factor authentication app for iOS. Your secrets
 - **QR code scanning** — add tokens by camera, photo library, or manual entry
 - **Import** — Aegis, 2FAS, andOTP, Raivo, LastPass, Google Authenticator transfer QR, `otpauth://` URI files
 - **Export** — plaintext JSON, AES-256-GCM encrypted JSON, or Google Authenticator-compatible migration QR codes
+- **AutoFill** — fill one-time codes from the iOS keyboard in Safari and any app; enable in Settings → Passwords
+- **Link-based setup** — tap any `otpauth://` link to open the pre-filled Add Token form directly
 - **Next-code preview** — upcoming code shown early so you never race the expiry timer
 - **Favorites, groups & search** — organise and find codes instantly
 - **Auto-lock** — configurable from immediately to 1 minute
@@ -46,6 +48,10 @@ No CocoaPods, no SPM packages, no third-party code.
 ## Project Structure
 
 ```
+CredentialProviderExtension/
+├── CredentialProviderViewController.swift  # ASCredentialProviderViewController — AutoFill entry point
+├── CredentialProviderExtension.entitlements
+└── Info.plist
 Keya Authenticator/
 ├── App/
 │   ├── AppEntry.swift               # @main entry point, app-state machine, PIN setup

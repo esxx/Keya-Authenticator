@@ -69,7 +69,7 @@ struct AddTokenView: View {
                             title: "Enter the secret key manually"
                         ) { showManual = true }
                     }
-                    .background(Color(.secondarySystemBackground))
+                    .background(Constants.Colors.background)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .padding(.horizontal, 16)
                 }

@@ -62,7 +62,7 @@ struct TokenRowView: View {
             Image(uiImage: uiImage)
                 .resizable()
                 .scaledToFill()
-                .background(Color(.systemBackground))
+                .background(Constants.Colors.background)
         } else {
             Text(monogram)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -114,7 +114,7 @@ struct TokenRowView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 6 : 2)
-        .background(Color(.systemBackground))
+        .background(Constants.Colors.background)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)

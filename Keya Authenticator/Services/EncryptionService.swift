@@ -17,7 +17,7 @@ struct EncryptedExportFile: Codable {
 // MARK: - Encryption Service
 
 enum EncryptionService {
-    static let kdfIterations = 100_000
+    static let kdfIterations = 600_000
     private static let saltByteCount = 32
 
     // MARK: - Public Interface
@@ -32,7 +32,7 @@ enum EncryptionService {
     }
 
     static func encrypt(_ plaintext: Data, password: String) throws -> Data {
-        guard !password.isEmpty else { throw ExportImportError.encryptionFailed }
+        guard password.count >= 8 else { throw ExportImportError.passwordTooShort }
 
         let salt = try randomBytes(count: saltByteCount)
         let key = try deriveKey(password: password, salt: salt, iterations: kdfIterations)
@@ -71,7 +71,8 @@ enum EncryptionService {
         switch container.version {
         case 2:
             guard container.encryption == "AES-256-GCM",
-                  container.kdf == "PBKDF2-HMAC-SHA256"
+                  container.kdf == "PBKDF2-HMAC-SHA256",
+                  container.iterations >= 100_000, container.iterations <= 10_000_000
             else { throw ExportImportError.unsupportedFormat }
 
             let key = try deriveKey(

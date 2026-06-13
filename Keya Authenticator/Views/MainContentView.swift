@@ -19,6 +19,8 @@ struct MainContentView: View {
                 .refreshable { viewModel.loadTokens() }
                 .navigationTitle("app.name")
                 .navigationBarTitleDisplayMode(.large)
+                .toolbarBackground(Constants.Colors.background, for: .navigationBar)
+                .toolbarBackground(Constants.Colors.background, for: .bottomBar)
                 .searchable(text: $viewModel.searchText, prompt: "Search tokens")
                 .toolbar {
                     ToolbarItemGroup(placement: .topBarTrailing) {
@@ -49,10 +51,12 @@ struct MainContentView: View {
                     AddTokenView(
                         viewModel: AddTokenViewModel(
                             tokenStore: viewModel.tokenStore,
-                            settings: viewModel.settings
+                            settings: viewModel.settings,
+                            prefillURI: viewModel.pendingOTPAuthURI
                         ),
                         onTokenAdded: { viewModel.trackNewTokens() }
                     )
+                    .onAppear { viewModel.pendingOTPAuthURI = nil }
                 }
                 .sheet(item: $viewModel.selectedTokenForEdit) { token in
                     EditTokenView(
@@ -382,6 +386,8 @@ struct PINAuthSheet: View {
 
                 Spacer().frame(height: 24)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Constants.Colors.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
