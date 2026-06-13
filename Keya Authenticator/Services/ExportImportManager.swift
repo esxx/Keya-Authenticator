@@ -104,14 +104,18 @@ final class ExportImportManager {
             } else if trimmedLine.hasPrefix("otpauth-migration://") {
                 if let params = trimmedLine.parseMigrationURI() {
                     for p in params {
+                        guard p.secret.count >= 10 else { skipped += 1
+                            continue
+                        }
+                        let rawPeriod = p.period ?? 30
                         tokens.append(Token(
                             name: p.name,
                             issuer: p.issuer,
                             secret: p.secret,
                             algorithm: p.algorithm,
-                            digits: p.digits,
+                            digits: (p.digits == 6 || p.digits == 8) ? p.digits : 6,
                             type: p.type,
-                            period: p.period,
+                            period: (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30,
                             counter: p.counter
                         ))
                     }
@@ -134,12 +138,6 @@ final class ExportImportManager {
 
     // MARK: - Generic JSON Parser
 
-    /// Tries each known JSON format in priority order.
-    ///
-    /// Each format attempt uses its own local counter so that partial skips accumulated
-    /// inside a failing parser don't pollute the count for the format that ultimately
-    /// succeeds. `skipped` is only written when a format both recognises the file **and**
-    /// returns at least one valid token.
     private func parseGenericJSON(data: Data, skipped: inout Int) throws -> [Token] {
         let rawJSON = try? JSONSerialization.jsonObject(with: data)
 
@@ -212,15 +210,18 @@ final class ExportImportManager {
             guard let name = entry["name"] as? String,
                   let info = entry["info"] as? [String: Any],
                   let secret = info["secret"] as? String,
-                  let secretData = secret.base32DecodedData
+                  let secretData = secret.base32DecodedData,
+                  secretData.count >= 10
             else {
                 skipped += 1
                 continue
             }
 
             let issuer = entry["issuer"] as? String
-            let digits = info["digits"] as? Int ?? 6
-            let period = info["period"] as? Int ?? 30
+            let rawDigits = info["digits"] as? Int ?? 6
+            let digits = (rawDigits == 6 || rawDigits == 8) ? rawDigits : 6
+            let rawPeriod = info["period"] as? Int ?? 30
+            let period = (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30
             let counter = info["counter"] as? UInt64 ?? 0
             let algorithm = algorithmFrom(string: info["algo"] as? String)
             let typeStr = ((entry["type"] as? String) ?? "totp").lowercased()
@@ -253,7 +254,8 @@ final class ExportImportManager {
         for service in services {
             guard let serviceName = service["name"] as? String,
                   let secret = service["secret"] as? String,
-                  let secretData = secret.base32DecodedData
+                  let secretData = secret.base32DecodedData,
+                  secretData.count >= 10
             else {
                 skipped += 1
                 continue
@@ -263,8 +265,10 @@ final class ExportImportManager {
 
             let issuer = service["issuer"] as? String ?? otp?["issuer"] as? String ?? serviceName
             let name = otp?["account"] as? String ?? otp?["label"] as? String ?? serviceName
-            let digits = otp?["digits"] as? Int ?? service["digits"] as? Int ?? 6
-            let period = otp?["period"] as? Int ?? service["period"] as? Int ?? 30
+            let rawDigits = otp?["digits"] as? Int ?? service["digits"] as? Int ?? 6
+            let digits = (rawDigits == 6 || rawDigits == 8) ? rawDigits : 6
+            let rawPeriod = otp?["period"] as? Int ?? service["period"] as? Int ?? 30
+            let period = (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30
             let algorithmStr = otp?["algorithm"] as? String ?? service["algorithm"] as? String
             let algorithm = algorithmFrom(string: algorithmStr)
             let typeStr = ((otp?["tokenType"] as? String) ?? (service["tokenType"] as? String) ?? "TOTP").uppercased()
@@ -297,14 +301,17 @@ final class ExportImportManager {
         var tokens: [Token] = []
         for entry in array {
             guard let secret = entry["secret"] as? String,
-                  let secretData = secret.base32DecodedData
+                  let secretData = secret.base32DecodedData,
+                  secretData.count >= 10
             else { skipped += 1
                 continue
             }
             let name = (entry["label"] as? String) ?? "Imported Token"
             let issuer = entry["issuer"] as? String
-            let digits = (entry["digits"] as? Int) ?? 6
-            let period = (entry["period"] as? Int) ?? 30
+            let rawDigits = (entry["digits"] as? Int) ?? 6
+            let digits = (rawDigits == 6 || rawDigits == 8) ? rawDigits : 6
+            let rawPeriod = (entry["period"] as? Int) ?? 30
+            let period = (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30
             let counter = (entry["counter"] as? UInt64) ?? 0
             let typeStr = ((entry["type"] as? String) ?? "TOTP").uppercased()
             let type: TokenType = typeStr == "HOTP" ? .hotp : .totp
@@ -328,14 +335,17 @@ final class ExportImportManager {
         var tokens: [Token] = []
         for entry in accounts {
             guard let secret = entry["secret"] as? String,
-                  let secretData = secret.base32DecodedData
+                  let secretData = secret.base32DecodedData,
+                  secretData.count >= 10
             else { skipped += 1
                 continue
             }
             let issuer = entry["issuerName"] as? String
             let name = (entry["userName"] as? String) ?? issuer ?? "Imported Token"
-            let digits = (entry["digits"] as? Int) ?? 6
-            let period = (entry["timeStep"] as? Int) ?? 30
+            let rawDigits = (entry["digits"] as? Int) ?? 6
+            let digits = (rawDigits == 6 || rawDigits == 8) ? rawDigits : 6
+            let rawPeriod = (entry["timeStep"] as? Int) ?? 30
+            let period = (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30
             let algorithm = algorithmFrom(string: entry["algorithm"] as? String)
             tokens.append(Token(
                 name: name, issuer: issuer, secret: secretData,
@@ -366,14 +376,17 @@ final class ExportImportManager {
         var tokens: [Token] = []
         for entry in entries {
             guard let secret = entry["secret"] as? String,
-                  let secretData = secret.base32DecodedData
+                  let secretData = secret.base32DecodedData,
+                  secretData.count >= 10
             else { skipped += 1
                 continue
             }
             let issuer = entry["issuer"] as? String
             let name = (entry["account"] as? String) ?? issuer ?? "Imported Token"
-            let digits = Int(entry["digits"] as? String ?? "") ?? 6
-            let period = Int(entry["timer"] as? String ?? "") ?? 30
+            let rawDigits = Int(entry["digits"] as? String ?? "") ?? 6
+            let digits = (rawDigits == 6 || rawDigits == 8) ? rawDigits : 6
+            let rawPeriod = Int(entry["timer"] as? String ?? "") ?? 30
+            let period = (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30
             let counter = UInt64(entry["counter"] as? String ?? "") ?? 0
             let typeStr = ((entry["kind"] as? String) ?? "TOTP").uppercased()
             let type: TokenType = typeStr == "HOTP" ? .hotp : .totp
@@ -405,11 +418,6 @@ final class ExportImportManager {
         guard uriString.lowercased().hasPrefix(schemePrefix) else {
             throw ExportImportError.invalidFileFormat
         }
-        // Only replace raw spaces — some apps (e.g. Google Authenticator) emit labels
-        // with literal spaces that are not valid in a URL. Everything else, including
-        // already-encoded sequences like %40 or %2B, must be left untouched: running
-        // the label through addingPercentEncoding would double-encode those sequences
-        // (%40 → %2540) because % itself is not in urlPathAllowed.
         let safeURIString = uriString.replacingOccurrences(of: " ", with: "%20")
 
         guard let url = URL(string: safeURIString) else {
@@ -441,8 +449,6 @@ final class ExportImportManager {
         var period: Int? = nil
         var counter: UInt64? = nil
 
-        // URLComponents.queryItems automatically percent-decodes both names and values
-        // (RFC 3986 §3.4), so item.value is already the decoded string.
         for item in queryItems {
             switch item.name.lowercased() {
             case "secret":
@@ -478,12 +484,12 @@ final class ExportImportManager {
         }
 
         guard let secret, !secret.isEmpty,
-              let secretData = secret.base32DecodedData
+              let secretData = secret.base32DecodedData,
+              secretData.count >= 10
         else {
             throw ExportImportError.invalidFileFormat
         }
 
-        // URLComponents.path is already percent-decoded.
         let label = components.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
         let decodedLabel = label
 
@@ -504,7 +510,8 @@ final class ExportImportManager {
         }
 
         if type == .totp {
-            period = period ?? 30
+            let p = period ?? 30
+            period = (p >= 15 && p <= 300) ? p : 30
             counter = nil
         } else {
             period = nil
@@ -580,6 +587,7 @@ enum ExportImportError: LocalizedError {
     case noDataToExport
     case encryptedFileRequiresPassword
     case encryptionFailed
+    case passwordTooShort
     case wrongPassword
 
     var errorDescription: String? {
@@ -610,6 +618,10 @@ enum ExportImportError: LocalizedError {
             )
         case .encryptionFailed: return NSLocalizedString(
                 "The backup couldn't be encrypted. Please try again.",
+                comment: ""
+            )
+        case .passwordTooShort: return NSLocalizedString(
+                "Password must be at least 8 characters.",
                 comment: ""
             )
         case .wrongPassword: return NSLocalizedString(

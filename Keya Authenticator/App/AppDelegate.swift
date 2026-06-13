@@ -25,9 +25,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     // MARK: - Configuration
 
     private func configureAppearance() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        let standard = UINavigationBarAppearance()
+        standard.configureWithOpaqueBackground()
+        standard.backgroundColor = UIColor(named: "AppBackground")
+        UINavigationBar.appearance().standardAppearance = standard
+
+        let scrollEdge = UINavigationBarAppearance()
+        scrollEdge.configureWithTransparentBackground()
+        UINavigationBar.appearance().scrollEdgeAppearance = scrollEdge
     }
 }

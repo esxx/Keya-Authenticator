@@ -62,7 +62,7 @@ struct TokenRowView: View {
             Image(uiImage: uiImage)
                 .resizable()
                 .scaledToFill()
-                .background(Color(.systemBackground))
+                .background(Constants.Colors.background)
         } else {
             Text(monogram)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
@@ -114,7 +114,7 @@ struct TokenRowView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 6 : 2)
-        .background(Color(.systemBackground))
+        .background(Constants.Colors.background)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -126,10 +126,6 @@ struct TokenRowView: View {
             }
         }
         .onChange(of: totpProgress(at: t)) { _, newVal in
-            // Detect a period rollover: progress jumped backward (e.g. 0.98 → 0.01).
-            // In that case snap without animation to avoid a reverse-sweep glitch.
-            // A forward jump larger than ~2 s (app was backgrounded) also snaps so
-            // the bar doesn't animate a long catch-up sweep.
             let forwardLeap = newVal - animatedProgress
             let periodSeconds = Double(token.period ?? 30)
             if newVal < animatedProgress - 0.05 || forwardLeap > (2.0 / periodSeconds) {
@@ -147,7 +143,6 @@ struct TokenRowView: View {
         .accessibilityHint("Tap to copy")
         .onTapGesture {
             if !codeVisible {
-                // First tap reveals the code — don't copy until the user taps again.
                 withAnimation(.spring(duration: 0.25)) { isRevealed = true }
                 if settings.hideCodesByDefault { scheduleRehide() }
             } else {
@@ -232,7 +227,6 @@ struct TokenRowView: View {
         HStack(alignment: .firstTextBaseline, spacing: 0) {
             if codeVisible {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    // Current code
                     Group {
                         if let code = currentCode(at: t) {
                             Text(formatCode(code))

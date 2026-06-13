@@ -54,7 +54,6 @@ final class OTPAuthURITests: XCTestCase {
     }
 
     func testHOTPDefaultCounter() throws {
-        // Counter defaults to 0 when omitted
         let token = try parse("otpauth://hotp/Test?secret=JBSWY3DPEHPK3PXP")
         XCTAssertEqual(token.type, .hotp)
         XCTAssertEqual(token.counter, 0)

@@ -111,7 +111,6 @@ struct QRScannerView: View {
             onResult(.success(code))
             dismiss()
         } else if code.isValidOTPSecret {
-            // Raw Base32 secret
             onResult(.success(code))
             dismiss()
         } else {
@@ -225,7 +224,6 @@ final class CameraManager: NSObject {
                     output.metadataObjectTypes = [.qr]
                     self.session.commitConfiguration()
                     self.isConfigured = true
-                    // Run session start on background thread to avoid UI hang
                     weakSessionQueue.async {
                         weakSession.startRunning()
                     }

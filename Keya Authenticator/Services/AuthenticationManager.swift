@@ -80,10 +80,6 @@ final class AuthenticationManager {
                 localizedReason: "Unlock your 2FA tokens"
             )
             if success {
-                // Do NOT update the biometric baseline here — only PIN auth
-                // is trusted enough to set a new baseline. This prevents an
-                // attacker on a jailbroken device from overwriting the baseline
-                // entry and then authenticating with their own biometrics.
             } else {
                 throw AuthenticationError.biometricFailed
             }
@@ -172,8 +168,6 @@ final class AuthenticationManager {
 
     // MARK: - Full Reset
 
-    /// Wipes all tokens, PIN, biometric baseline, lockout state, and app settings.
-    /// Single source of truth for the full reset — call from any coordinator that needs it.
     func performReset(tokenStore: TokenStore, settings: AppSettings) {
         tokenStore.deleteAll()
         try? removePIN()
@@ -185,7 +179,6 @@ final class AuthenticationManager {
 
     // MARK: - Lockout Message
 
-    /// Canonical formatter for PIN lockout countdown messages.
     static func lockoutMessage(seconds: Int) -> String {
         if seconds >= 60 {
             return String(localized: "Too many attempts. Try again in \(seconds / 60)m \(seconds % 60)s.")

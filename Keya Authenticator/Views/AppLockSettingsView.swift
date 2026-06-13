@@ -24,8 +24,10 @@ struct AppLockSettingsView: View {
         List {
             // MARK: - App Lock
 
-            Section("App lock") {
+            Section {
                 Toggle("PIN", isOn: pinToggleBinding)
+                    .listRowBackground(Constants.Colors.background)
+                    .listRowSeparator(.visible)
 
                 if settings.isAuthenticationEnabled, KeychainManager.isPINSet() {
                     Button("Change PIN") {
@@ -33,13 +35,17 @@ struct AppLockSettingsView: View {
                         showingPINSetup = true
                     }
                     .foregroundColor(.blue)
+                    .listRowBackground(Constants.Colors.background)
+                    .listRowSeparator(.visible)
                 }
+            } header: {
+                Text("App lock").textCase(.uppercase)
             }
 
             // MARK: - Auto-lock
 
             if settings.isAuthenticationEnabled {
-                Section("Auto-lock") {
+                Section {
                     Picker("Lock after", selection: $settings.lockGracePeriod) {
                         Text("Immediately").tag(0)
                         Text("5 seconds").tag(5)
@@ -47,17 +53,25 @@ struct AppLockSettingsView: View {
                         Text("30 seconds").tag(30)
                         Text("1 minute").tag(60)
                     }
+                    .listRowBackground(Constants.Colors.background)
+                    .listRowSeparator(.visible)
+                } header: {
+                    Text("Auto-lock").textCase(.uppercase)
                 }
             }
 
             // MARK: - Biometric Authentication
 
             if settings.isAuthenticationEnabled, authenticationManager.isBiometricAvailable {
-                Section("Biometric Authentication") {
+                Section {
                     Toggle(
                         authenticationManager.biometricDisplayName,
                         isOn: biometricToggleBinding
                     )
+                    .listRowBackground(Constants.Colors.background)
+                    .listRowSeparator(.visible)
+                } header: {
+                    Text("Biometric Authentication").textCase(.uppercase)
                 }
             }
         }

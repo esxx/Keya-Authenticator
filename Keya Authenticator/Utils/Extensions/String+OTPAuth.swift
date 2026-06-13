@@ -15,9 +15,6 @@ extension String {
     )? {
         guard hasPrefix("otpauth://") else { return nil }
 
-        // Only replace raw spaces — some apps emit labels with literal spaces that are
-        // not valid in URL syntax. Re-encoding the entire label would double-encode
-        // already-encoded sequences like %40 → %2540 (since % is not in urlPathAllowed).
         let safeURIString = replacingOccurrences(of: " ", with: "%20")
 
         guard let url = URL(string: safeURIString), url.scheme == "otpauth" else { return nil }
@@ -41,9 +38,6 @@ extension String {
         var period: Int?
         var counter: UInt64?
 
-        // URLComponents.queryItems automatically percent-decodes both names and values
-        // (RFC 3986 §3.4), so item.value is already the decoded string — no extra
-        // removingPercentEncoding call is needed here.
         for item in queryItems {
             switch item.name.lowercased() {
             case "secret": secret = item.value
@@ -114,7 +108,6 @@ extension String {
             return nil
         }
 
-        // `encoded` is already percent-decoded by URLComponents.queryItems — no further decoding needed.
         var base64 = encoded
             .replacingOccurrences(of: "-", with: "+")
             .replacingOccurrences(of: "_", with: "/")
@@ -149,7 +142,8 @@ private extension String {
             let fieldNumber = Int(tag >> 3)
             let wireType = Int(tag & 0x7)
             if fieldNumber == 1, wireType == 2 {
-                guard let length = protoReadVarint(data, pos: &pos) else { break }
+                guard let length = protoReadVarint(data, pos: &pos),
+                      length <= UInt64(Int.max) else { break }
                 let end = pos + Int(length)
                 guard end <= data.count else { break }
                 if let params = parseOtpParameters(Data(data[pos ..< end])) {
@@ -182,19 +176,19 @@ private extension String {
             let wireType = Int(tag & 0x7)
             switch (fieldNumber, wireType) {
             case (1, 2):
-                guard let len = protoReadVarint(data, pos: &pos) else { return nil }
+                guard let len = protoReadVarint(data, pos: &pos), len <= UInt64(Int.max) else { return nil }
                 let end = pos + Int(len)
                 guard end <= data.count else { return nil }
                 secret = Data(data[pos ..< end])
                 pos = end
             case (2, 2):
-                guard let len = protoReadVarint(data, pos: &pos) else { return nil }
+                guard let len = protoReadVarint(data, pos: &pos), len <= UInt64(Int.max) else { return nil }
                 let end = pos + Int(len)
                 guard end <= data.count else { return nil }
                 name = String(data: data[pos ..< end], encoding: .utf8) ?? name
                 pos = end
             case (3, 2):
-                guard let len = protoReadVarint(data, pos: &pos) else { return nil }
+                guard let len = protoReadVarint(data, pos: &pos), len <= UInt64(Int.max) else { return nil }
                 let end = pos + Int(len)
                 guard end <= data.count else { return nil }
                 issuer = String(data: data[pos ..< end], encoding: .utf8)
@@ -249,6 +243,7 @@ private extension String {
             return true
         case 2:
             guard let len = protoReadVarint(data, pos: &pos),
+                  len <= UInt64(Int.max),
                   pos + Int(len) <= data.count else { return false }
             pos += Int(len)
             return true

@@ -13,6 +13,7 @@ final class MainContentViewModel {
 
     var searchText = ""
     var showingAddSheet = false
+    var pendingOTPAuthURI: String?
     var showingSettings = false
     var selectedTokenForEdit: Token?
     var selectedTokenForQR: Token?
@@ -101,6 +102,11 @@ final class MainContentViewModel {
         updated[index].touch()
         ClipboardManager.shared.provideHapticFeedback(updated[index].isFavorite ? .success : .medium)
         Task { @MainActor in try? tokenStore.update(updated) }
+    }
+
+    func openAddSheet(prefillURI uri: String) {
+        pendingOTPAuthURI = uri
+        showingAddSheet = true
     }
 
     // MARK: - New Token Tracking

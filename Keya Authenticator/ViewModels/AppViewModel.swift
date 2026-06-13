@@ -13,6 +13,7 @@ final class AppCoordinator {
 
     var appState: AppState = .loading
     var showPrivacyOverlay = false
+    private var pendingIncomingURL: URL?
 
     // MARK: - Child ViewModels
 
@@ -51,6 +52,7 @@ final class AppCoordinator {
         } else {
             tokenStore.load()
             appState = .main
+            processPendingURL()
         }
     }
 
@@ -96,11 +98,28 @@ final class AppCoordinator {
         settings.isAuthenticationEnabled = true
         tokenStore.load()
         withAnimation { appState = .main }
+        processPendingURL()
     }
 
     func completeUnlock() {
         tokenStore.load()
         withAnimation { appState = .main }
+        processPendingURL()
+    }
+
+    func handleIncomingURL(_ url: URL) {
+        guard url.scheme == "otpauth" else { return }
+        if appState == .main {
+            mainContentViewModel.openAddSheet(prefillURI: url.absoluteString)
+        } else {
+            pendingIncomingURL = url
+        }
+    }
+
+    private func processPendingURL() {
+        guard let url = pendingIncomingURL else { return }
+        pendingIncomingURL = nil
+        mainContentViewModel.openAddSheet(prefillURI: url.absoluteString)
     }
 
     func requestReset() {

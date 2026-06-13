@@ -10,9 +10,6 @@ final class TokenStoreTests: XCTestCase {
     private let secret = "JBSWY3DPEHPK3PXP".base32DecodedData!
 
     private func makeToken(id: UUID = UUID(), name: String, issuer: String = "Issuer") -> Token {
-        // Each token gets a unique secret derived from its name so that content-key
-        // deduplication (which correctly keys on the secret) doesn't collapse distinct
-        // test tokens. Padding ensures the minimum byte length for HMAC.
         var uniqueSecret = Data(name.utf8)
         while uniqueSecret.count < 10 { uniqueSecret.append(0) }
         return Token(id: id, name: name, issuer: issuer,
@@ -89,8 +86,6 @@ final class TokenStoreTests: XCTestCase {
     }
 
     func testDuplicateUUIDCollapseToOne() throws {
-        // Simulate data-corruption: the same token inserted twice.
-        // update() must not crash and must produce exactly one entry.
         let sharedID = UUID()
         let t = makeToken(id: sharedID, name: "Token")
         XCTAssertNoThrow(try store.update([t, t]))

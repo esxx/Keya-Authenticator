@@ -88,16 +88,10 @@ final class AppSettings {
     init() {
         registerDefaults()
         clearStaleKeychainIfReinstalled()
+        KeychainManager.migrateTokensToSharedKeychainGroupIfNeeded()
         loadFromUserDefaults()
     }
 
-    /// Clears stale Keychain data on a genuine fresh install.
-    ///
-    /// **Why not UserDefaults?**  When a device is restored from iCloud or iTunes backup,
-    /// the Keychain is preserved but UserDefaults is wiped. A UserDefaults-based flag would
-    /// misidentify a restore as a fresh install and delete all tokens. Using a Keychain
-    /// sentinel correctly distinguishes the two cases: on a true fresh install the sentinel
-    /// is absent; on a restore it survives alongside the user's tokens.
     private func clearStaleKeychainIfReinstalled() {
         let query: [CFString: Any] = [
             kSecClass: kSecClassGenericPassword,
@@ -108,17 +102,12 @@ final class AppSettings {
         let status = SecItemCopyMatching(query as CFDictionary, nil)
 
         if status == errSecInteractionNotAllowed {
-            // Device is locked (cold-boot background launch) — cannot determine state.
-            // Never wipe on ambiguity; the next foreground launch will resolve correctly.
             return
         }
 
         if status == errSecItemNotFound {
-            // Genuine fresh install — wipe any orphaned Keychain entries left by a previous
-            // uninstall (the Keychain persists across uninstalls on non-restored devices).
             try? KeychainManager.deleteAllTokens()
 
-            // Write the sentinel so subsequent launches are recognised as normal starts.
             let add: [CFString: Any] = [
                 kSecClass: kSecClassGenericPassword,
                 kSecAttrService: Constants.keychainService,
@@ -128,18 +117,18 @@ final class AppSettings {
             ]
             SecItemAdd(add as CFDictionary, nil)
         }
-        // errSecSuccess → sentinel present: normal launch or restore. Leave Keychain intact.
     }
 
     private func loadFromUserDefaults() {
         let sec = KeychainManager.loadSecuritySettings()
         isAuthenticationEnabled = sec.isAuthenticationEnabled
-        useBiometricAuthentication = sec.useBiometricAuthentication
 
         let ud = UserDefaults.standard
         hideCodesByDefault = ud.bool(forKey: Keys.hideCodesByDefault)
         appTheme = AppTheme(rawValue: ud.string(forKey: Keys.appTheme) ?? "") ?? .auto
         biometricActivated = ud.bool(forKey: Keys.biometricActivated)
+
+        useBiometricAuthentication = sec.useBiometricAuthentication && biometricActivated
 
         if let keychainGrace = sec.lockGracePeriod {
             lockGracePeriod = AppSettings.clampLockPeriod(keychainGrace)

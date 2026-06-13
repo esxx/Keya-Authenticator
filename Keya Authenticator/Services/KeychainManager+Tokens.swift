@@ -50,10 +50,7 @@ extension KeychainManager {
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let reservedAccounts: Set<String> = [
-            "app_pin", "pin_lockout_state", KeychainManager.securitySettingsAccount,
-            "biometric_fingerprint", "biometric_lockout", "app_background_timestamp",
-        ]
+        let reservedAccounts = Token.reservedKeychainAccounts
 
         var allTokens: [Token] = []
         for item in items {
@@ -160,11 +157,6 @@ extension KeychainManager {
     }
 
     private static func contentKey(for token: Token) -> String {
-        // Identity is defined by what codes the token produces, not by its display labels.
-        // name/issuer are user-editable and differ across apps for the same account.
-        // algorithm/digits/period change the generated codes — two tokens that share
-        // all four values are cryptographically identical.
-        // For HOTP, period is nil; using 0 keeps the key stable across imports.
         let secretHex = token.secret.map { String(format: "%02x", $0) }.joined()
         return "\(secretHex)|\(token.algorithm.rawValue)|\(token.digits)|\(token.period ?? 0)"
     }

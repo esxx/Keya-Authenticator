@@ -220,4 +220,41 @@ final class AddTokenViewModelTests: XCTestCase {
         viewModel.createToken()
         XCTAssertNil(tokenStore.tokens.first?.issuer, "Empty issuer string must be stored as nil")
     }
+
+    // MARK: - handleScannedQR digit and period clamping
+
+    func testHandleScannedQR_invalidDigits_clampsToSix() {
+        let uri = "otpauth://totp/Test:user@example.com?secret=\(validSecret)&digits=7"
+        viewModel.handleScannedQR(uri)
+        XCTAssertEqual(tokenStore.tokens.first?.digits, 6,
+                       "digits=7 must be clamped to 6")
+    }
+
+    func testHandleScannedQR_eightDigitsPreserved() {
+        let uri = "otpauth://totp/Test:user@example.com?secret=\(validSecret)&digits=8"
+        viewModel.handleScannedQR(uri)
+        XCTAssertEqual(tokenStore.tokens.first?.digits, 8,
+                       "digits=8 is valid and must be stored unchanged")
+    }
+
+    func testHandleScannedQR_belowMinPeriod_clampsToThirty() {
+        let uri = "otpauth://totp/Test:user@example.com?secret=\(validSecret)&period=5"
+        viewModel.handleScannedQR(uri)
+        XCTAssertEqual(tokenStore.tokens.first?.period, 30,
+                       "period=5 is below minimum 15 — must be clamped to 30")
+    }
+
+    func testHandleScannedQR_aboveMaxPeriod_clampsToThirty() {
+        let uri = "otpauth://totp/Test:user@example.com?secret=\(validSecret)&period=600"
+        viewModel.handleScannedQR(uri)
+        XCTAssertEqual(tokenStore.tokens.first?.period, 30,
+                       "period=600 is above maximum 300 — must be clamped to 30")
+    }
+
+    func testHandleScannedQR_validPeriod_preserved() {
+        let uri = "otpauth://totp/Test:user@example.com?secret=\(validSecret)&period=60"
+        viewModel.handleScannedQR(uri)
+        XCTAssertEqual(tokenStore.tokens.first?.period, 60,
+                       "period=60 is valid and must be stored unchanged")
+    }
 }

@@ -107,7 +107,6 @@ enum ServiceIconResolver {
     }
 
     private static let domainNames: [String: String] = [
-        // ── Email providers ───────────────────────────────────────────────────
         "gmail.com": "Gmail",
         "googlemail.com": "Gmail",
         "yahoo.com": "Yahoo",
@@ -147,7 +146,6 @@ enum ServiceIconResolver {
         "gmx.de": "GMX",
         "posteo.de": "Posteo",
 
-        // ── Dev / hosting ─────────────────────────────────────────────────────
         "github.com": "GitHub",
         "gitlab.com": "GitLab",
         "bitbucket.org": "Bitbucket",
@@ -170,7 +168,6 @@ enum ServiceIconResolver {
         "datadog.com": "Datadog",
         "sentry.io": "Sentry",
 
-        // ── Social / communication ────────────────────────────────────────────
         "facebook.com": "Facebook",
         "instagram.com": "Instagram",
         "twitter.com": "Twitter",
@@ -192,7 +189,6 @@ enum ServiceIconResolver {
         "substack.com": "Substack",
         "medium.com": "Medium",
 
-        // ── Cloud / productivity ──────────────────────────────────────────────
         "google.com": "Google",
         "microsoft.com": "Microsoft",
         "amazon.com": "Amazon",
@@ -204,7 +200,6 @@ enum ServiceIconResolver {
         "shopify.com": "Shopify",
         "stripe.com": "Stripe",
 
-        // ── Finance / crypto ──────────────────────────────────────────────────
         "paypal.com": "PayPal",
         "wise.com": "Wise",
         "revolut.com": "Revolut",
@@ -215,7 +210,6 @@ enum ServiceIconResolver {
         "robinhood.com": "Robinhood",
         "venmo.com": "Venmo",
 
-        // ── Gaming ────────────────────────────────────────────────────────────
         "steampowered.com": "Steam",
         "epicgames.com": "Epic Games",
         "battle.net": "Battle.net",
@@ -226,7 +220,6 @@ enum ServiceIconResolver {
         "ubisoft.com": "Ubisoft",
         "gog.com": "GOG",
 
-        // ── VPN / security ────────────────────────────────────────────────────
         "nordvpn.com": "NordVPN",
         "expressvpn.com": "ExpressVPN",
         "1password.com": "1Password",
@@ -234,7 +227,6 @@ enum ServiceIconResolver {
         "lastpass.com": "LastPass",
         "dashlane.com": "Dashlane",
 
-        // ── Travel ────────────────────────────────────────────────────────────
         "airbnb.com": "Airbnb",
         "booking.com": "Booking.com",
         "uber.com": "Uber",
@@ -274,7 +266,6 @@ enum ServiceIconResolver {
         }
 
         return [
-            // ── Google ecosystem ──────────────────────────────────────────────
             "google": w(hex: 0x4285F4),
             "gmail": w(hex: 0xEA4335),
             "google workspace": w(hex: 0x4285F4),
@@ -282,12 +273,10 @@ enum ServiceIconResolver {
             "google cloud": w(hex: 0x4285F4),
             "firebase": w(hex: 0xFFCA28),
 
-            // ── Apple ─────────────────────────────────────────────────────────
             "apple": w(hex: 0x000000),
             "icloud": w(hex: 0x3693F3),
             "apple id": w(hex: 0x000000),
 
-            // ── Microsoft ─────────────────────────────────────────────────────
             "microsoft": w(hex: 0x5E5E5E),
             "outlook": w(hex: 0x0078D4),
             "hotmail": w(hex: 0x0078D4),
@@ -296,24 +285,20 @@ enum ServiceIconResolver {
             "teams": w(hex: 0x6264A7),
             "github": w(hex: 0x181717),
 
-            // ── Amazon / AWS ──────────────────────────────────────────────────
             "amazon": b(hex: 0xFF9900),
             "aws": b(hex: 0xFF9900),
             "amazon web services": b(hex: 0xFF9900),
             "twitch": w(hex: 0x9146FF),
 
-            // ── Meta ──────────────────────────────────────────────────────────
             "facebook": w(hex: 0x0866FF),
             "meta": w(hex: 0x0866FF),
             "instagram": w(hex: 0xE4405F),
             "whatsapp": w(hex: 0x25D366),
 
-            // ── Twitter / X ───────────────────────────────────────────────────
             "twitter": w(hex: 0x000000),
             "x.com": w(hex: 0x000000),
             "x": w(hex: 0x000000),
 
-            // ── Productivity ──────────────────────────────────────────────────
             "dropbox": w(hex: 0x0061FF),
             "slack": w(hex: 0x4A154B),
             "notion": b(hex: 0xFFFFFF),
@@ -336,7 +321,6 @@ enum ServiceIconResolver {
             "keeper": w(hex: 0x00AEEF),
             "nordpass": w(hex: 0x4687FF),
 
-            // ── Social ────────────────────────────────────────────────────────
             "reddit": w(hex: 0xFF4500),
             "linkedin": w(hex: 0x0A66C2),
             "discord": w(hex: 0x5865F2),
@@ -356,7 +340,6 @@ enum ServiceIconResolver {
             "hackernews": b(hex: 0xFF6600),
             "hacker news": b(hex: 0xFF6600),
 
-            // ── Gaming ────────────────────────────────────────────────────────
             "steam": w(hex: 0x000000),
             "epic games": w(hex: 0x2563EB),
             "epicgames": w(hex: 0x2563EB),
@@ -373,7 +356,6 @@ enum ServiceIconResolver {
             "riotgames": w(hex: 0xD32936),
             "genshin impact": w(hex: 0x2F6FEB),
 
-            // ── Entertainment ─────────────────────────────────────────────────
             "netflix": w(hex: 0xE50914),
             "spotify": b(hex: 0x1DB954),
             "disney": w(hex: 0x113CCF),
@@ -384,7 +366,6 @@ enum ServiceIconResolver {
             "prime video": w(hex: 0x00A8E0),
             "amazon prime": b(hex: 0xFF9900),
 
-            // ── Finance ───────────────────────────────────────────────────────
             "paypal": w(hex: 0x003087),
             "stripe": w(hex: 0x635BFF),
             "wise": w(hex: 0x9FE870),
@@ -399,7 +380,6 @@ enum ServiceIconResolver {
             "kraken": w(hex: 0x5741D9),
             "crypto.com": w(hex: 0x002D74),
 
-            // ── Cloud / Dev ───────────────────────────────────────────────────
             "cloudflare": b(hex: 0xF48120),
             "digitalocean": w(hex: 0x0080FF),
             "heroku": w(hex: 0x430098),
@@ -421,27 +401,23 @@ enum ServiceIconResolver {
             "datadog": w(hex: 0x632CA6),
             "sentry": w(hex: 0x362D59),
 
-            // ── E-commerce ────────────────────────────────────────────────────
             "shopify": b(hex: 0x96BF48),
             "etsy": w(hex: 0xF16521),
             "ebay": w(hex: 0x0064D2),
             "aliexpress": w(hex: 0xFF6A00),
             "alibaba": w(hex: 0xFF6A00),
 
-            // ── Email / Hosting ───────────────────────────────────────────────
             "proton": w(hex: 0x6D4AFF),
             "protonmail": w(hex: 0x6D4AFF),
             "fastmail": w(hex: 0x2F71DA),
             "zoho": w(hex: 0xE42527),
             "mailchimp": b(hex: 0xFFE01B),
 
-            // ── VPN / Security ────────────────────────────────────────────────
             "nordvpn": w(hex: 0x4687FF),
             "expressvpn": w(hex: 0xDA3940),
             "mullvad": b(hex: 0xFFD040),
             "protonvpn": w(hex: 0x6D4AFF),
 
-            // ── Travel ────────────────────────────────────────────────────────
             "airbnb": w(hex: 0xFF5A5F),
             "booking.com": w(hex: 0x003580),
             "uber": w(hex: 0x000000),

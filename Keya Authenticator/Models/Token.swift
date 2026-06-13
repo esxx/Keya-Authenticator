@@ -33,6 +33,12 @@ struct Token: Identifiable, Codable, Equatable {
 
     private var secretLength: Int
 
+    static let reservedKeychainAccounts: Set<String> = [
+        "app_pin", "pin_lockout_state", "security_settings",
+        "biometric_fingerprint", "biometric_lockout", "app_background_timestamp",
+        "app.installSentinel",
+    ]
+
     // MARK: - Init
 
     init(
@@ -92,10 +98,6 @@ struct Token: Identifiable, Codable, Equatable {
     }
 
     mutating func zeroSecret() {
-        // Zero the bytes in-place before releasing the reference.
-        // Note: Swift Data has copy-on-write semantics — if secretStorage was copied
-        // elsewhere, only this instance's backing buffer is zeroed here. That is still
-        // strictly better than replacing the reference without zeroing.
         secretStorage.withUnsafeMutableBytes { ptr in
             _ = ptr.initializeMemory(as: UInt8.self, repeating: 0)
         }
@@ -127,10 +129,10 @@ struct Token: Identifiable, Codable, Equatable {
         type = try c.decode(TokenType.self, forKey: .type)
         let rawPeriod = try c.decodeIfPresent(Int.self, forKey: .period)
         let rawCounter = try c.decodeIfPresent(UInt64.self, forKey: .counter)
-        // Normalize period/counter by token type — matches the failable init's logic.
         switch type {
         case .totp:
-            period = rawPeriod ?? 30
+            let p = rawPeriod ?? 30
+            period = (p >= 15 && p <= 300) ? p : 30
             counter = nil
         case .hotp:
             period = nil

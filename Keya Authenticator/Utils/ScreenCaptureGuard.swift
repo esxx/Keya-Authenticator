@@ -1,7 +1,5 @@
 import UIKit
 
-/// Detects active screen recording or AirPlay mirroring and publishes the state
-/// so the app can overlay a privacy screen when the display is being captured.
 @Observable
 final class ScreenCaptureGuard {
     private(set) var isCapturing: Bool

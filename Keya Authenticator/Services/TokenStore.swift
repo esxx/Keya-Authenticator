@@ -18,10 +18,7 @@ final class TokenStore {
             var loaded = try KeychainManager.loadAllTokens(using: authContext)
             applySort(to: &loaded)
             tokens = loaded
-        } catch {
-            // On a transient Keychain error, preserve whatever is already in memory.
-            // Never wipe a populated vault because of a temporary read failure.
-        }
+        } catch {}
     }
 
     // MARK: - Sort order

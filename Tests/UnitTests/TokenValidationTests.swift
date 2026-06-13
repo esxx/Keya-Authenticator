@@ -60,7 +60,6 @@ final class TokenValidationTests: XCTestCase {
 
     func testTOTPCodeStableWithinPeriod() throws {
         let token = totpToken()
-        // Two timestamps 1 second apart inside the same 30 s window must produce the same code.
         let base = Date(timeIntervalSince1970: 1_700_000_000)
         let code1 = try token.generateCode(time: base)
         let code2 = try token.generateCode(time: base.addingTimeInterval(1))

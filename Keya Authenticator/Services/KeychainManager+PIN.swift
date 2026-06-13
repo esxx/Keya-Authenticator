@@ -146,10 +146,6 @@ extension KeychainManager {
             throw TokenError.keychainError("Security state is temporarily unavailable. Please try again.")
         }
         guard let state = try? JSONDecoder().decode(LockoutState.self, from: data) else {
-            // Corrupt or tampered lockout data — fail safe. Resetting to zero would let an
-            // attacker bypass the lockout by corrupting this Keychain item, so instead we
-            // impose a 5-minute cooldown. The corrupt record is deleted so the next
-            // successful PIN attempt can write a clean state.
             try? deleteLockoutState(account: account)
             return LockoutState(
                 failedAttempts: 10,

@@ -7,9 +7,6 @@ struct PINSetupSheet: View {
     @Binding var newPIN: String
     @Binding var confirmPIN: String
     @Binding var errorMessage: String?
-    /// Called when the sheet finishes.
-    /// - `success`: PIN was saved successfully.
-    /// - `biometricChanged`: the verification step detected a biometric database change.
     let onComplete: (_ success: Bool, _ biometricChanged: Bool) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -17,7 +14,7 @@ struct PINSetupSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text(mode == .changeExisting ? "Change PIN" : "Set PIN")) {
+                Section {
                     if mode == .changeExisting {
                         SecureField("Current PIN", text: $currentPIN)
                             .keyboardType(.numberPad)
@@ -37,6 +34,8 @@ struct PINSetupSheet: View {
                             .font(.caption)
                             .foregroundColor(.orange)
                     }
+                } header: {
+                    Text(mode == .changeExisting ? "Change PIN" : "Set PIN").textCase(.uppercase)
                 }
 
                 if let errorMessage {

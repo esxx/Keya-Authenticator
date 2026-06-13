@@ -34,17 +34,23 @@ struct AppEntry: App {
                     Constants.Colors.background.ignoresSafeArea()
 
                 case .pinSetup:
-                    PINSetupView(
-                        authenticationManager: authenticationManager,
-                        onComplete: { appViewModel.completePINSetup() }
-                    )
+                    ZStack {
+                        Constants.Colors.background.ignoresSafeArea()
+                        PINSetupView(
+                            authenticationManager: authenticationManager,
+                            onComplete: { appViewModel.completePINSetup() }
+                        )
+                    }
 
                 case .appUnlock:
-                    AuthenticationView(
-                        authenticationManager: authenticationManager,
-                        settings: settings,
-                        onUnlock: { appViewModel.completeUnlock() }
-                    )
+                    ZStack {
+                        Constants.Colors.background.ignoresSafeArea()
+                        AuthenticationView(
+                            authenticationManager: authenticationManager,
+                            settings: settings,
+                            onUnlock: { appViewModel.completeUnlock() }
+                        )
+                    }
 
                 case .main:
                     MainContentView(
@@ -62,6 +68,9 @@ struct AppEntry: App {
             .preferredColorScheme(settings.appTheme.colorScheme)
             .onAppear {
                 appViewModel.determineInitialState()
+            }
+            .onOpenURL { url in
+                appViewModel.handleIncomingURL(url)
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                 appViewModel.showPrivacyOverlay = true

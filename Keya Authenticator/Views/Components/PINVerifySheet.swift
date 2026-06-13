@@ -78,6 +78,8 @@ struct PINVerifySheet: View {
 
                 Spacer().frame(height: 24)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Constants.Colors.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

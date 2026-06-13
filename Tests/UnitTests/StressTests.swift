@@ -52,8 +52,6 @@ final class OTPGeneratorStressTests: XCTestCase {
     // MARK: Leading-zero preservation
 
     func testHOTP_LeadingZerosPreserved() throws {
-        // Counter 0 with the RFC secret produces "755224" — no leading zeros,
-        // but we need to guarantee the zero-pad format contract for any output.
         let secret = "12345678901234567890".data(using: .ascii)!
         for counter: UInt64 in 0..<20 {
             let code = try OTPGenerator.generateHOTP(secret: secret, counter: counter, digits: 6)
@@ -74,7 +72,6 @@ final class OTPGeneratorStressTests: XCTestCase {
 
     func testHOTP_MaxUInt64Counter() throws {
         let secret = "JBSWY3DPEHPK3PXP".base32DecodedData!
-        // Must not crash or throw.
         let code = try OTPGenerator.generateHOTP(secret: secret, counter: UInt64.max, digits: 6)
         XCTAssertEqual(code.count, 6)
     }
@@ -89,7 +86,6 @@ final class OTPGeneratorStressTests: XCTestCase {
     // MARK: Period boundary
 
     func testTOTP_ExactPeriodBoundary() throws {
-        // t=30 is the first tick of the second period — code must differ from t=29.
         let secret = "JBSWY3DPEHPK3PXP".base32DecodedData!
         let codeBefore = try OTPGenerator.generateTOTP(
             secret: secret, time: Date(timeIntervalSince1970: 29), period: 30)
@@ -265,7 +261,6 @@ final class Base32StressTests: XCTestCase {
     func testGarbageInputsReturnNilOrEmpty() {
         let garbage = ["!@#$", "0", "1", "8", "9", "====", "ZZZZZZZZ1"]
         for g in garbage {
-            // Must not crash; we don't mandate nil vs empty vs partial.
             _ = g.base32DecodedData
         }
     }
@@ -273,8 +268,6 @@ final class Base32StressTests: XCTestCase {
     // MARK: Single-character boundary
 
     func testSingleCharacterIsGraceful() {
-        // A single base32 char encodes only 5 bits — not a full byte.
-        // Result can be nil or 0-length; must not crash.
         let result = "A".base32DecodedData
         XCTAssertTrue(result == nil || result?.isEmpty == true)
     }
@@ -299,19 +292,16 @@ final class OTPAuthURIStressTests: XCTestCase {
     // MARK: Unusual but valid percent-encoding
 
     func testDoublyEncodedIssuerDecodes() throws {
-        // Some apps encode the space as %2520 (double-encode). We should handle it gracefully.
         let token = try parse("otpauth://totp/Corp:user?secret=JBSWY3DPEHPK3PXP&issuer=Corp")
         XCTAssertFalse(token.name.isEmpty)
     }
 
     func testSpecialCharsInName() throws {
-        // Plus signs, slashes (encoded), hashes
         let token = try parse("otpauth://totp/Service:user%2Bname%40example.com?secret=JBSWY3DPEHPK3PXP&issuer=Service")
         XCTAssertEqual(token.name, "user+name@example.com")
     }
 
     func testUnicodeIssuerPercent() throws {
-        // Issuer with Unicode encoded in query param
         let token = try parse("otpauth://totp/Test:u?secret=JBSWY3DPEHPK3PXP&issuer=Caf%C3%A9")
         XCTAssertEqual(token.issuer, "Café")
     }
@@ -333,7 +323,6 @@ final class OTPAuthURIStressTests: XCTestCase {
     }
 
     func testNegativeCounterIgnored() throws {
-        // UInt64("-1") returns nil, so counter should fall back to 0
         let token = try parse("otpauth://hotp/T?secret=JBSWY3DPEHPK3PXP&counter=-1")
         XCTAssertEqual(token.counter, 0)
     }
@@ -359,7 +348,6 @@ final class OTPAuthURIStressTests: XCTestCase {
     }
 
     func testEmptyLabelFallsBackToDefault() throws {
-        // Path is just "/" — name should not be empty
         let token = try parse("otpauth://totp/?secret=JBSWY3DPEHPK3PXP")
         XCTAssertFalse(token.name.isEmpty)
     }
@@ -367,9 +355,7 @@ final class OTPAuthURIStressTests: XCTestCase {
     // MARK: Duplicate query parameters
 
     func testDuplicateSecretUsesFirst() throws {
-        // Behaviour is implementation-defined; must not crash or throw.
         let token = try? parse("otpauth://totp/T?secret=JBSWY3DPEHPK3PXP&secret=HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ")
-        // Either value is acceptable; just verify it didn't crash.
         XCTAssertNotNil(token)
     }
 
@@ -477,7 +463,6 @@ final class ExportImportFormatStressTests: XCTestCase {
             }
         }
         """.data(using: .utf8)!
-        // Unknown type should not crash — the parser defaults to TOTP.
         let result = try manager.parseTokens(from: json)
         XCTAssertEqual(result.tokens.count, 1)
         XCTAssertEqual(result.tokens[0].type, .totp)
@@ -595,8 +580,6 @@ final class ExportImportFormatStressTests: XCTestCase {
     func testLargeRoundTripMixedTypes() throws {
         var tokens: [Token] = []
         for i in 0..<25 {
-            // Unique secret per token: content-key dedup correctly collapses
-            // same-secret entries, so each token must carry a distinct secret.
             var s = Data("TOTP-\(i)".utf8); while s.count < 10 { s.append(0) }
             tokens.append(Token(name: "TOTP-\(i)", issuer: "Corp",
                                 secret: s, algorithm: .sha1,
@@ -619,7 +602,6 @@ final class ExportImportFormatStressTests: XCTestCase {
         XCTAssertEqual(totpCount, 25)
         XCTAssertEqual(hotpCount, 25)
 
-        // Verify HOTP tokens preserved their counters
         let hotpTokens = result.tokens
             .filter { $0.type == .hotp }
             .sorted { ($0.counter ?? 0) < ($1.counter ?? 0) }
@@ -681,7 +663,6 @@ final class ExportImportFormatStressTests: XCTestCase {
         try tokenStore.update([t])
 
         let encrypted = try manager.exportVaultEncrypted(password: "mypassword")
-        // Calling parseTokens (not parseEncryptedTokens) on encrypted data must throw.
         XCTAssertThrowsError(try manager.parseTokens(from: encrypted)) { error in
             guard let e = error as? ExportImportError,
                   e == .encryptedFileRequiresPassword else {
@@ -696,7 +677,6 @@ final class ExportImportFormatStressTests: XCTestCase {
         try tokenStore.update([t])
 
         var encrypted = try manager.exportVaultEncrypted(password: "pass")
-        // Flip a byte in the middle to corrupt the ciphertext.
         let mid = encrypted.count / 2
         encrypted[mid] ^= 0xFF
 
@@ -711,7 +691,6 @@ final class ExportImportFormatStressTests: XCTestCase {
         try tokenStore.update([t])
 
         let encrypted = try manager.exportVaultEncrypted(password: "pass")
-        // Keep only the first half.
         let truncated = encrypted.prefix(encrypted.count / 2)
         XCTAssertThrowsError(
             try manager.parseEncryptedTokens(from: Data(truncated), password: "pass")
@@ -987,9 +966,7 @@ final class AuthenticationManagerStressTests: XCTestCase {
         for _ in 0..<4 {
             XCTAssertThrowsError(try manager.authenticateWithPIN("000000"))
         }
-        // 4 failures — should still not be locked out
         XCTAssertNil(manager.pinLockoutSecondsRemaining(), "4 failures must not trigger lockout")
-        // 5th failure triggers soft lockout
         XCTAssertThrowsError(try manager.authenticateWithPIN("000000"))
         XCTAssertNotNil(manager.pinLockoutSecondsRemaining(), "5th failure must trigger soft lockout")
     }
@@ -999,16 +976,10 @@ final class AuthenticationManagerStressTests: XCTestCase {
         let state = KeychainManager.LockoutState(failedAttempts: 4, lockoutUntil: nil, lastFailedAttempt: nil)
         try KeychainManager.saveLockoutState(state, account: KeychainManager.pinLockoutAccount)
 
-        // Get to 9 failures: state says 4, so 5 more wrong attempts
         for _ in 0..<4 {
-            // Each wrong attempt while locked out just throws pinLocked — skip if locked
             if manager.pinLockoutSecondsRemaining() != nil { break }
             XCTAssertThrowsError(try manager.authenticateWithPIN("000000"))
         }
-        // At 9 total failures we should have soft lockout but NOT hard lockout (~5 min).
-        // We can't distinguish the two from the outside easily, but the seconds remaining
-        // must be ≤ 30 (soft lockout), not 300 (hard lockout).
-        // Skip if we already triggered lockout in the loop above.
         let remaining = manager.pinLockoutSecondsRemaining()
         if let r = remaining {
             XCTAssertLessThanOrEqual(r, 30, "9 failures must produce soft lockout, not hard lockout")
@@ -1017,7 +988,6 @@ final class AuthenticationManagerStressTests: XCTestCase {
 
     func testHardLockoutDurationIsApproximately5Minutes() throws {
         try KeychainManager.savePIN("111111")
-        // Plant state with exactly 9 failures so next attempt triggers hard lockout.
         let state = KeychainManager.LockoutState(failedAttempts: 9, lockoutUntil: nil, lastFailedAttempt: Date())
         try KeychainManager.saveLockoutState(state, account: KeychainManager.pinLockoutAccount)
 
@@ -1025,7 +995,6 @@ final class AuthenticationManagerStressTests: XCTestCase {
 
         let saved = try KeychainManager.loadLockoutState(account: KeychainManager.pinLockoutAccount)
         XCTAssertEqual(saved.failedAttempts, 10)
-        // Lockout window should be close to 300 s from now.
         let interval = saved.lockoutUntil?.timeIntervalSinceNow ?? 0
         XCTAssertGreaterThan(interval, 290, "Hard lockout must be ~5 minutes")
         XCTAssertLessThan(interval, 310, "Hard lockout must not exceed 5 minutes significantly")
@@ -1107,5 +1076,37 @@ final class AuthenticationManagerStressTests: XCTestCase {
 
     func testSetPIN5DigitsThrows() {
         XCTAssertThrowsError(try manager.setPIN("12345", confirmPin: "12345"))
+    }
+}
+
+// MARK: - Migration URI security tests
+
+final class MigrationURISecurityTests: XCTestCase {
+
+    func testOuterFieldOverflowLengthReturnsNil() {
+        let bytes: [UInt8] = [0x0A, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01]
+        let base64 = Data(bytes).base64EncodedString()
+        let uri = "otpauth-migration://offline?data=\(base64)"
+
+        XCTAssertNil(uri.parseMigrationURI(),
+                     "Parser must return nil for overflow-length outer field, not trap")
+    }
+
+    func testInnerFieldOverflowLengthReturnsNil() {
+        let innerBytes: [UInt8] = [0x0A, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01]
+        var outer: [UInt8] = [0x0A, UInt8(innerBytes.count)]
+        outer.append(contentsOf: innerBytes)
+        let base64 = Data(outer).base64EncodedString()
+        let uri = "otpauth-migration://offline?data=\(base64)"
+
+        XCTAssertNil(uri.parseMigrationURI(),
+                     "Parser must return nil for overflow-length inner field, not trap")
+    }
+
+    func testValidMigrationURI_parsesSuccessfully() {
+        let uri = "otpauth-migration://offline?data=CgwKCkhlbGxvV29ybGQ"
+        let result = uri.parseMigrationURI()
+        XCTAssertNotNil(result, "Known-valid migration URI must parse at least one token")
+        XCTAssertEqual(result?.count, 1)
     }
 }
