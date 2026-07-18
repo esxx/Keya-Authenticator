@@ -16,7 +16,6 @@ struct MainContentView: View {
             tokenList
                 .scrollContentBackground(.hidden)
                 .background(Constants.Colors.background)
-                .refreshable { viewModel.loadTokens() }
                 .navigationTitle("app.name")
                 .navigationBarTitleDisplayMode(.large)
                 .toolbarBackground(Constants.Colors.background, for: .navigationBar)
@@ -107,11 +106,17 @@ struct MainContentView: View {
                 .onAppear { viewModel.loadTokens() }
                 .alert("Delete token?", isPresented: Binding(
                     get: { viewModel.tokenPendingDelete != nil },
-                    set: { if !$0 { viewModel.tokenPendingDelete = nil } }
+                    set: {
+                        if !$0 {
+                            viewModel.tokenPendingDelete = nil
+                        }
+                    }
                 )) {
                     Button("Cancel", role: .cancel) { viewModel.tokenPendingDelete = nil }
                     Button("Delete", role: .destructive) {
-                        if let token = viewModel.tokenPendingDelete { viewModel.deleteToken(token) }
+                        if let token = viewModel.tokenPendingDelete {
+                            viewModel.deleteToken(token)
+                        }
                         viewModel.tokenPendingDelete = nil
                     }
                 } message: {
@@ -122,6 +127,18 @@ struct MainContentView: View {
                     } else {
                         Text("This will permanently delete this token. This cannot be undone.")
                     }
+                }
+                .alert("Something Went Wrong", isPresented: Binding(
+                    get: { viewModel.operationErrorMessage != nil },
+                    set: {
+                        if !$0 {
+                            viewModel.operationErrorMessage = nil
+                        }
+                    }
+                )) {
+                    Button("OK", role: .cancel) { viewModel.operationErrorMessage = nil }
+                } message: {
+                    Text(viewModel.operationErrorMessage ?? "")
                 }
         }
         .overlay(alignment: .top) {
@@ -376,10 +393,13 @@ struct PINAuthSheet: View {
                     .accessibilityHidden(true)
                     .onChange(of: pinText) { _, newValue in
                         let filtered = String(newValue.filter(\.isNumber).prefix(pinLength))
-                        if filtered != newValue { pinText = filtered
+                        if filtered != newValue {
+                            pinText = filtered
                             return
                         }
-                        if filtered.count == pinLength { verify() }
+                        if filtered.count == pinLength {
+                            verify()
+                        }
                     }
 
                 Spacer().frame(height: 24)

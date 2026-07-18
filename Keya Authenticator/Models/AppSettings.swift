@@ -107,6 +107,11 @@ final class AppSettings {
 
         if status == errSecItemNotFound {
             try? KeychainManager.deleteAllTokens()
+            try? KeychainManager.deletePIN()
+            KeychainManager.deleteSecuritySettings()
+            KeychainManager.deleteBiometricFingerprint()
+            try? KeychainManager.deleteLockoutState(account: KeychainManager.pinLockoutAccount)
+            try? KeychainManager.deleteLockoutState(account: KeychainManager.biometricLockoutAccount)
 
             let add: [CFString: Any] = [
                 kSecClass: kSecClassGenericPassword,

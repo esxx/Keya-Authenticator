@@ -192,7 +192,8 @@ final class CameraManager: NSObject {
     private func configureAndStart() {
         sessionQueue.async { [weak self] in
             guard let self else { return }
-            if isConfigured { session.startRunning()
+            if isConfigured {
+                session.startRunning()
                 return
             }
             session.beginConfiguration()

@@ -13,12 +13,12 @@ final class TokenStore {
 
     // MARK: - Load / Clear
 
-    func load(using authContext: LAContext? = nil) {
-        do {
-            var loaded = try KeychainManager.loadAllTokens(using: authContext)
-            applySort(to: &loaded)
+    func load(using authContext: LAContext? = nil) throws {
+        var loaded = try KeychainManager.loadAllTokens(using: authContext)
+        applySort(to: &loaded)
+        if loaded != tokens {
             tokens = loaded
-        } catch {}
+        }
     }
 
     // MARK: - Sort order
@@ -87,58 +87,76 @@ final class TokenStore {
     func update(_ newTokens: [Token]) throws {
         let oldIDs = Set(tokens.map(\.id))
 
-        var seenKeys = Set<String>()
-        var keyToIndex: [String: Int] = [:]
-        var deduped: [Token] = []
+        var bestByContent: [String: Token] = [:]
         for token in newTokens {
-            let key = contentKey(for: token)
-            if oldIDs.contains(token.id) {
-                keyToIndex[key] = deduped.count
-                seenKeys.insert(key)
-                deduped.append(token)
+            let key = token.contentKey
+            guard let current = bestByContent[key] else {
+                bestByContent[key] = token
                 continue
             }
-            if seenKeys.contains(key) {
-                continue // discard the duplicate; keep the first-seen token's metadata intact
+            let currentIsExisting = oldIDs.contains(current.id)
+            let tokenIsExisting = oldIDs.contains(token.id)
+            if currentIsExisting, !tokenIsExisting {
+                continue
             }
-            keyToIndex[key] = deduped.count
-            seenKeys.insert(key)
-            deduped.append(token)
+            if tokenIsExisting, !currentIsExisting {
+                bestByContent[key] = token
+                continue
+            }
+            if token.updatedAt > current.updatedAt {
+                bestByContent[key] = token
+            }
         }
+        var deduped = Array(bestByContent.values)
 
         var seenDupIDs = Set<UUID>()
         deduped = deduped.reversed().filter { token in
-            if oldIDs.contains(token.id) { return true }
+            if oldIDs.contains(token.id) {
+                return true
+            }
             return seenDupIDs.insert(token.id).inserted
         }.reversed()
 
         let newIDs = Set(deduped.map(\.id))
+        var orphanDeleteError: Error?
         for id in oldIDs.subtracting(newIDs) {
-            try? KeychainManager.deleteToken(id: id)
+            do {
+                try KeychainManager.deleteToken(id: id)
+            } catch {
+                if orphanDeleteError == nil {
+                    orphanDeleteError = error
+                }
+            }
         }
         for token in deduped {
             try KeychainManager.saveToken(token)
         }
         applySort(to: &deduped)
         tokens = deduped
+        if let orphanDeleteError {
+            throw orphanDeleteError
+        }
     }
 
-    private func contentKey(for token: Token) -> String {
-        let secretHex = token.secret.map { String(format: "%02x", $0) }.joined()
-        return "\(secretHex)|\(token.algorithm.rawValue)|\(token.digits)|\(token.period ?? 0)"
-    }
-
-    func delete(at indices: IndexSet) {
+    func delete(at indices: IndexSet) throws {
         let sorted = indices.sorted(by: >)
         var updated = tokens
+        var firstError: Error?
         for index in sorted where index < updated.count {
             do {
                 try KeychainManager.deleteToken(id: updated[index].id)
                 updated.remove(at: index)
-            } catch {}
+            } catch {
+                if firstError == nil {
+                    firstError = error
+                }
+            }
         }
         applySort(to: &updated)
         tokens = updated
+        if let firstError {
+            throw firstError
+        }
     }
 
     func deleteAll() {

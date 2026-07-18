@@ -6,7 +6,7 @@ import UIKit
 
 // MARK: - Constants
 
-private let keychainService = "ee.exx.KeyaAuthenticator"
+private let keychainService = Constants.keychainService
 
 private let reservedAccounts = Token.reservedKeychainAccounts
 
@@ -51,7 +51,11 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     private func authenticateThenPresent(serviceIdentifiers: [ASCredentialServiceIdentifier]) {
         evaluate { [weak self] granted in
             guard let self, granted else { return }
-            self.allTokens = self.loadTokens()
+            guard let tokens = self.loadTokens() else {
+                self.extensionContext.cancelRequest(withError: ASExtensionError(.failed))
+                return
+            }
+            self.allTokens = tokens
             self.displayedTokens = self.filtered(self.allTokens, for: serviceIdentifiers)
             self.showTableView()
         }
@@ -60,7 +64,11 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     private func authenticateThenDeliver(request: any ASCredentialRequest) {
         evaluate { [weak self] granted in
             guard let self, granted else { return }
-            self.allTokens = self.loadTokens()
+            guard let tokens = self.loadTokens() else {
+                self.extensionContext.cancelRequest(withError: ASExtensionError(.failed))
+                return
+            }
+            self.allTokens = tokens
 
             let serviceID = request.credentialIdentity.serviceIdentifier
             let candidates = self.filtered(self.allTokens, for: [serviceID])
@@ -97,7 +105,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
 
     // MARK: - Token loading
 
-    private func loadTokens() -> [Token] {
+    private func loadTokens() -> [Token]? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: keychainService,
@@ -107,14 +115,17 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         ]
         var result: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
-        guard status == errSecSuccess, let items = result as? [[String: Any]] else {
+        if status == errSecItemNotFound {
             return []
+        }
+        guard status == errSecSuccess, let items = result as? [[String: Any]] else {
+            return nil
         }
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
 
-        return items.compactMap { item -> Token? in
+        let tokens = items.compactMap { item -> Token? in
             guard
                 let account = item[kSecAttrAccount as String] as? String,
                 !reservedAccounts.contains(account),
@@ -122,7 +133,16 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
             else { return nil }
             return try? decoder.decode(Token.self, from: data)
         }
-        .sorted { $0.createdAt < $1.createdAt }
+
+        var bestByContent: [String: Token] = [:]
+        for token in tokens {
+            if let existing = bestByContent[token.contentKey],
+               existing.updatedAt >= token.updatedAt {
+                continue
+            }
+            bestByContent[token.contentKey] = token
+        }
+        return Array(bestByContent.values).sorted { $0.createdAt < $1.createdAt }
     }
 
     // MARK: - Filtering
@@ -134,7 +154,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         let keywords = identifiers.compactMap { id -> String? in
             if id.type == .URL,
                let host = URL(string: id.identifier)?.host {
-                return brandKeyword(from: host)
+                return BrandKeyword.extract(fromHost: host)
             }
             return id.identifier.lowercased()
         }
@@ -147,14 +167,6 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
             return keywords.contains { haystack.contains($0) }
         }
         return matches.isEmpty ? tokens : matches
-    }
-
-    private func brandKeyword(from host: String) -> String {
-        let parts = host.lowercased()
-            .split(separator: ".")
-            .filter { $0 != "www" }
-        guard parts.count >= 2 else { return host.lowercased() }
-        return String(parts[parts.count - 2])
     }
 
     // MARK: - UI

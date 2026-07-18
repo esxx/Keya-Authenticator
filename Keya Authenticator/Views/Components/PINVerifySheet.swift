@@ -68,7 +68,8 @@ struct PINVerifySheet: View {
                     .frame(width: 1, height: 1)
                     .onChange(of: pinText) { _, newValue in
                         let filtered = String(newValue.filter(\.isNumber).prefix(pinLength))
-                        if filtered != newValue { pinText = filtered
+                        if filtered != newValue {
+                            pinText = filtered
                             return
                         }
                         if filtered.count == pinLength {

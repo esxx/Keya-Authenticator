@@ -28,8 +28,11 @@ struct SettingsView: View {
 
                 Section {
                     Button {
-                        if pinGatingEnabled { showingAppLockGate = true }
-                        else { navigateToAppLock = true }
+                        if pinGatingEnabled {
+                            showingAppLockGate = true
+                        } else {
+                            navigateToAppLock = true
+                        }
                     } label: {
                         HStack {
                             settingsRow(
@@ -60,8 +63,11 @@ struct SettingsView: View {
 
                 Section {
                     Button {
-                        if pinGatingEnabled { showingTransferGate = true }
-                        else { navigateToTransfer = true }
+                        if pinGatingEnabled {
+                            showingTransferGate = true
+                        } else {
+                            navigateToTransfer = true
+                        }
                     } label: {
                         HStack {
                             settingsRow(icon: "square.and.arrow.up", iconBg: .green, title: "Export (Backup)")
@@ -151,8 +157,11 @@ struct SettingsView: View {
 
                 Section {
                     Button(role: .destructive) {
-                        if pinGatingEnabled { showingResetGate = true }
-                        else { showingResetConfirmation = true }
+                        if pinGatingEnabled {
+                            showingResetGate = true
+                        } else {
+                            showingResetConfirmation = true
+                        }
                     } label: {
                         settingsRow(icon: "trash.fill", iconBg: .red, title: "Delete all data")
                     }
@@ -208,13 +217,17 @@ struct SettingsView: View {
             .sheet(isPresented: $showingAppLockGate) {
                 PINVerifySheet(authenticationManager: authenticationManager) { verified in
                     showingAppLockGate = false
-                    if verified { navigateToAppLock = true }
+                    if verified {
+                        navigateToAppLock = true
+                    }
                 }
             }
             .sheet(isPresented: $showingTransferGate) {
                 PINVerifySheet(authenticationManager: authenticationManager) { verified in
                     showingTransferGate = false
-                    if verified { navigateToTransfer = true }
+                    if verified {
+                        navigateToTransfer = true
+                    }
                 }
             }
             .sheet(isPresented: $showingTipJar) {
@@ -223,7 +236,9 @@ struct SettingsView: View {
             .sheet(isPresented: $showingResetGate) {
                 PINVerifySheet(authenticationManager: authenticationManager) { verified in
                     showingResetGate = false
-                    if verified { showingResetConfirmation = true }
+                    if verified {
+                        showingResetConfirmation = true
+                    }
                 }
             }
         }

@@ -54,13 +54,19 @@ enum ServiceIconResolver {
         let ordered = candidates.filter { seen.insert($0).inserted }
 
         for candidate in ordered {
-            if let info = exactMatch(candidate) { return info }
+            if let info = exactMatch(candidate) {
+                return info
+            }
         }
         for candidate in ordered {
-            if let info = prefixMatch(candidate) { return info }
+            if let info = prefixMatch(candidate) {
+                return info
+            }
         }
         for candidate in ordered {
-            if let info = containsMatch(candidate) { return info }
+            if let info = containsMatch(candidate) {
+                return info
+            }
         }
         return nil
     }
@@ -94,12 +100,16 @@ enum ServiceIconResolver {
 
         let lower = domain.lowercased()
 
-        if let name = domainNames[lower] { return name }
+        if let name = domainNames[lower] {
+            return name
+        }
 
         let parts = lower.split(separator: ".").map(String.init)
         if parts.count > 2 {
             let root = parts.suffix(2).joined(separator: ".")
-            if let name = domainNames[root] { return name }
+            if let name = domainNames[root] {
+                return name
+            }
         }
 
         let label = parts.count >= 2 ? parts[parts.count - 2] : parts.first
@@ -258,10 +268,10 @@ enum ServiceIconResolver {
             let fg: Color = light ? Color(hex: hex).lightened(by: 0.55) : Color(hex: hex).darkened(by: 0.55)
             return ServiceInfo(assetName: assetName, brandColor: bg, foregroundColor: fg)
         }
-        func w(_ assetName: String? = nil, hex: UInt32) -> ServiceInfo { // white-fg variant
+        func w(_ assetName: String? = nil, hex: UInt32) -> ServiceInfo {
             ServiceInfo(assetName: assetName, brandColor: Color(hex: hex), foregroundColor: .white.opacity(0.9))
         }
-        func b(_ assetName: String? = nil, hex: UInt32) -> ServiceInfo { // black-fg variant
+        func b(_ assetName: String? = nil, hex: UInt32) -> ServiceInfo {
             ServiceInfo(assetName: assetName, brandColor: Color(hex: hex), foregroundColor: Color(hex: 0x1A1A1A))
         }
 

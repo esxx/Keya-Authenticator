@@ -197,7 +197,9 @@ final class AddTokenViewModel {
                     return
                 }
                 let skipped = params.count - validParams.count
-                if skipped > 0 { importSkippedCount = skipped }
+                if skipped > 0 {
+                    importSkippedCount = skipped
+                }
                 let tokens = validParams.map {
                     Token(
                         name: $0.name,
@@ -221,7 +223,9 @@ final class AddTokenViewModel {
                 if let p = params.period {
                     period = (p >= 15 && p <= 300) ? p : 30
                 }
-                if let c = params.counter { counter = c }
+                if let c = params.counter {
+                    counter = c
+                }
             } else {
                 secret = qr
             }

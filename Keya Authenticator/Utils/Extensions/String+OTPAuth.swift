@@ -49,11 +49,17 @@ extension String {
                 default: algorithm = .sha1
                 }
             case "digits":
-                if let v = item.value, let n = Int(v) { digits = n }
+                if let v = item.value, let n = Int(v) {
+                    digits = n
+                }
             case "period":
-                if let v = item.value, let n = Int(v) { period = n }
+                if let v = item.value, let n = Int(v) {
+                    period = n
+                }
             case "counter":
-                if let v = item.value, let n = UInt64(v) { counter = n }
+                if let v = item.value, let n = UInt64(v) {
+                    counter = n
+                }
             default: break
             }
         }
@@ -63,7 +69,9 @@ extension String {
         var name: String
         if let colonRange = label.range(of: ":") {
             name = String(label[colonRange.upperBound...])
-            if issuer == nil { issuer = String(label[..<colonRange.lowerBound]) }
+            if issuer == nil {
+                issuer = String(label[..<colonRange.lowerBound])
+            }
         } else {
             name = label
         }
@@ -112,7 +120,9 @@ extension String {
             .replacingOccurrences(of: "-", with: "+")
             .replacingOccurrences(of: "_", with: "/")
         let rem = base64.count % 4
-        if rem > 0 { base64 += String(repeating: "=", count: 4 - rem) }
+        if rem > 0 {
+            base64 += String(repeating: "=", count: 4 - rem)
+        }
 
         guard let protoData = Data(base64Encoded: base64) else { return nil }
         return String.parseMigrationPayload(protoData)
@@ -166,7 +176,7 @@ private extension String {
         var issuer: String?
         var algorithm: Algorithm = .sha1
         var digits = 6
-        var otpType = 2 // 2 = TOTP
+        var otpType = 2
         var counter: UInt64 = 0
         var pos = 0
 
@@ -228,7 +238,9 @@ private extension String {
             let byte = data[pos]
             pos += 1
             result |= UInt64(byte & 0x7F) << shift
-            if byte & 0x80 == 0 { return result }
+            if byte & 0x80 == 0 {
+                return result
+            }
             shift += 7
             guard shift < 64 else { return nil }
         }

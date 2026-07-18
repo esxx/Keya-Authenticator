@@ -57,9 +57,28 @@ final class TokenStoreTests: XCTestCase {
         XCTAssertEqual(savedOrder.first, "Third", "Move should place Third first")
 
         store.clear()
-        store.load()
+        try store.load()
         XCTAssertEqual(store.tokens.map(\.name), savedOrder,
                        "Sort order should be preserved across a fresh load")
+    }
+
+    func testLoadThrowsWhenKeychainHasCorruptedEntry() throws {
+        let corruptQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: "ee.exx.KeyaAuthenticator",
+            kSecAttrAccount as String: UUID().uuidString,
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            kSecValueData as String: "not-json".data(using: .utf8)!,
+        ]
+        SecItemAdd(corruptQuery as CFDictionary, nil)
+
+        XCTAssertNoThrow(try store.load(), "Corrupted individual entries must be skipped, not crash load()")
+
+        let deleteQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: "ee.exx.KeyaAuthenticator",
+        ]
+        SecItemDelete(deleteQuery as CFDictionary)
     }
 
     // MARK: - Duplicate UUID regression (crash fix)
@@ -126,7 +145,7 @@ final class TokenStoreTests: XCTestCase {
         try store.update([t1, t2])
 
         let removeIndex = store.tokens.firstIndex(where: { $0.name == "Remove" })!
-        store.delete(at: IndexSet(integer: removeIndex))
+        try store.delete(at: IndexSet(integer: removeIndex))
 
         XCTAssertEqual(store.tokens.count, 1)
         XCTAssertEqual(store.tokens.first?.name, "Keep")
@@ -136,6 +155,17 @@ final class TokenStoreTests: XCTestCase {
         try store.update([makeToken(name: "A"), makeToken(name: "B")])
         store.deleteAll()
         XCTAssertTrue(store.tokens.isEmpty)
+    }
+
+    func testDeleteAllTokensPreservesReservedAccounts() throws {
+        try KeychainManager.savePIN("123456")
+        try store.update([makeToken(name: "A")])
+
+        try KeychainManager.deleteAllTokens()
+
+        XCTAssertTrue(KeychainManager.isPINSet(), "deleteAllTokens must not erase the PIN")
+        XCTAssertTrue(try KeychainManager.loadAllTokens().isEmpty, "tokens must be gone")
+        try KeychainManager.deletePIN()
     }
 
     // MARK: - Clear (security wipe)
@@ -148,7 +178,7 @@ final class TokenStoreTests: XCTestCase {
 
     // MARK: - isFavorite dedup regression
 
-    func testDedupConflictStripsIsFavorite() throws {
+    func testUpdateNewerUpdatedAtWinsContentConflict() throws {
         let older = Token(
             name: "Service", issuer: "Corp",
             secret: secret, algorithm: .sha1,
@@ -168,8 +198,35 @@ final class TokenStoreTests: XCTestCase {
         try store.update([older, newer])
 
         XCTAssertEqual(store.tokens.count, 1, "Duplicate content keys must collapse to one token")
-        XCTAssertFalse(store.tokens[0].isFavorite,
-                       "isFavorite must be stripped when dedup resolves a conflict")
+        XCTAssertTrue(store.tokens[0].isFavorite,
+                      "Newer updatedAt wins — metadata from the most recently modified token is preserved")
+    }
+
+    func testExistingTokenAlwaysBeatsNewImportOnContentConflict() throws {
+        let existing = makeToken(name: "MyService")
+        try store.update([existing])
+
+        var updatedExisting = store.tokens.first!
+        updatedExisting.isFavorite = true
+        updatedExisting.touch()
+        try store.update([updatedExisting])
+
+        let importedNewer = Token(
+            id: UUID(),
+            name: updatedExisting.name, issuer: updatedExisting.issuer,
+            secret: updatedExisting.secret, algorithm: updatedExisting.algorithm,
+            digits: updatedExisting.digits, type: updatedExisting.type,
+            period: updatedExisting.period, counter: nil,
+            isFavorite: false,
+            updatedAt: Date(timeIntervalSinceNow: 9999)
+        )
+        try store.update([updatedExisting, importedNewer])
+
+        XCTAssertEqual(store.tokens.count, 1)
+        XCTAssertTrue(store.tokens[0].isFavorite,
+                      "Existing in-store token must survive import regardless of the import's updatedAt")
+        XCTAssertEqual(store.tokens[0].id, updatedExisting.id,
+                       "The surviving token must be the existing one, not the import")
     }
 
     func testDeleteThenReaddIsNotFavorite() throws {
@@ -184,7 +241,7 @@ final class TokenStoreTests: XCTestCase {
         XCTAssertTrue(store.tokens.first?.isFavorite == true)
 
         let deleteIdx = store.tokens.firstIndex(where: { $0.id == original.id })!
-        store.delete(at: IndexSet(integer: deleteIdx))
+        try store.delete(at: IndexSet(integer: deleteIdx))
         XCTAssertTrue(store.tokens.isEmpty)
 
         let readded = makeToken(name: "MyService")

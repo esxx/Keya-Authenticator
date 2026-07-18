@@ -111,7 +111,8 @@ struct AuthenticationView: View {
         }
         .onChange(of: viewModel.pinText) { _, newValue in
             let filtered = String(newValue.filter(\.isNumber).prefix(pinLength))
-            if filtered != newValue { viewModel.pinText = filtered
+            if filtered != newValue {
+                viewModel.pinText = filtered
                 return
             }
             if filtered.count == pinLength {
@@ -121,7 +122,9 @@ struct AuthenticationView: View {
             }
         }
         .onChange(of: viewModel.errorMessage) { _, err in
-            if let error = err, !error.isEmpty { shakeDots() }
+            if let error = err, !error.isEmpty {
+                shakeDots()
+            }
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(String(localized: "PIN unlock screen"))

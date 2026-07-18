@@ -22,7 +22,8 @@ enum KeychainManager {
 
     private static let backgroundTimestampAccount = "app_background_timestamp"
 
-    static func saveBackgroundTimestamp(_ date: Date) {
+    @discardableResult
+    static func saveBackgroundTimestamp(_ date: Date) -> Bool {
         let data = withUnsafeBytes(of: date.timeIntervalSinceReferenceDate) { Data($0) }
         let deleteQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -37,7 +38,7 @@ enum KeychainManager {
             kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
             kSecValueData as String: data,
         ]
-        SecItemAdd(addQuery as CFDictionary, nil)
+        return SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess
     }
 
     static func loadBackgroundTimestamp() -> Date? {
@@ -94,23 +95,5 @@ enum KeychainManager {
             query[kSecUseAuthenticationContext as String] = context
         }
         return query
-    }
-}
-
-// MARK: - OSStatus Human-Readable Description
-
-extension OSStatus {
-    var description: String {
-        switch self {
-        case errSecSuccess: return "No error"
-        case errSecItemNotFound: return "Item not found"
-        case errSecParam: return "Parameter error"
-        case errSecAllocate: return "Memory allocation error"
-        case errSecInteractionNotAllowed: return "Interaction not allowed"
-        case errSecUnimplemented: return "Function not implemented"
-        case errSecDuplicateItem: return "Duplicate item"
-        case errSecDecode: return "Unable to decode the provided data"
-        default: return "Unknown error: \(self)"
-        }
     }
 }

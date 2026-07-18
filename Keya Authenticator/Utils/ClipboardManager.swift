@@ -10,7 +10,7 @@ final class ClipboardManager {
         let pasteboard = UIPasteboard.general
 
         var options: [UIPasteboard.OptionsKey: Any] = [
-            .localOnly: true, // never sync to other devices via Handoff
+            .localOnly: true,
         ]
         if let delay = autoClearDelay, delay > 0 {
             options[.expirationDate] = Date().addingTimeInterval(delay)

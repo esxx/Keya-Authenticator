@@ -12,16 +12,18 @@ final class AuthenticationManager {
         return ctx.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &err)
     }
 
-    var biometricDisplayName: String {
+    private static let biometryType: LABiometryType = {
         let ctx = LAContext()
         _ = ctx.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
-        return ctx.biometryType == .faceID ? "Face ID" : "Touch ID"
+        return ctx.biometryType
+    }()
+
+    var biometricDisplayName: String {
+        Self.biometryType == .faceID ? "Face ID" : "Touch ID"
     }
 
     var biometricIcon: String {
-        let ctx = LAContext()
-        _ = ctx.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
-        return ctx.biometryType == .faceID ? "faceid" : "touchid"
+        Self.biometryType == .faceID ? "faceid" : "touchid"
     }
 
     // MARK: - System Biometric Lockout Check
@@ -30,7 +32,10 @@ final class AuthenticationManager {
         let ctx = LAContext()
         var err: NSError?
         if !ctx.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &err),
-           let laErr = err as? LAError, laErr.code == .biometryLockout { return true }
+           let laErr = err as? LAError, laErr.code == .biometryLockout
+        {
+            return true
+        }
         return false
     }
 
@@ -79,8 +84,7 @@ final class AuthenticationManager {
                 .deviceOwnerAuthenticationWithBiometrics,
                 localizedReason: "Unlock your 2FA tokens"
             )
-            if success {
-            } else {
+            guard success else {
                 throw AuthenticationError.biometricFailed
             }
         } catch let error as LAError {
@@ -101,8 +105,8 @@ final class AuthenticationManager {
 
     // MARK: - PIN Lockout Constants
 
-    private static let softLockoutThreshold = 5 // attempts before 30-second cooldown
-    private static let hardLockoutThreshold = 10 // attempts before 5-minute lockout
+    private static let softLockoutThreshold = 5
+    private static let hardLockoutThreshold = 10
     private static let softLockoutDuration: TimeInterval = 30
     private static let hardLockoutDuration: TimeInterval = 5 * 60
 
@@ -174,6 +178,7 @@ final class AuthenticationManager {
         clearBiometricFingerprint()
         try? KeychainManager.deleteLockoutState(account: KeychainManager.pinLockoutAccount)
         try? KeychainManager.deleteLockoutState(account: KeychainManager.biometricLockoutAccount)
+        KeychainManager.deleteBackgroundTimestamp()
         settings.resetToDefaults()
     }
 

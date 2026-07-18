@@ -84,6 +84,11 @@ struct AppLockSettingsView: View {
                 Button("Done") { dismiss() }
             }
         }
+        .alert("Couldn't Save Settings", isPresented: saveErrorBinding) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(settings.securitySettingsSaveError ?? "")
+        }
         .alert("Biometric Unavailable", isPresented: $showingBiometricError) {
             Button("Open Settings") {
                 if let url = URL(string: UIApplication.openSettingsURLString) {
@@ -132,6 +137,17 @@ struct AppLockSettingsView: View {
     }
 
     // MARK: - Bindings
+
+    private var saveErrorBinding: Binding<Bool> {
+        Binding(
+            get: { settings.securitySettingsSaveError != nil },
+            set: {
+                if !$0 {
+                    settings.securitySettingsSaveError = nil
+                }
+            }
+        )
+    }
 
     private var pinToggleBinding: Binding<Bool> {
         Binding(

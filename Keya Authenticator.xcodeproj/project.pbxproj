@@ -10,6 +10,8 @@
 		074AD187AC2759F94CD10271 /* CredentialProviderExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = E85A4517458D969C283DB4FD /* CredentialProviderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0D41E42F480FF24A91DCFAEE /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24D99AB8AF17D1669E3FC50 /* Token.swift */; };
 		1438DA878722BB1E72CCE7D4 /* Data+OTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF2B0B7D4EEB1C81FA9FB12D /* Data+OTP.swift */; };
+		AA10C0257A475000000B0001 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10C0257A475000000C0001 /* Constants.swift */; };
+		AA10C0257A475000000B0002 /* BrandKeyword.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10C0257A475000000C0002 /* BrandKeyword.swift */; };
 		16709C643C3CBECC9AF24B78 /* Algorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA231C91EF4C007C15003208 /* Algorithm.swift */; };
 		350293D21031A83EC59B9BFD /* OTPGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1563D2292A4F2DC6DCF98059 /* OTPGenerator.swift */; };
 		3F422716617BE8F1B48814FD /* TokenError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF4561661DA4E77C0326C7D /* TokenError.swift */; };
@@ -66,6 +68,8 @@
 		A56E80C0A7B25F37BE473A01 /* CredentialProviderViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CredentialProviderViewController.swift; sourceTree = "<group>"; };
 		A6BC041B186C747E42A70C1E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		AF2B0B7D4EEB1C81FA9FB12D /* Data+OTP.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Data+OTP.swift"; path = "Keya Authenticator/Utils/Extensions/Data+OTP.swift"; sourceTree = SOURCE_ROOT; };
+		AA10C0257A475000000C0001 /* Constants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = "Keya Authenticator/Utils/Constants.swift"; sourceTree = SOURCE_ROOT; };
+		AA10C0257A475000000C0002 /* BrandKeyword.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BrandKeyword.swift; path = "Keya Authenticator/Utils/BrandKeyword.swift"; sourceTree = SOURCE_ROOT; };
 		CA231C91EF4C007C15003208 /* Algorithm.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Algorithm.swift; path = "Keya Authenticator/Models/Algorithm.swift"; sourceTree = SOURCE_ROOT; };
 		D24D99AB8AF17D1669E3FC50 /* Token.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Token.swift; path = "Keya Authenticator/Models/Token.swift"; sourceTree = SOURCE_ROOT; };
 		E85A4517458D969C283DB4FD /* CredentialProviderExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CredentialProviderExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -160,6 +164,8 @@
 				1563D2292A4F2DC6DCF98059 /* OTPGenerator.swift */,
 				A2F0D9FF7FBBF6C430735AB4 /* String+Base32.swift */,
 				AF2B0B7D4EEB1C81FA9FB12D /* Data+OTP.swift */,
+				AA10C0257A475000000C0001 /* Constants.swift */,
+				AA10C0257A475000000C0002 /* BrandKeyword.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -393,6 +399,8 @@
 				350293D21031A83EC59B9BFD /* OTPGenerator.swift in Sources */,
 				60B96A1AA119509909FE6B0E /* String+Base32.swift in Sources */,
 				1438DA878722BB1E72CCE7D4 /* Data+OTP.swift in Sources */,
+				AA10C0257A475000000B0001 /* Constants.swift in Sources */,
+				AA10C0257A475000000B0002 /* BrandKeyword.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

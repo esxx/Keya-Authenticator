@@ -27,7 +27,7 @@ final class AppSettingsTests: XCTestCase {
         try KeychainManager.saveSecuritySettings(
             KeychainManager.SecuritySettings(
                 isAuthenticationEnabled: true,
-                useBiometricAuthentication: true,   // ← stale Keychain value
+                useBiometricAuthentication: true,
                 lockGracePeriod: 30
             )
         )
@@ -105,7 +105,7 @@ final class AppSettingsTests: XCTestCase {
             KeychainManager.SecuritySettings(
                 isAuthenticationEnabled: true,
                 useBiometricAuthentication: true,
-                lockGracePeriod: 5           // non-default value
+                lockGracePeriod: 5
             )
         )
         UserDefaults.standard.removeObject(forKey: "biometricActivated")

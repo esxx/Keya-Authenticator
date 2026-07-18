@@ -93,8 +93,15 @@ struct Token: Identifiable, Codable, Equatable {
     }
 
     var displayName: String {
-        if let issuer, !issuer.isEmpty { return "\(issuer): \(name)" }
+        if let issuer, !issuer.isEmpty {
+            return "\(issuer): \(name)"
+        }
         return name
+    }
+
+    var contentKey: String {
+        let secretHex = secret.map { String(format: "%02x", $0) }.joined()
+        return "\(secretHex)|\(algorithm.rawValue)|\(digits)|\(period ?? 0)"
     }
 
     mutating func zeroSecret() {
