@@ -5,14 +5,21 @@ final class AppCoordinatorTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        try? KeychainManager.deleteAllTokens()
+        cleanKeychain()
         UserDefaults.standard.removeObject(forKey: KeychainManager.migrationV1Key)
     }
 
     override func tearDown() {
-        try? KeychainManager.deleteAllTokens()
+        cleanKeychain()
         UserDefaults.standard.removeObject(forKey: KeychainManager.migrationV1Key)
         super.tearDown()
+    }
+
+    private func cleanKeychain() {
+        try? KeychainManager.deleteAllTokens()
+        try? KeychainManager.deletePIN()
+        KeychainManager.deleteSecuritySettings()
+        try? KeychainManager.deleteLockoutState(account: KeychainManager.pinLockoutAccount)
     }
 
     // MARK: - Pending URL on no-auth path

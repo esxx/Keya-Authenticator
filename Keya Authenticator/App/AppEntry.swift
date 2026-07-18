@@ -167,7 +167,8 @@ struct PINSetupView: View {
         }
         .onChange(of: pinText) { _, newValue in
             let filtered = String(newValue.filter(\.isNumber).prefix(pinLength))
-            if filtered != newValue { pinText = filtered
+            if filtered != newValue {
+                pinText = filtered
                 return
             }
             if filtered.count == pinLength {

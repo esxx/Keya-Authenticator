@@ -63,7 +63,9 @@ extension KeychainManager {
         var result: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
 
-        if status == errSecItemNotFound { return nil }
+        if status == errSecItemNotFound {
+            return nil
+        }
         guard status == errSecSuccess else {
             throw TokenError.keychainError("PIN verification failed. Please try again.")
         }
@@ -148,7 +150,7 @@ extension KeychainManager {
         guard let state = try? JSONDecoder().decode(LockoutState.self, from: data) else {
             try? deleteLockoutState(account: account)
             return LockoutState(
-                failedAttempts: 10,
+                failedAttempts: 0,
                 lockoutUntil: Date().addingTimeInterval(5 * 60),
                 lastFailedAttempt: Date()
             )

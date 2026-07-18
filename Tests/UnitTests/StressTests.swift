@@ -245,7 +245,7 @@ final class Base32StressTests: XCTestCase {
             "Hello, World!",
             "1234567890abcdef",
             "The quick brown fox",
-            "\0\0\0",                   // null bytes as string
+            "\0\0\0",
             String(repeating: "A", count: 100),
         ]
         for s in strings {

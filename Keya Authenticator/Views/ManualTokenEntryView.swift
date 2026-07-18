@@ -57,7 +57,9 @@ struct ManualTokenEntryView: View {
             }
         }
         .onChange(of: viewModel.shouldDismiss) { _, shouldDismiss in
-            if shouldDismiss { dismiss() }
+            if shouldDismiss {
+                dismiss()
+            }
         }
     }
 
@@ -149,7 +151,9 @@ struct ManualTokenEntryView: View {
     }
 
     private var secretBorderColor: Color {
-        if viewModel.secret.isEmpty { return Color(.separator).opacity(0.3) }
+        if viewModel.secret.isEmpty {
+            return Color(.separator).opacity(0.3)
+        }
         return viewModel.secret.isValidOTPSecret ? .green.opacity(0.5) : .red.opacity(0.5)
     }
 

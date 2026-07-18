@@ -50,17 +50,17 @@ final class AppCoordinator {
             checkGracePeriodAndLock()
             appState = .appUnlock
         } else {
-            tokenStore.load()
+            do { try tokenStore.load() } catch {}
             appState = .main
             processPendingURL()
         }
     }
 
     func handleAppBackground() {
-        KeychainManager.saveBackgroundTimestamp(Date())
+        let timestampSaved = KeychainManager.saveBackgroundTimestamp(Date())
         ClipboardManager.shared.clearClipboard()
 
-        if settings.isAuthenticationEnabled, settings.lockGracePeriod == 0 {
+        if settings.isAuthenticationEnabled, settings.lockGracePeriod == 0 || !timestampSaved {
             performLock()
         }
 
@@ -96,13 +96,13 @@ final class AppCoordinator {
 
     func completePINSetup() {
         settings.isAuthenticationEnabled = true
-        tokenStore.load()
+        do { try tokenStore.load() } catch {}
         withAnimation { appState = .main }
         processPendingURL()
     }
 
     func completeUnlock() {
-        tokenStore.load()
+        do { try tokenStore.load() } catch {}
         withAnimation { appState = .main }
         processPendingURL()
     }

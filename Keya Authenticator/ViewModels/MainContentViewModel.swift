@@ -21,6 +21,7 @@ final class MainContentViewModel {
     var tokenPendingDelete: Token?
     var showBackupNudge = false
     var showExportSheet = false
+    var operationErrorMessage: String?
 
     // MARK: - Private State
 
@@ -31,7 +32,9 @@ final class MainContentViewModel {
     // MARK: - Computed Properties
 
     var filteredTokens: [Token] {
-        if searchText.isEmpty { return tokenStore.tokens }
+        if searchText.isEmpty {
+            return tokenStore.tokens
+        }
         let query = searchText.lowercased()
         return tokenStore.tokens.filter {
             $0.name.lowercased().contains(query) ||
@@ -75,13 +78,22 @@ final class MainContentViewModel {
     // MARK: - Token Operations
 
     func loadTokens() {
-        tokenStore.load()
+        do {
+            try tokenStore.load()
+        } catch {
+            operationErrorMessage = error.localizedDescription
+        }
     }
 
     func deleteToken(_ token: Token) {
         guard let index = tokenStore.tokens.firstIndex(where: { $0.id == token.id }) else { return }
-        tokenStore.delete(at: IndexSet(integer: index))
-        ClipboardManager.shared.provideHapticFeedback(.medium)
+        do {
+            try tokenStore.delete(at: IndexSet(integer: index))
+            ClipboardManager.shared.provideHapticFeedback(.medium)
+        } catch {
+            ClipboardManager.shared.provideHapticFeedback(.error)
+            operationErrorMessage = error.localizedDescription
+        }
     }
 
     func incrementCounter(for token: Token) {
@@ -92,7 +104,11 @@ final class MainContentViewModel {
         defer { hotpIncrementInProgress = false }
         var updated = tokenStore.tokens
         updated[index].incrementCounter()
-        try? tokenStore.update(updated)
+        do {
+            try tokenStore.update(updated)
+        } catch {
+            operationErrorMessage = error.localizedDescription
+        }
     }
 
     func toggleFavorite(_ token: Token) {
@@ -101,7 +117,13 @@ final class MainContentViewModel {
         updated[index].isFavorite.toggle()
         updated[index].touch()
         ClipboardManager.shared.provideHapticFeedback(updated[index].isFavorite ? .success : .medium)
-        Task { @MainActor in try? tokenStore.update(updated) }
+        Task { @MainActor in
+            do {
+                try tokenStore.update(updated)
+            } catch {
+                operationErrorMessage = error.localizedDescription
+            }
+        }
     }
 
     func openAddSheet(prefillURI uri: String) {

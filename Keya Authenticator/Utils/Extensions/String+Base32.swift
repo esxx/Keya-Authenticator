@@ -5,7 +5,12 @@ import Foundation
 extension String {
     var base32DecodedData: Data? {
         let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
-        let cleaned = uppercased().filter { !$0.isWhitespace && $0 != "=" }
+        let compact = uppercased().filter { !$0.isWhitespace }
+        var cleaned = Substring(compact)
+        if let padStart = cleaned.firstIndex(of: "=") {
+            guard cleaned[padStart...].allSatisfy({ $0 == "=" }) else { return nil }
+            cleaned = cleaned[..<padStart]
+        }
         guard !cleaned.isEmpty else { return Data() }
 
         var bits = 0

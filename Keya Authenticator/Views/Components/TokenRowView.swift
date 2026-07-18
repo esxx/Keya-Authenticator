@@ -108,7 +108,9 @@ struct TokenRowView: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 nameRow
-                if token.type == .totp { progressBar(progress: animatedProgress) }
+                if token.type == .totp {
+                    progressBar(progress: animatedProgress)
+                }
                 codeRow(at: t)
             }
         }
@@ -121,7 +123,8 @@ struct TokenRowView: View {
                 .stroke(Color(.separator).opacity(0.3), lineWidth: 0.5)
         )
         .onChange(of: currentCode(at: t)) { _, _ in
-            if settings.hideCodesByDefault { cancelRehide()
+            if settings.hideCodesByDefault {
+                cancelRehide()
                 isRevealed = false
             }
         }
@@ -144,9 +147,13 @@ struct TokenRowView: View {
         .onTapGesture {
             if !codeVisible {
                 withAnimation(.spring(duration: 0.25)) { isRevealed = true }
-                if settings.hideCodesByDefault { scheduleRehide() }
+                if settings.hideCodesByDefault {
+                    scheduleRehide()
+                }
             } else {
-                if settings.hideCodesByDefault { scheduleRehide() }
+                if settings.hideCodesByDefault {
+                    scheduleRehide()
+                }
                 onCopy?()
             }
         }
@@ -155,7 +162,8 @@ struct TokenRowView: View {
             animatedProgress = totpProgress(at: clock.now)
         }
         .onChange(of: settings.hideCodesByDefault) { _, v in
-            if v { cancelRehide()
+            if v {
+                cancelRehide()
                 isRevealed = false
             }
         }
@@ -202,8 +210,12 @@ struct TokenRowView: View {
 
     private func progressBarColor(progress: Double) -> Color {
         let remaining = 1.0 - progress
-        if remaining < 0.15 { return .red }
-        if remaining < 0.30 { return .orange }
+        if remaining < 0.15 {
+            return .red
+        }
+        if remaining < 0.30 {
+            return .orange
+        }
         return .blue
     }
 
@@ -268,7 +280,9 @@ struct TokenRowView: View {
 
             Spacer(minLength: 6)
 
-            if token.type == .hotp { refreshButton }
+            if token.type == .hotp {
+                refreshButton
+            }
         }
     }
 
@@ -293,10 +307,12 @@ struct TokenRowView: View {
     // MARK: - Helpers
 
     private func formatCode(_ code: String) -> String {
-        if code.count == 6 { let i = code.index(code.startIndex, offsetBy: 3)
+        if code.count == 6 {
+            let i = code.index(code.startIndex, offsetBy: 3)
             return "\(code[..<i]) \(code[i...])"
         }
-        if code.count == 8 { let i = code.index(code.startIndex, offsetBy: 4)
+        if code.count == 8 {
+            let i = code.index(code.startIndex, offsetBy: 4)
             return "\(code[..<i]) \(code[i...])"
         }
         return code

@@ -94,9 +94,11 @@ Keya Authenticator/
 │   ├── AuthenticationManager.swift  # PIN + biometric auth with rate limiting
 │   ├── OTPGenerator.swift           # TOTP/HOTP code generation (RFC 6238/4226)
 │   ├── EncryptionService.swift      # AES-256-GCM encrypt/decrypt, PBKDF2 key derivation
-│   └── ExportImportManager.swift    # JSON export, multi-format import
+│   ├── ExportImportManager.swift    # JSON export, import dispatch, encrypted backup
+│   └── TokenImportParser.swift      # One adapter per import format (Aegis, 2FAS, …)
 └── Utils/
-    ├── Constants.swift
+    ├── Constants.swift              # Shared with the AutoFill extension target
+    ├── BrandKeyword.swift           # Host → brand keyword (shared with extension)
     ├── QRCodeGenerator.swift
     ├── ClipboardManager.swift
     ├── ScreenCaptureGuard.swift
@@ -132,6 +134,8 @@ Navigation uses the `shouldDismiss: Bool` pattern — ViewModels set the flag, V
 
 Tokens are stored as individual Keychain items. Locking the app clears them from memory; they reload from Keychain on the next successful unlock.
 
+**AutoFill and the app PIN:** the AutoFill extension is gated by system authentication (Face ID / Touch ID or the device passcode), not by the app PIN — so anyone who can unlock the device can fill codes via AutoFill. This is a deliberate trade-off following Apple's credential-provider pattern; the app PIN protects the in-app vault UI, while the device passcode remains the true security boundary for the secrets themselves.
+
 ## Import Compatibility
 
 | Source | Format |
@@ -157,7 +161,7 @@ Tokens are stored as individual Keychain items. Locking the app clears them from
 
 GPL v3 — see [LICENSE](LICENSE)
 
-© 2026 Eldar Shaidullin
+© 2026 Eldar SHAIDULLIN
 
 ## Links
 

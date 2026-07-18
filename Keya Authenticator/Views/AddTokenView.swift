@@ -114,13 +114,18 @@ struct AddTokenView: View {
             }
             .onAppear { viewModel.onTokenAdded = onTokenAdded }
             .onChange(of: viewModel.shouldDismiss) { _, shouldDismiss in
-                if shouldDismiss { viewModel.shouldDismiss = false
+                if shouldDismiss {
+                    viewModel.shouldDismiss = false
                     dismiss()
                 }
             }
             .alert("Some tokens skipped", isPresented: .init(
                 get: { viewModel.importSkippedCount > 0 },
-                set: { if !$0 { viewModel.importSkippedCount = 0 } }
+                set: {
+                    if !$0 {
+                        viewModel.importSkippedCount = 0
+                    }
+                }
             )) {
                 Button("OK", role: .cancel) { viewModel.importSkippedCount = 0 }
             } message: {

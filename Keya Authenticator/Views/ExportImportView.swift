@@ -359,7 +359,9 @@ struct MigrationQRExportView: View {
         repeat {
             var byte = UInt8(v & 0x7F)
             v >>= 7
-            if v != 0 { byte |= 0x80 }
+            if v != 0 {
+                byte |= 0x80
+            }
             data.append(byte)
         } while v != 0
     }

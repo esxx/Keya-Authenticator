@@ -377,4 +377,104 @@ final class ExportImportTests: XCTestCase {
             XCTAssertEqual(exportError, .noDataToExport)
         }
     }
+
+    // MARK: - Direct adapter tests (seam verification)
+
+    func testAegisParserDirectly() throws {
+        let json = """
+        {
+            "db": {
+                "entries": [{
+                    "type": "totp",
+                    "name": "direct",
+                    "issuer": "DirectCorp",
+                    "info": { "secret": "JBSWY3DPEHPK3PXP", "algo": "SHA1", "digits": 6, "period": 30 }
+                }]
+            }
+        }
+        """
+        let result = try AegisParser().parse(from: json.data(using: .utf8)!)
+        XCTAssertEqual(result.tokens.count, 1)
+        XCTAssertEqual(result.tokens[0].issuer, "DirectCorp")
+        XCTAssertEqual(result.skipped, 0)
+    }
+
+    func testAegisParserThrowsOnNonAegisData() {
+        let data = #"{"services": []}"#.data(using: .utf8)!
+        XCTAssertThrowsError(try AegisParser().parse(from: data))
+    }
+
+    func testAegisParserCountsSkippedEntries() throws {
+        let json = """
+        {
+            "db": {
+                "entries": [
+                    { "name": "ok", "issuer": "Corp",
+                      "info": { "secret": "JBSWY3DPEHPK3PXP", "digits": 6, "period": 30 } },
+                    { "name": "bad", "issuer": "Corp", "info": { "digits": 6 } }
+                ]
+            }
+        }
+        """
+        let result = try AegisParser().parse(from: json.data(using: .utf8)!)
+        XCTAssertEqual(result.tokens.count, 1)
+        XCTAssertEqual(result.skipped, 1)
+    }
+
+    func testTwoFASParserDirectly() throws {
+        let json = """
+        { "services": [{ "name": "G", "secret": "JBSWY3DPEHPK3PXP",
+          "otp": { "account": "u@g.com", "tokenType": "TOTP", "digits": 6, "period": 30 } }] }
+        """
+        let result = try TwoFASParser().parse(from: json.data(using: .utf8)!)
+        XCTAssertEqual(result.tokens.count, 1)
+        XCTAssertEqual(result.tokens[0].type, .totp)
+    }
+
+    func testLastPassParserDirectly() throws {
+        let json = """
+        { "accounts": [{ "secret": "JBSWY3DPEHPK3PXP", "issuerName": "LP", "userName": "u", "timeStep": 30 }] }
+        """
+        let result = try LastPassParser().parse(from: json.data(using: .utf8)!)
+        XCTAssertEqual(result.tokens.count, 1)
+        XCTAssertEqual(result.tokens[0].issuer, "LP")
+    }
+
+    func testAndOTPParserDirectly() throws {
+        let json = """
+        [{ "secret": "JBSWY3DPEHPK3PXP", "label": "andotp-account", "type": "TOTP", "digits": 6, "period": 30 }]
+        """
+        let result = try AndOTPParser().parse(from: json.data(using: .utf8)!)
+        XCTAssertEqual(result.tokens.count, 1)
+        XCTAssertEqual(result.tokens[0].name, "andotp-account")
+    }
+
+    func testRaivoParserDirectlyArray() throws {
+        let json = """
+        [{ "secret": "JBSWY3DPEHPK3PXP", "account": "raivo-user", "issuer": "R",
+           "kind": "TOTP", "digits": "6", "timer": "30" }]
+        """
+        let result = try RaivoParser().parse(from: json.data(using: .utf8)!)
+        XCTAssertEqual(result.tokens.count, 1)
+        XCTAssertEqual(result.tokens[0].name, "raivo-user")
+    }
+
+    func testOTPAuthURIParserDirectly() throws {
+        let text = "otpauth://totp/GitHub:user?secret=JBSWY3DPEHPK3PXP&issuer=GitHub"
+        let parser = OTPAuthURIParser(parseURI: manager.parseOTPAuthURI)
+        let result = try parser.parse(from: text.data(using: .utf8)!)
+        XCTAssertEqual(result.tokens.count, 1)
+        XCTAssertEqual(result.tokens[0].issuer, "GitHub")
+    }
+
+    func testOTPAuthURIParserThrowsOnNonURIData() {
+        let data = #"{"not": "a uri"}"#.data(using: .utf8)!
+        let parser = OTPAuthURIParser(parseURI: manager.parseOTPAuthURI)
+        XCTAssertThrowsError(try parser.parse(from: data))
+    }
+
+    func testKeyaPlaintextParserThrowsOnNonKeyaData() {
+        let data = #"{"services": []}"#.data(using: .utf8)!
+        XCTAssertThrowsError(try KeyaPlaintextParser().parse(from: data))
+    }
 }
