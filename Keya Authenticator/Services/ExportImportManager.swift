@@ -56,10 +56,14 @@ final class ExportImportManager {
             RaivoParser(),
             AndOTPParser(),
         ]
+        var recognisedFormatError: Error?
         for parser in parsers {
             do {
                 return try parser.parse(from: data)
             } catch ExportImportError.unsupportedFormat {
+                continue
+            } catch {
+                recognisedFormatError = recognisedFormatError ?? error
                 continue
             }
         }
@@ -70,6 +74,9 @@ final class ExportImportManager {
             if !tokens.isEmpty {
                 return ImportResult(tokens: tokens, skipped: uris.count - tokens.count)
             }
+        }
+        if let recognisedFormatError {
+            throw recognisedFormatError
         }
         throw NSError(domain: "Import", code: 10, userInfo: [
             NSLocalizedDescriptionKey: "Unrecognised format. Supported: otpauth:// URI list, Aegis/2FAS JSON, Keya Authenticator JSON backup.",

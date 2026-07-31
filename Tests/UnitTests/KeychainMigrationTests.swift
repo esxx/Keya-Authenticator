@@ -21,8 +21,8 @@ final class KeychainMigrationTests: XCTestCase {
     }
 
     private func makeToken(name: String = "Test Token") -> Token {
-        let secret = Data([0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x21, 0xDE, 0xAD, 0xBE, 0xEF,
-                           0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x21, 0xDE, 0xAD, 0xBE, 0xEF])
+        var secret = Data(name.utf8)
+        while secret.count < 20 { secret.append(0xEF) }
         return Token(
             name: name,
             issuer: "Example",
