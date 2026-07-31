@@ -635,14 +635,27 @@ final class ExportImportFormatStressTests: XCTestCase {
         XCTAssertEqual(result.tokens.count, 1)
     }
 
-    func testEncryptionWithMinimum6CharPassword() throws {
+    func testEncryptionWithMinimum8CharPassword() throws {
         let t = Token(name: "Test", issuer: "Corp", secret: secret,
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
         try tokenStore.update([t])
 
-        let encrypted = try manager.exportVaultEncrypted(password: "sixchr")
-        let result = try manager.parseEncryptedTokens(from: encrypted, password: "sixchr")
+        let encrypted = try manager.exportVaultEncrypted(password: "eightchr")
+        let result = try manager.parseEncryptedTokens(from: encrypted, password: "eightchr")
         XCTAssertEqual(result.tokens.count, 1)
+    }
+
+    func testEncryptionRejectsPasswordShorterThan8() throws {
+        let t = Token(name: "Test", issuer: "Corp", secret: secret,
+                      algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        try tokenStore.update([t])
+
+        for short in ["", "x", "sixchr", "sevench"] {
+            XCTAssertThrowsError(try manager.exportVaultEncrypted(password: short)) { error in
+                XCTAssertEqual(error as? ExportImportError, .passwordTooShort,
+                               "Password of length \(short.count) must be rejected")
+            }
+        }
     }
 
     func testEncryptedFileDetectedCorrectly() throws {
@@ -676,12 +689,12 @@ final class ExportImportFormatStressTests: XCTestCase {
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
         try tokenStore.update([t])
 
-        var encrypted = try manager.exportVaultEncrypted(password: "pass")
+        var encrypted = try manager.exportVaultEncrypted(password: "passw0rd")
         let mid = encrypted.count / 2
         encrypted[mid] ^= 0xFF
 
         XCTAssertThrowsError(
-            try manager.parseEncryptedTokens(from: encrypted, password: "pass")
+            try manager.parseEncryptedTokens(from: encrypted, password: "passw0rd")
         )
     }
 
@@ -690,10 +703,10 @@ final class ExportImportFormatStressTests: XCTestCase {
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
         try tokenStore.update([t])
 
-        let encrypted = try manager.exportVaultEncrypted(password: "pass")
+        let encrypted = try manager.exportVaultEncrypted(password: "passw0rd")
         let truncated = encrypted.prefix(encrypted.count / 2)
         XCTAssertThrowsError(
-            try manager.parseEncryptedTokens(from: Data(truncated), password: "pass")
+            try manager.parseEncryptedTokens(from: Data(truncated), password: "passw0rd")
         )
     }
 }
@@ -706,8 +719,8 @@ final class EncryptionServiceStressTests: XCTestCase {
 
     func testEncryptEmptyData() throws {
         let empty = Data()
-        let enc = try EncryptionService.encrypt(empty, password: "hunter2")
-        let dec = try EncryptionService.decrypt(enc, password: "hunter2")
+        let enc = try EncryptionService.encrypt(empty, password: "hunter2x")
+        let dec = try EncryptionService.decrypt(enc, password: "hunter2x")
         XCTAssertEqual(dec, empty)
     }
 
@@ -724,28 +737,33 @@ final class EncryptionServiceStressTests: XCTestCase {
         XCTAssertThrowsError(try EncryptionService.encrypt(Data([1, 2, 3]), password: ""))
     }
 
-    func testSingleCharPassword() throws {
+    func testSingleCharPasswordIsRejected() {
+        XCTAssertThrowsError(try EncryptionService.encrypt(Data("hello".utf8), password: "x")) { error in
+            XCTAssertEqual(error as? ExportImportError, .passwordTooShort)
+        }
+    }
+
+    func testExactlyEightCharPasswordIsAccepted() throws {
         let data = Data("hello".utf8)
-        let enc = try EncryptionService.encrypt(data, password: "x")
-        let dec = try EncryptionService.decrypt(enc, password: "x")
-        XCTAssertEqual(dec, data)
+        let enc = try EncryptionService.encrypt(data, password: "12345678")
+        XCTAssertEqual(try EncryptionService.decrypt(enc, password: "12345678"), data)
     }
 
     // MARK: Each encryption call produces a unique ciphertext (fresh random salt + nonce)
 
     func testTwoEncryptionsOfSamePlaintextDiffer() throws {
         let data = Data("same input".utf8)
-        let enc1 = try EncryptionService.encrypt(data, password: "pw")
-        let enc2 = try EncryptionService.encrypt(data, password: "pw")
+        let enc1 = try EncryptionService.encrypt(data, password: "pwpwpwpw")
+        let enc2 = try EncryptionService.encrypt(data, password: "pwpwpwpw")
         XCTAssertNotEqual(enc1, enc2, "Distinct encryptions must produce different ciphertext")
     }
 
     // MARK: Wrong password
 
     func testWrongPasswordThrowsWrongPassword() throws {
-        let enc = try EncryptionService.encrypt(Data("secret".utf8), password: "correct")
+        let enc = try EncryptionService.encrypt(Data("secret".utf8), password: "correct1")
         XCTAssertThrowsError(
-            try EncryptionService.decrypt(enc, password: "wrong")
+            try EncryptionService.decrypt(enc, password: "wrong123")
         ) { error in
             guard let e = error as? ExportImportError, e == .wrongPassword else {
                 return XCTFail("Expected .wrongPassword, got \(error)")

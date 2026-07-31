@@ -214,8 +214,11 @@ struct MigrationQRExportView: View {
                     qrCarousel
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Constants.Colors.background)
             .navigationTitle("Export as QR code")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Constants.Colors.background, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
@@ -384,7 +387,7 @@ struct EncryptedExportPasswordSheet: View {
     }
 
     private var canExport: Bool {
-        password.count >= 6 && passwordsMatch && !isExporting
+        password.count >= 8 && passwordsMatch && !isExporting
     }
 
     var body: some View {
