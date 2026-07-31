@@ -44,6 +44,10 @@ enum OTPGenerator {
         digits: Int = defaultDigits,
         algorithm: Algorithm = .sha1
     ) throws -> String {
+        guard !secret.isEmpty else {
+            throw TokenError.invalidSecret("Token secret is empty")
+        }
+
         guard digits == 6 || digits == 8 else {
             throw TokenError.invalidDigits("Digits must be 6 or 8")
         }

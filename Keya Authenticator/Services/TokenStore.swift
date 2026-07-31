@@ -87,27 +87,29 @@ final class TokenStore {
     func update(_ newTokens: [Token]) throws {
         let oldIDs = Set(tokens.map(\.id))
 
-        var bestByContent: [String: Token] = [:]
+        var deduped: [Token] = []
+        var indexByContent: [String: Int] = [:]
         for token in newTokens {
             let key = token.contentKey
-            guard let current = bestByContent[key] else {
-                bestByContent[key] = token
+            guard let index = indexByContent[key] else {
+                indexByContent[key] = deduped.count
+                deduped.append(token)
                 continue
             }
+            let current = deduped[index]
             let currentIsExisting = oldIDs.contains(current.id)
             let tokenIsExisting = oldIDs.contains(token.id)
             if currentIsExisting, !tokenIsExisting {
                 continue
             }
             if tokenIsExisting, !currentIsExisting {
-                bestByContent[key] = token
+                deduped[index] = token
                 continue
             }
             if token.updatedAt > current.updatedAt {
-                bestByContent[key] = token
+                deduped[index] = token
             }
         }
-        var deduped = Array(bestByContent.values)
 
         var seenDupIDs = Set<UUID>()
         deduped = deduped.reversed().filter { token in
