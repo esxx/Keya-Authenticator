@@ -56,7 +56,7 @@ final class EditTokenViewModelTests: XCTestCase {
         try tokenStore.update([colliding, edited])
 
         let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: edited)
-        viewModel.digits = 8 // same secret+algorithm+period as `colliding`: now collides by contentKey
+        viewModel.digits = 8
 
         let success = await viewModel.saveToken()
 

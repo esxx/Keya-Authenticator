@@ -89,8 +89,6 @@ final class TokenStore {
         let existing: Token
     }
 
-    /// Candidates whose contentKey (secret+algorithm+digits+period) matches an already-stored
-    /// token under a different id. Pure query, no side effects — callers decide what to do.
     func existingDuplicates(of candidates: [Token]) -> [DuplicateTokenPair] {
         let byContent = Dictionary(tokens.map { ($0.contentKey, $0) }, uniquingKeysWith: { first, _ in first })
         return candidates.compactMap { candidate in

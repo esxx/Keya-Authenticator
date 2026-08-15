@@ -55,8 +55,6 @@ final class AddTokenViewModel {
         let duplicateIDs: Set<UUID>
     }
 
-    /// Pending skipped-import count, surfaced to `importSkippedCount` only once any
-    /// duplicate confirmation has been resolved, so the two alerts never both fire.
     private var pendingSkippedCount = 0
 
     var pendingDuplicateAdd: PendingDuplicateAdd?
@@ -97,9 +95,6 @@ final class AddTokenViewModel {
         }
     }
 
-    /// Candidates that share a contentKey with an earlier candidate in the same batch
-    /// collapse to the first occurrence. Nothing here has been persisted yet, so this
-    /// is a non-destructive, silent dedup (unlike a collision with an already-stored token).
     private func dedupedWithinBatch(_ tokens: [Token]) -> [Token] {
         var seenKeys = Set<String>()
         return tokens.filter { seenKeys.insert($0.contentKey).inserted }
