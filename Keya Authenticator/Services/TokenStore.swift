@@ -82,42 +82,30 @@ final class TokenStore {
         }
     }
 
+    // MARK: - Duplicate detection
+
+    struct DuplicateTokenPair {
+        let new: Token
+        let existing: Token
+    }
+
+    /// Candidates whose contentKey (secret+algorithm+digits+period) matches an already-stored
+    /// token under a different id. Pure query, no side effects — callers decide what to do.
+    func existingDuplicates(of candidates: [Token]) -> [DuplicateTokenPair] {
+        let byContent = Dictionary(tokens.map { ($0.contentKey, $0) }, uniquingKeysWith: { first, _ in first })
+        return candidates.compactMap { candidate in
+            guard let match = byContent[candidate.contentKey], match.id != candidate.id else { return nil }
+            return DuplicateTokenPair(new: candidate, existing: match)
+        }
+    }
+
     // MARK: - Token Mutations
 
     func update(_ newTokens: [Token]) throws {
         let oldIDs = Set(tokens.map(\.id))
 
-        var deduped: [Token] = []
-        var indexByContent: [String: Int] = [:]
-        for token in newTokens {
-            let key = token.contentKey
-            guard let index = indexByContent[key] else {
-                indexByContent[key] = deduped.count
-                deduped.append(token)
-                continue
-            }
-            let current = deduped[index]
-            let currentIsExisting = oldIDs.contains(current.id)
-            let tokenIsExisting = oldIDs.contains(token.id)
-            if currentIsExisting, !tokenIsExisting {
-                continue
-            }
-            if tokenIsExisting, !currentIsExisting {
-                deduped[index] = token
-                continue
-            }
-            if token.updatedAt > current.updatedAt {
-                deduped[index] = token
-            }
-        }
-
-        var seenDupIDs = Set<UUID>()
-        deduped = deduped.reversed().filter { token in
-            if oldIDs.contains(token.id) {
-                return true
-            }
-            return seenDupIDs.insert(token.id).inserted
-        }.reversed()
+        var seenIDs = Set<UUID>()
+        var deduped = newTokens.filter { seenIDs.insert($0.id).inserted }
 
         let newIDs = Set(deduped.map(\.id))
         var orphanDeleteError: Error?

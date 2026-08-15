@@ -41,6 +41,70 @@ final class AddTokenViewModel {
 
     var onTokenAdded: (() -> Void)?
 
+    // MARK: - Duplicate confirmation
+
+    enum PendingDuplicateSource {
+        case manualCreate(Token)
+        case imported([Token])
+        case encryptedImport([Token])
+    }
+
+    struct PendingDuplicateAdd {
+        let existingNames: [String]
+        let source: PendingDuplicateSource
+        let duplicateIDs: Set<UUID>
+    }
+
+    /// Pending skipped-import count, surfaced to `importSkippedCount` only once any
+    /// duplicate confirmation has been resolved, so the two alerts never both fire.
+    private var pendingSkippedCount = 0
+
+    var pendingDuplicateAdd: PendingDuplicateAdd?
+
+    func confirmPendingDuplicateAdd() {
+        guard let pending = pendingDuplicateAdd else { return }
+        pendingDuplicateAdd = nil
+        switch pending.source {
+        case let .manualCreate(token):
+            finishCreatingToken(token)
+        case let .imported(tokens):
+            finishPersistingImported(tokens)
+        case let .encryptedImport(tokens):
+            finishAddingEncryptedImport(tokens)
+        }
+    }
+
+    func cancelPendingDuplicateAdd() {
+        guard let pending = pendingDuplicateAdd else { return }
+        pendingDuplicateAdd = nil
+        switch pending.source {
+        case .manualCreate:
+            pendingSkippedCount = 0
+        case let .imported(tokens):
+            let remaining = tokens.filter { !pending.duplicateIDs.contains($0.id) }
+            guard !remaining.isEmpty else {
+                pendingSkippedCount = 0
+                return
+            }
+            finishPersistingImported(remaining)
+        case let .encryptedImport(tokens):
+            let remaining = tokens.filter { !pending.duplicateIDs.contains($0.id) }
+            guard !remaining.isEmpty else {
+                pendingSkippedCount = 0
+                return
+            }
+            finishAddingEncryptedImport(remaining)
+        }
+    }
+
+    /// Candidates that share a contentKey with an earlier candidate in the same batch
+    /// collapse to the first occurrence. Nothing here has been persisted yet, so this
+    /// is a non-destructive, silent dedup (unlike a collision with an already-stored token).
+    private func dedupedWithinBatch(_ tokens: [Token]) -> [Token] {
+        var seenKeys = Set<String>()
+        return tokens.filter { seenKeys.insert($0.contentKey).inserted }
+    }
+
     // MARK: - Initialization
 
     init(tokenStore: TokenStore, settings: AppSettings, prefillURI: String? = nil) {
@@ -66,6 +130,26 @@ final class AddTokenViewModel {
         isAddingToken = true
         do {
             let token = try buildToken()
+            let duplicates = tokenStore.existingDuplicates(of: [token])
+            guard duplicates.isEmpty else {
+                isAddingToken = false
+                pendingDuplicateAdd = PendingDuplicateAdd(
+                    existingNames: duplicates.map(\.existing.name),
+                    source: .manualCreate(token),
+                    duplicateIDs: [token.id]
+                )
+                return
+            }
+            finishCreatingToken(token)
+        } catch {
+            ClipboardManager.shared.provideHapticFeedback(.error)
+            errorMessage = "Failed to create token: \(error.localizedDescription)"
+            isAddingToken = false
+        }
+    }
+
+    private func finishCreatingToken(_ token: Token) {
+        do {
             var current = tokenStore.tokens
             current.append(token)
             try tokenStore.update(current)
@@ -144,10 +228,7 @@ final class AddTokenViewModel {
                 errorMessage = String(localized: "No valid tokens found in QR code")
                 return
             }
-            let skipped = params.count - validParams.count
-            if skipped > 0 {
-                importSkippedCount = skipped
-            }
+            pendingSkippedCount = params.count - validParams.count
             let tokens = validParams.map {
                 Token(
                     name: $0.name,
@@ -196,10 +277,7 @@ final class AddTokenViewModel {
                     errorMessage = String(localized: "No valid tokens found in QR code")
                     return
                 }
-                let skipped = params.count - validParams.count
-                if skipped > 0 {
-                    importSkippedCount = skipped
-                }
+                pendingSkippedCount = params.count - validParams.count
                 let tokens = validParams.map {
                     Token(
                         name: $0.name,
@@ -286,7 +364,7 @@ final class AddTokenViewModel {
                     return
                 }
                 await MainActor.run {
-                    importSkippedCount = importResult.skipped
+                    pendingSkippedCount = importResult.skipped
                     persistImported(importResult.tokens)
                 }
             }
@@ -299,13 +377,29 @@ final class AddTokenViewModel {
         pendingEncryptedData = nil
         showEncryptedImportSheet = false
         guard let result else { return }
-        importSkippedCount = result.skipped
+        pendingSkippedCount = result.skipped
+        let candidates = dedupedWithinBatch(result.tokens)
+        let duplicates = tokenStore.existingDuplicates(of: candidates)
+        guard duplicates.isEmpty else {
+            pendingDuplicateAdd = PendingDuplicateAdd(
+                existingNames: duplicates.map(\.existing.name),
+                source: .encryptedImport(candidates),
+                duplicateIDs: Set(duplicates.map(\.new.id))
+            )
+            return
+        }
+        finishAddingEncryptedImport(candidates)
+    }
+
+    private func finishAddingEncryptedImport(_ tokens: [Token]) {
         do {
             var current = tokenStore.tokens
-            current.append(contentsOf: result.tokens)
+            current.append(contentsOf: tokens)
             try tokenStore.update(current)
             onTokenAdded?()
             shouldDismiss = true
+            importSkippedCount = pendingSkippedCount
+            pendingSkippedCount = 0
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -348,6 +442,20 @@ final class AddTokenViewModel {
     // MARK: - Private helpers
 
     private func persistImported(_ tokens: [Token]) {
+        let candidates = dedupedWithinBatch(tokens)
+        let duplicates = tokenStore.existingDuplicates(of: candidates)
+        guard duplicates.isEmpty else {
+            pendingDuplicateAdd = PendingDuplicateAdd(
+                existingNames: duplicates.map(\.existing.name),
+                source: .imported(candidates),
+                duplicateIDs: Set(duplicates.map(\.new.id))
+            )
+            return
+        }
+        finishPersistingImported(candidates)
+    }
+
+    private func finishPersistingImported(_ tokens: [Token]) {
         isImporting = true
         do {
             var current = tokenStore.tokens
@@ -356,6 +464,8 @@ final class AddTokenViewModel {
             ClipboardManager.shared.provideHapticFeedback(.success)
             onTokenAdded?()
             shouldDismiss = true
+            importSkippedCount = pendingSkippedCount
+            pendingSkippedCount = 0
         } catch {
             ClipboardManager.shared.provideHapticFeedback(.error)
             errorMessage = error.localizedDescription

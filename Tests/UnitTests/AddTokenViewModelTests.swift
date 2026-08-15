@@ -257,4 +257,204 @@ final class AddTokenViewModelTests: XCTestCase {
         XCTAssertEqual(tokenStore.tokens.first?.period, 60,
                        "period=60 is valid and must be stored unchanged")
     }
+
+    // MARK: - Duplicate confirmation (manual create)
+
+    private func addExistingToken(name: String = "Existing") -> Token {
+        let token = Token(name: name, issuer: nil, secret: validSecret.base32DecodedData!,
+                          algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        try? tokenStore.update([token])
+        return token
+    }
+
+    func testCreateTokenWithDuplicateContentDoesNotPersistImmediately() {
+        let existing = addExistingToken(name: "GitHub")
+        fillValidTOTP()
+        viewModel.name = "GitHub (rescanned)"
+
+        viewModel.createToken()
+
+        XCTAssertEqual(tokenStore.tokens.count, 1, "The duplicate must not be persisted before confirmation")
+        XCTAssertEqual(tokenStore.tokens.first?.id, existing.id)
+        XCTAssertNil(viewModel.errorMessage, "A duplicate is not an error")
+        XCTAssertFalse(viewModel.shouldDismiss, "Sheet must stay open until the user decides")
+    }
+
+    func testCreateTokenWithDuplicateContentSetsPendingConfirmationWithExistingName() {
+        _ = addExistingToken(name: "GitHub")
+        fillValidTOTP()
+        viewModel.name = "GitHub (rescanned)"
+
+        viewModel.createToken()
+
+        XCTAssertEqual(viewModel.pendingDuplicateAdd?.existingNames, ["GitHub"])
+    }
+
+    func testConfirmPendingDuplicateAddPersistsManualCreate() {
+        _ = addExistingToken(name: "GitHub")
+        fillValidTOTP()
+        viewModel.name = "GitHub (rescanned)"
+        viewModel.createToken()
+
+        viewModel.confirmPendingDuplicateAdd()
+
+        XCTAssertEqual(tokenStore.tokens.count, 2, "Both tokens must coexist after explicit confirmation")
+        XCTAssertNil(viewModel.pendingDuplicateAdd)
+        XCTAssertTrue(viewModel.shouldDismiss)
+    }
+
+    func testCancelPendingDuplicateAddDiscardsManualCreate() {
+        _ = addExistingToken(name: "GitHub")
+        fillValidTOTP()
+        viewModel.name = "GitHub (rescanned)"
+        viewModel.createToken()
+
+        viewModel.cancelPendingDuplicateAdd()
+
+        XCTAssertEqual(tokenStore.tokens.count, 1, "Cancelling must not add the duplicate")
+        XCTAssertNil(viewModel.pendingDuplicateAdd)
+        XCTAssertFalse(viewModel.shouldDismiss)
+    }
+
+    func testCreateTokenWithoutDuplicateDoesNotSetPendingConfirmation() {
+        fillValidTOTP()
+        viewModel.createToken()
+        XCTAssertNil(viewModel.pendingDuplicateAdd)
+        XCTAssertEqual(tokenStore.tokens.count, 1)
+    }
+
+    // MARK: - Duplicate confirmation (scanned QR)
+
+    func testHandleScannedQRWithDuplicateContentDoesNotPersistImmediately() {
+        let existing = addExistingToken(name: "GitHub")
+        let uri = "otpauth://totp/Test:user@example.com?secret=\(validSecret)"
+
+        viewModel.handleScannedQR(uri)
+
+        XCTAssertEqual(tokenStore.tokens.count, 1)
+        XCTAssertEqual(tokenStore.tokens.first?.id, existing.id)
+        XCTAssertNotNil(viewModel.pendingDuplicateAdd)
+        XCTAssertFalse(viewModel.shouldDismiss)
+    }
+
+    func testConfirmPendingDuplicateAddPersistsScannedQR() {
+        _ = addExistingToken(name: "GitHub")
+        let uri = "otpauth://totp/Test:user@example.com?secret=\(validSecret)"
+        viewModel.handleScannedQR(uri)
+
+        viewModel.confirmPendingDuplicateAdd()
+
+        XCTAssertEqual(tokenStore.tokens.count, 2)
+        XCTAssertTrue(viewModel.shouldDismiss)
+    }
+
+    // MARK: - Duplicate confirmation (encrypted import)
+
+    func testHandleEncryptedImportResultWithDuplicateContentDoesNotPersistImmediately() {
+        let existing = addExistingToken(name: "GitHub")
+        let imported = Token(name: "GitHub (imported)", issuer: nil, secret: validSecret.base32DecodedData!,
+                             algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        let result = ExportImportManager.ImportResult(tokens: [imported], skipped: 0)
+
+        viewModel.handleEncryptedImportResult(result)
+
+        XCTAssertEqual(tokenStore.tokens.count, 1)
+        XCTAssertEqual(tokenStore.tokens.first?.id, existing.id)
+        XCTAssertNotNil(viewModel.pendingDuplicateAdd)
+        XCTAssertFalse(viewModel.shouldDismiss)
+    }
+
+    func testConfirmPendingDuplicateAddPersistsEncryptedImport() {
+        _ = addExistingToken(name: "GitHub")
+        let imported = Token(name: "GitHub (imported)", issuer: nil, secret: validSecret.base32DecodedData!,
+                             algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        let result = ExportImportManager.ImportResult(tokens: [imported], skipped: 0)
+        viewModel.handleEncryptedImportResult(result)
+
+        viewModel.confirmPendingDuplicateAdd()
+
+        XCTAssertEqual(tokenStore.tokens.count, 2)
+        XCTAssertTrue(viewModel.shouldDismiss)
+    }
+
+    // MARK: - Intra-batch duplicate collapse (no confirmation needed: nothing stored yet)
+
+    func testImportBatchWithTwoIdenticalCandidatesCollapsesToOneWithoutConfirmation() {
+        let secret = validSecret.base32DecodedData!
+        let first = Token(name: "GitHub A", issuer: nil, secret: secret,
+                          algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        let second = Token(name: "GitHub B", issuer: nil, secret: secret,
+                           algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        let result = ExportImportManager.ImportResult(tokens: [first, second], skipped: 0)
+
+        viewModel.handleEncryptedImportResult(result)
+
+        XCTAssertNil(viewModel.pendingDuplicateAdd, "Two never-stored candidates colliding with each other is not destructive")
+        XCTAssertEqual(tokenStore.tokens.count, 1, "Only the first of the two identical candidates should be kept")
+        XCTAssertEqual(tokenStore.tokens.first?.id, first.id)
+        XCTAssertTrue(viewModel.shouldDismiss)
+    }
+
+    // MARK: - Cancel on a mixed batch keeps the non-duplicate tokens
+
+    func testCancelPendingDuplicateAddOnMixedBatchKeepsNonDuplicateTokens() {
+        let existing = addExistingToken(name: "GitHub")
+        let duplicate = Token(name: "GitHub (imported)", issuer: nil, secret: validSecret.base32DecodedData!,
+                              algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        let unique = Token(name: "Discord", issuer: nil, secret: Data("distinct-secret-key".utf8),
+                           algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        let result = ExportImportManager.ImportResult(tokens: [duplicate, unique], skipped: 0)
+        viewModel.handleEncryptedImportResult(result)
+        XCTAssertNotNil(viewModel.pendingDuplicateAdd, "Precondition: the batch must contain a real duplicate")
+
+        viewModel.cancelPendingDuplicateAdd()
+
+        XCTAssertNil(viewModel.pendingDuplicateAdd)
+        XCTAssertEqual(tokenStore.tokens.count, 2, "Existing token plus the non-duplicate import must survive")
+        XCTAssertTrue(tokenStore.tokens.contains { $0.id == existing.id })
+        XCTAssertTrue(tokenStore.tokens.contains { $0.id == unique.id })
+        XCTAssertFalse(tokenStore.tokens.contains { $0.id == duplicate.id }, "The declined duplicate must not be added")
+        XCTAssertTrue(viewModel.shouldDismiss, "A partially-successful import still dismisses, matching the old silent-skip behavior")
+    }
+
+    func testCancelPendingDuplicateAddOnAllDuplicateBatchAddsNothing() {
+        let existing = addExistingToken(name: "GitHub")
+        let duplicate = Token(name: "GitHub (imported)", issuer: nil, secret: validSecret.base32DecodedData!,
+                              algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        let result = ExportImportManager.ImportResult(tokens: [duplicate], skipped: 0)
+        viewModel.handleEncryptedImportResult(result)
+
+        viewModel.cancelPendingDuplicateAdd()
+
+        XCTAssertEqual(tokenStore.tokens.count, 1)
+        XCTAssertEqual(tokenStore.tokens.first?.id, existing.id)
+        XCTAssertFalse(viewModel.shouldDismiss, "Nothing was added, so the sheet should not report success")
+    }
+
+    // MARK: - Skipped-count alert does not race the duplicate-confirmation alert
+
+    func testDuplicateAndSkippedCountAreNeverBothPendingAtOnce() {
+        _ = addExistingToken(name: "GitHub")
+        let duplicate = Token(name: "GitHub (imported)", issuer: nil, secret: validSecret.base32DecodedData!,
+                              algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        let result = ExportImportManager.ImportResult(tokens: [duplicate], skipped: 3)
+
+        viewModel.handleEncryptedImportResult(result)
+
+        XCTAssertNotNil(viewModel.pendingDuplicateAdd)
+        XCTAssertEqual(viewModel.importSkippedCount, 0,
+                       "The skipped-count alert must not fire while a duplicate confirmation is pending")
+    }
+
+    func testSkippedCountSurfacesAfterDuplicateIsResolved() {
+        _ = addExistingToken(name: "GitHub")
+        let duplicate = Token(name: "GitHub (imported)", issuer: nil, secret: validSecret.base32DecodedData!,
+                              algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        let result = ExportImportManager.ImportResult(tokens: [duplicate], skipped: 3)
+        viewModel.handleEncryptedImportResult(result)
+
+        viewModel.confirmPendingDuplicateAdd()
+
+        XCTAssertEqual(viewModel.importSkippedCount, 3)
+    }
 }

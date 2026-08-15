@@ -109,10 +109,14 @@ struct QRScannerView: View {
 
         if code.hasPrefix("otpauth://") || code.hasPrefix("otpauth-migration://") {
             onResult(.success(code))
-            dismiss()
+            if !isEmbedded {
+                dismiss()
+            }
         } else if code.isValidOTPSecret {
             onResult(.success(code))
-            dismiss()
+            if !isEmbedded {
+                dismiss()
+            }
         } else {
             errorMessage = String(localized: "Invalid QR code")
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
@@ -189,6 +193,74 @@ final class CameraManager: NSObject {
         }
     }
 
+    // MARK: - Device selection
+
+    private static func scanningDevice() -> AVCaptureDevice? {
+        let wide = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back)
+        let virtualTypes: [AVCaptureDevice.DeviceType] = [.builtInTripleCamera, .builtInDualWideCamera]
+
+        for type in virtualTypes {
+            guard let virtualDevice = AVCaptureDevice.default(type, for: .video, position: .back) else { continue }
+            guard let wide else { return virtualDevice }
+            let virtualMinimum = virtualDevice.minimumFocusDistance
+            let wideMinimum = wide.minimumFocusDistance
+            if virtualMinimum > 0, wideMinimum > 0, virtualMinimum < wideMinimum {
+                return virtualDevice
+            }
+        }
+        return wide ?? AVCaptureDevice.default(for: .video)
+    }
+
+    // MARK: - Close-range focus
+
+    private static func configureForCloseRangeScanning(_ device: AVCaptureDevice) {
+        do {
+            try device.lockForConfiguration()
+        } catch {
+            return
+        }
+        defer { device.unlockForConfiguration() }
+
+        if device.isFocusModeSupported(.continuousAutoFocus) {
+            device.focusMode = .continuousAutoFocus
+        }
+        if device.isSmoothAutoFocusSupported {
+            device.isSmoothAutoFocusEnabled = false
+        }
+        if device.isExposureModeSupported(.continuousAutoExposure) {
+            device.exposureMode = .continuousAutoExposure
+        }
+        if device.isVirtualDevice {
+            device.setPrimaryConstituentDeviceSwitchingBehavior(.auto, restrictedSwitchingBehaviorConditions: [])
+        }
+
+        applyRecommendedZoom(for: device)
+    }
+
+    // MARK: - Zoom compensation (adapted from Apple's AVCamBarcode sample)
+
+    private static func applyRecommendedZoom(for device: AVCaptureDevice, minimumCodeSize: Float = 20) {
+        let deviceMinimumFocusDistance = Float(device.minimumFocusDistance)
+        guard deviceMinimumFocusDistance > 0 else { return }
+
+        let fieldOfView = device.activeFormat.videoFieldOfView
+        let dimensions = CMVideoFormatDescriptionGetDimensions(device.activeFormat.formatDescription)
+        guard dimensions.width > 0 else { return }
+        let previewFillPercentage = Float(dimensions.height) / Float(dimensions.width)
+        guard previewFillPercentage > 0 else { return }
+
+        let radians = (fieldOfView / 2) * Float.pi / 180
+        let filledCodeSize = minimumCodeSize / previewFillPercentage
+        let minimumSubjectDistance = filledCodeSize / tan(radians)
+        guard minimumSubjectDistance > 0, minimumSubjectDistance < deviceMinimumFocusDistance else { return }
+
+        let zoomFactor = CGFloat(deviceMinimumFocusDistance / minimumSubjectDistance)
+        device.videoZoomFactor = min(
+            max(zoomFactor, device.minAvailableVideoZoomFactor),
+            device.maxAvailableVideoZoomFactor
+        )
+    }
+
     private func configureAndStart() {
         sessionQueue.async { [weak self] in
             guard let self else { return }
@@ -197,19 +269,22 @@ final class CameraManager: NSObject {
                 return
             }
             session.beginConfiguration()
-            guard let device = AVCaptureDevice.default(for: .video) else {
+            guard let device = CameraManager.scanningDevice() else {
+                session.commitConfiguration()
                 DispatchQueue.main.async { self.onError?("No camera available") }
                 return
             }
             do {
                 let input = try AVCaptureDeviceInput(device: device)
                 guard session.canAddInput(input) else {
+                    session.commitConfiguration()
                     DispatchQueue.main.async { self.onError?("Could not configure camera") }
                     return
                 }
                 session.addInput(input)
                 let output = AVCaptureMetadataOutput()
                 guard session.canAddOutput(output) else {
+                    session.commitConfiguration()
                     DispatchQueue.main.async { self.onError?("Could not configure scanner") }
                     return
                 }
@@ -226,10 +301,12 @@ final class CameraManager: NSObject {
                     self.session.commitConfiguration()
                     self.isConfigured = true
                     weakSessionQueue.async {
+                        CameraManager.configureForCloseRangeScanning(device)
                         weakSession.startRunning()
                     }
                 }
             } catch {
+                session.commitConfiguration()
                 DispatchQueue.main.async { self.onError?("Failed to setup camera: \(error.localizedDescription)") }
             }
         }

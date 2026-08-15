@@ -134,6 +134,23 @@ struct AddTokenView: View {
                     "\(n) token\(n == 1 ? "" : "s") could not be imported because the data was missing or invalid. The remaining tokens were imported successfully."
                 )
             }
+            .alert("Duplicate token", isPresented: Binding(
+                get: { viewModel.pendingDuplicateAdd != nil },
+                set: {
+                    if !$0 {
+                        viewModel.cancelPendingDuplicateAdd()
+                    }
+                }
+            )) {
+                Button("Cancel", role: .cancel) { viewModel.cancelPendingDuplicateAdd() }
+                Button("Add Anyway") { viewModel.confirmPendingDuplicateAdd() }
+            } message: {
+                if let names = viewModel.pendingDuplicateAdd?.existingNames, !names.isEmpty {
+                    Text("This matches the secret already saved as \(names.joined(separator: ", ")). Add it anyway?")
+                } else {
+                    Text("This token's secret is already in your vault. Add it anyway?")
+                }
+            }
         }
     }
 

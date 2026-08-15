@@ -1,0 +1,30 @@
+{
+  "configurations" : [
+    {
+      "id" : "8C7AE78C-1BEA-4BDD-BC04-E0EED934635D",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Keya Authenticator.xcodeproj",
+      "identifier" : "460FE18A2F71DA2E00839783",
+      "name" : "Keya Authenticator"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Keya Authenticator.xcodeproj",
+        "identifier" : "46AA00082F71DA2E00839783",
+        "name" : "Keya AuthenticatorTests"
+      }
+    }
+  ],
+  "version" : 1
+}
