@@ -90,7 +90,7 @@ struct ManualTokenEntryView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 Text("Secret key").font(.caption).foregroundColor(.secondary)
-                TextField("Base32 encoded key", text: $viewModel.secret)
+                SecureField("Base32 encoded key", text: $viewModel.secret)
                     .autocorrectionDisabled()
                     .autocapitalization(.none)
                     .font(.system(.body, design: .monospaced))

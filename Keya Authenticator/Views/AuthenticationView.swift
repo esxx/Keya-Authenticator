@@ -4,7 +4,7 @@ struct AuthenticationView: View {
     @State private var viewModel: AuthenticationViewModel
     let onUnlock: () -> Void
 
-    @FocusState private var pinFocused: Bool
+    @State private var pinFocused = false
     @State private var shakeOffset: CGFloat = 0
     @State private var contentOpacity: Double
     @State private var showBiometricChangedAlert = false
@@ -73,9 +73,7 @@ struct AuthenticationView: View {
 
             Spacer()
 
-            TextField("", text: $viewModel.pinText)
-                .keyboardType(.numberPad)
-                .focused($pinFocused)
+            SecurePINField(text: $viewModel.pinText, isFocused: $pinFocused)
                 .opacity(0.001)
                 .frame(width: 1, height: 1)
                 .accessibilityHidden(true)

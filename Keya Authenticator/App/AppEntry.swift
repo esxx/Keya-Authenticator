@@ -111,7 +111,7 @@ struct PINSetupView: View {
     @State private var step: Step = .enter
     @State private var firstPIN: String = ""
     @State private var pinText: String = ""
-    @FocusState private var pinFocused: Bool
+    @State private var pinFocused = false
     @State private var errorMessage: String? = nil
     @State private var shakeOffset: CGFloat = 0
 
@@ -149,9 +149,7 @@ struct PINSetupView: View {
 
             Spacer()
 
-            TextField("", text: $pinText)
-                .keyboardType(.numberPad)
-                .focused($pinFocused)
+            SecurePINField(text: $pinText, isFocused: $pinFocused)
                 .opacity(0.001)
                 .frame(width: 1, height: 1)
                 .padding(.bottom, 48)

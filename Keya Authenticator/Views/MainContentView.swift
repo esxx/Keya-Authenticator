@@ -355,7 +355,7 @@ struct PINAuthSheet: View {
     @State private var pinError: String? = nil
     @State private var lockoutSecondsRemaining: Int? = nil
     @State private var shakeOffset: CGFloat = 0
-    @FocusState private var pinFocused: Bool
+    @State private var pinFocused = false
 
     private let pinLength = 6
 
@@ -411,10 +411,7 @@ struct PINAuthSheet: View {
 
                 Spacer()
 
-                TextField("", text: $pinText)
-                    .keyboardType(.numberPad)
-                    .textContentType(.oneTimeCode)
-                    .focused($pinFocused)
+                SecurePINField(text: $pinText, isFocused: $pinFocused)
                     .opacity(0.001)
                     .frame(width: 1, height: 1)
                     .accessibilityHidden(true)
