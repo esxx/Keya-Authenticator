@@ -68,7 +68,7 @@ extension KeychainManager {
             }
         }
 
-        return deduplicated(allTokens)
+        return allTokens.sorted { $0.createdAt < $1.createdAt }
     }
 
     static func updateToken(_ token: Token) throws {
@@ -133,27 +133,5 @@ extension KeychainManager {
                 throw TokenError.keychainError("Your tokens couldn't be deleted. Please try again.")
             }
         }
-    }
-
-    // MARK: - Deduplication
-
-    private static func deduplicated(_ tokens: [Token]) -> [Token] {
-        var bestByContent: [String: Token] = [:]
-        var orphanIDs: [UUID] = []
-
-        for token in tokens {
-            if let existing = bestByContent[token.contentKey] {
-                if token.updatedAt > existing.updatedAt {
-                    orphanIDs.append(existing.id)
-                    bestByContent[token.contentKey] = token
-                } else {
-                    orphanIDs.append(token.id)
-                }
-            } else {
-                bestByContent[token.contentKey] = token
-            }
-        }
-        orphanIDs.forEach { try? deleteToken(id: $0) }
-        return Array(bestByContent.values).sorted { $0.createdAt < $1.createdAt }
     }
 }

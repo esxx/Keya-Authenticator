@@ -25,8 +25,6 @@ final class AppCoordinatorTests: XCTestCase {
     // MARK: - Pending URL on no-auth path
 
     func testDetermineInitialState_noAuth_consumesPendingURL() throws {
-        _ = AppSettings()
-
         try KeychainManager.savePIN("123456")
         try KeychainManager.saveSecuritySettings(
             KeychainManager.SecuritySettings(
@@ -58,8 +56,6 @@ final class AppCoordinatorTests: XCTestCase {
     }
 
     func testDetermineInitialState_noAuth_noPendingURL_doesNotOpenSheet() throws {
-        _ = AppSettings()
-
         try KeychainManager.savePIN("123456")
         try KeychainManager.saveSecuritySettings(
             KeychainManager.SecuritySettings(

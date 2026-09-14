@@ -11,6 +11,12 @@ struct MainContentView: View {
     @State private var showingPINAuthForExport = false
     @State private var tokenPendingPINAuth: Token? = nil
 
+    // MARK: - Sheet view models
+
+    @State private var addTokenViewModel: AddTokenViewModel?
+    @State private var editTokenViewModel: EditTokenViewModel?
+    @State private var exportImportViewModel: ExportImportViewModel?
+
     var body: some View {
         NavigationStack {
             tokenList
@@ -45,26 +51,38 @@ struct MainContentView: View {
                         editMode?.wrappedValue = .inactive
                     }
                 }
-                .sheet(isPresented: $viewModel.showingAddSheet) {
-                    AddTokenView(
-                        viewModel: AddTokenViewModel(
+                .onChange(of: viewModel.showingAddSheet) { _, isShowing in
+                    if isShowing, addTokenViewModel == nil {
+                        addTokenViewModel = AddTokenViewModel(
                             tokenStore: viewModel.tokenStore,
                             settings: viewModel.settings,
                             prefillURI: viewModel.pendingOTPAuthURI
-                        ),
-                        onTokenAdded: { viewModel.trackNewTokens() }
-                    )
-                    .onAppear { viewModel.pendingOTPAuthURI = nil }
+                        )
+                        viewModel.pendingOTPAuthURI = nil
+                    } else if !isShowing {
+                        addTokenViewModel = nil
+                    }
                 }
-                .sheet(item: $viewModel.selectedTokenForEdit) { token in
-                    EditTokenView(
-                        viewModel: EditTokenViewModel(
-                            tokenStore: viewModel.tokenStore,
-                            settings: viewModel.settings,
-                            token: token
-                        ),
-                        authenticationManager: viewModel.authenticationManager
-                    ) { viewModel.selectedTokenForEdit = nil }
+                .sheet(isPresented: $viewModel.showingAddSheet) {
+                    if let addTokenViewModel {
+                        AddTokenView(
+                            viewModel: addTokenViewModel,
+                            onTokenAdded: { viewModel.trackNewTokens() }
+                        )
+                    }
+                }
+                .onChange(of: viewModel.selectedTokenForEdit) { _, token in
+                    editTokenViewModel = token.map {
+                        EditTokenViewModel(tokenStore: viewModel.tokenStore, settings: viewModel.settings, token: $0)
+                    }
+                }
+                .sheet(item: $viewModel.selectedTokenForEdit) { _ in
+                    if let editTokenViewModel {
+                        EditTokenView(
+                            viewModel: editTokenViewModel,
+                            authenticationManager: viewModel.authenticationManager
+                        ) { viewModel.selectedTokenForEdit = nil }
+                    }
                 }
                 .sheet(item: $viewModel.selectedTokenForQR) { token in
                     QRExportView(viewModel: QRExportViewModel(token: token))
@@ -75,12 +93,21 @@ struct MainContentView: View {
                 } message: {
                     Text("Losing this app without a backup means losing access to your accounts.")
                 }
-                .sheet(isPresented: $viewModel.showExportSheet) {
-                    NavigationStack {
-                        TokenTransferView(viewModel: ExportImportViewModel(
+                .onChange(of: viewModel.showExportSheet) { _, isShowing in
+                    if isShowing, exportImportViewModel == nil {
+                        exportImportViewModel = ExportImportViewModel(
                             tokenStore: viewModel.tokenStore,
                             settings: viewModel.settings
-                        ))
+                        )
+                    } else if !isShowing {
+                        exportImportViewModel = nil
+                    }
+                }
+                .sheet(isPresented: $viewModel.showExportSheet) {
+                    if let exportImportViewModel {
+                        NavigationStack {
+                            TokenTransferView(viewModel: exportImportViewModel)
+                        }
                     }
                 }
                 .sheet(isPresented: $viewModel.showingSettings) {
@@ -328,7 +355,7 @@ struct PINAuthSheet: View {
     @State private var pinError: String? = nil
     @State private var lockoutSecondsRemaining: Int? = nil
     @State private var shakeOffset: CGFloat = 0
-    @FocusState private var pinFocused: Bool
+    @State private var pinFocused = false
 
     private let pinLength = 6
 
@@ -384,10 +411,7 @@ struct PINAuthSheet: View {
 
                 Spacer()
 
-                TextField("", text: $pinText)
-                    .keyboardType(.numberPad)
-                    .textContentType(.oneTimeCode)
-                    .focused($pinFocused)
+                SecurePINField(text: $pinText, isFocused: $pinFocused)
                     .opacity(0.001)
                     .frame(width: 1, height: 1)
                     .accessibilityHidden(true)

@@ -112,9 +112,9 @@ final class TokenStoreTests: XCTestCase {
                        "Tokens with a shared UUID must collapse to exactly one")
     }
 
-    // MARK: - Content-based deduplication
+    // MARK: - Content collisions are never auto-merged
 
-    func testUpdateDeduplicatesIdenticalContent() throws {
+    func testUpdateKeepsBothTokensOnIdenticalContent() throws {
         let t = makeToken(name: "Dupe")
         let copy = Token(id: UUID(), name: t.name, issuer: t.issuer,
                          secret: t.secret, algorithm: t.algorithm,
@@ -122,7 +122,8 @@ final class TokenStoreTests: XCTestCase {
 
         try store.update([t, copy])
 
-        XCTAssertEqual(store.tokens.count, 1)
+        XCTAssertEqual(store.tokens.count, 2,
+                       "update() must never silently drop a same-content token; that decision belongs to the caller")
     }
 
     func testUpdatingExistingTokenBypassesContentDedup() throws {
@@ -178,7 +179,7 @@ final class TokenStoreTests: XCTestCase {
 
     // MARK: - isFavorite dedup regression
 
-    func testUpdateNewerUpdatedAtWinsContentConflict() throws {
+    func testUpdateKeepsBothTokensRegardlessOfUpdatedAt() throws {
         let older = Token(
             name: "Service", issuer: "Corp",
             secret: secret, algorithm: .sha1,
@@ -197,12 +198,11 @@ final class TokenStoreTests: XCTestCase {
 
         try store.update([older, newer])
 
-        XCTAssertEqual(store.tokens.count, 1, "Duplicate content keys must collapse to one token")
-        XCTAssertTrue(store.tokens[0].isFavorite,
-                      "Newer updatedAt wins — metadata from the most recently modified token is preserved")
+        XCTAssertEqual(store.tokens.count, 2,
+                       "update() must not pick a winner by updatedAt; conflict resolution is the caller's job")
     }
 
-    func testExistingTokenAlwaysBeatsNewImportOnContentConflict() throws {
+    func testUpdateDoesNotDropExistingTokenOnContentConflictWithNewImport() throws {
         let existing = makeToken(name: "MyService")
         try store.update([existing])
 
@@ -222,11 +222,12 @@ final class TokenStoreTests: XCTestCase {
         )
         try store.update([updatedExisting, importedNewer])
 
-        XCTAssertEqual(store.tokens.count, 1)
-        XCTAssertTrue(store.tokens[0].isFavorite,
-                      "Existing in-store token must survive import regardless of the import's updatedAt")
-        XCTAssertEqual(store.tokens[0].id, updatedExisting.id,
-                       "The surviving token must be the existing one, not the import")
+        XCTAssertEqual(store.tokens.count, 2,
+                       "The existing token must never be silently deleted by an unrelated update() call")
+        XCTAssertTrue(store.tokens.contains { $0.id == updatedExisting.id },
+                      "The pre-existing token must still be present")
+        XCTAssertTrue(store.tokens.contains { $0.id == importedNewer.id },
+                      "The imported token must also be present — both coexist until the user decides")
     }
 
     func testDeleteThenReaddIsNotFavorite() throws {
@@ -250,5 +251,84 @@ final class TokenStoreTests: XCTestCase {
         XCTAssertEqual(store.tokens.count, 1)
         XCTAssertFalse(store.tokens[0].isFavorite,
                        "Re-added token must not inherit favorite status from the deleted entry")
+    }
+
+    // MARK: - existingDuplicates(of:)
+
+    func testExistingDuplicatesDetectsContentCollisionWithDifferentID() throws {
+        let existing = makeToken(name: "GitHub")
+        try store.update([existing])
+
+        let candidate = Token(id: UUID(), name: "GitHub (rescanned)", issuer: existing.issuer,
+                              secret: existing.secret, algorithm: existing.algorithm,
+                              digits: existing.digits, type: existing.type,
+                              period: existing.period, counter: nil)
+
+        let duplicates = store.existingDuplicates(of: [candidate])
+
+        XCTAssertEqual(duplicates.count, 1)
+        XCTAssertEqual(duplicates.first?.existing.id, existing.id)
+        XCTAssertEqual(duplicates.first?.new.id, candidate.id)
+    }
+
+    func testExistingDuplicatesIgnoresSameID() throws {
+        let existing = makeToken(name: "GitHub")
+        try store.update([existing])
+
+        var edited = existing
+        edited.name = "GitHub Renamed"
+
+        let duplicates = store.existingDuplicates(of: [edited])
+
+        XCTAssertTrue(duplicates.isEmpty, "A token cannot be a duplicate of itself")
+    }
+
+    func testExistingDuplicatesEmptyWhenNoCollision() throws {
+        let existing = makeToken(name: "GitHub")
+        try store.update([existing])
+
+        let candidate = makeToken(name: "Discord")
+
+        XCTAssertTrue(store.existingDuplicates(of: [candidate]).isEmpty)
+    }
+
+    func testExistingDuplicatesDetectsMultipleCollisionsInBatch() throws {
+        let existingA = makeToken(name: "GitHub")
+        let existingB = makeToken(name: "Discord")
+        try store.update([existingA, existingB])
+
+        let candidateA = Token(id: UUID(), name: "GitHub 2", issuer: existingA.issuer,
+                               secret: existingA.secret, algorithm: existingA.algorithm,
+                               digits: existingA.digits, type: existingA.type,
+                               period: existingA.period, counter: nil)
+        let candidateB = Token(id: UUID(), name: "Discord 2", issuer: existingB.issuer,
+                               secret: existingB.secret, algorithm: existingB.algorithm,
+                               digits: existingB.digits, type: existingB.type,
+                               period: existingB.period, counter: nil)
+        let newToken = makeToken(name: "Slack")
+
+        let duplicates = store.existingDuplicates(of: [candidateA, candidateB, newToken])
+
+        XCTAssertEqual(duplicates.count, 2)
+        XCTAssertTrue(duplicates.contains { $0.new.id == candidateA.id })
+        XCTAssertTrue(duplicates.contains { $0.new.id == candidateB.id })
+    }
+
+    // MARK: - Keychain-level reads never delete data
+
+    func testLoadAllTokensDoesNotDeleteContentDuplicates() throws {
+        let a = Token(id: UUID(), name: "Alpha", issuer: "Corp",
+                     secret: secret, algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        let b = Token(id: UUID(), name: "Beta", issuer: "Corp",
+                     secret: secret, algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        try KeychainManager.saveToken(a)
+        try KeychainManager.saveToken(b)
+
+        let firstLoad = try KeychainManager.loadAllTokens()
+        XCTAssertEqual(firstLoad.count, 2, "A plain read must not merge or drop content duplicates")
+
+        let secondLoad = try KeychainManager.loadAllTokens()
+        XCTAssertEqual(secondLoad.count, 2,
+                       "Reading twice must not have deleted anything from Keychain on the first read")
     }
 }

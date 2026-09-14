@@ -155,12 +155,41 @@ struct EditTokenView: View {
                     showRevealSheet = false
                 }
             }
+            .alert("Duplicate token", isPresented: Binding(
+                get: { viewModel.pendingDuplicateAdd != nil },
+                set: {
+                    if !$0 {
+                        viewModel.cancelPendingDuplicateSave()
+                    }
+                }
+            )) {
+                Button("Cancel", role: .cancel) { viewModel.cancelPendingDuplicateSave() }
+                Button("Save Anyway") { confirmDuplicateSave() }
+            } message: {
+                if let name = viewModel.pendingDuplicateAdd?.existingName {
+                    Text("This matches the secret already saved as \(name). Save it anyway?")
+                } else {
+                    Text("This token's secret is already in your vault. Save it anyway?")
+                }
+            }
         }
     }
 
     private func save() {
         Task {
             let success = await viewModel.saveToken()
+            if success {
+                await MainActor.run {
+                    onSave()
+                    dismiss()
+                }
+            }
+        }
+    }
+
+    private func confirmDuplicateSave() {
+        Task {
+            let success = await viewModel.confirmPendingDuplicateSave()
             if success {
                 await MainActor.run {
                     onSave()

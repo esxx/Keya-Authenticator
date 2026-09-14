@@ -5,7 +5,7 @@ struct PINVerifySheet: View {
     let onVerified: (Bool) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @FocusState private var pinFocused: Bool
+    @State private var pinFocused = false
     @State private var pinText = ""
     @State private var errorMessage: String? = nil
     @State private var shakeOffset: CGFloat = 0
@@ -61,9 +61,7 @@ struct PINVerifySheet: View {
 
                 Spacer()
 
-                TextField("", text: $pinText)
-                    .keyboardType(.numberPad)
-                    .focused($pinFocused)
+                SecurePINField(text: $pinText, isFocused: $pinFocused)
                     .opacity(0.001)
                     .frame(width: 1, height: 1)
                     .onChange(of: pinText) { _, newValue in

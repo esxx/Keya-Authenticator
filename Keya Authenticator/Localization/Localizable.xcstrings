@@ -2,7 +2,6 @@
   "sourceLanguage": "en",
   "strings": {
     "": {},
-    "·": {},
     "%@%@": {
       "localizations": {
         "en": {
@@ -123,18 +122,6 @@
         }
       }
     },
-    "••• •••": {},
-    "•••• ••••": {},
-    "© %@ Eldar SHAIDULLIN — Keya Authenticator %@ (%@) — GPL v3": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "new",
-            "value": "© %1$@ Eldar SHAIDULLIN — Keya Authenticator %2$@ (%3$@) — GPL v3"
-          }
-        }
-      }
-    },
     "0": {},
     "1 minute": {
       "localizations": {
@@ -170,42 +157,6 @@
         }
       }
     },
-    "5 seconds": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "5 segundos"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "5 secondes"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "5秒"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "5초"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "5 segundos"
-          }
-        }
-      }
-    },
-    "6": {},
-    "8": {},
     "15 seconds": {
       "localizations": {
         "es-419": {
@@ -271,6 +222,82 @@
           "stringUnit": {
             "state": "translated",
             "value": "30 segundos"
+          }
+        }
+      }
+    },
+    "5 seconds": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 segundos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 secondes"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5秒"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5초"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 segundos"
+          }
+        }
+      }
+    },
+    "6": {},
+    "8": {},
+    "AES-256-GCM with PBKDF2. Password is required to export — keep it safe.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AES-256-GCM with PBKDF2. Password is required to export — keep it safe."
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AES-256-GCM con PBKDF2. Se requiere contraseña para exportar — manténgala segura."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AES-256-GCM avec PBKDF2. Un mot de passe est requis pour l'export — gardez-le en lieu sûr."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PBKDF2を使用したAES-256-GCM。エクスポートにはパスワードが必要です — 安全に保管してください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PBKDF2를 사용한 AES-256-GCM. 내보내기에 비밀번호가 필요합니다 — 안전하게 보관하세요"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AES-256-GCM com PBKDF2. Uma senha é necessária para exportar — mantenha-a em segurança"
           }
         }
       }
@@ -377,6 +404,7 @@
         }
       }
     },
+    "Add Anyway": {},
     "Add some tokens first before exporting a backup": {
       "localizations": {
         "en": {
@@ -485,46 +513,6 @@
         }
       }
     },
-    "AES-256-GCM with PBKDF2. Password is required to export — keep it safe.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AES-256-GCM with PBKDF2. Password is required to export — keep it safe."
-          }
-        },
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AES-256-GCM con PBKDF2. Se requiere contraseña para exportar — manténgala segura."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AES-256-GCM avec PBKDF2. Un mot de passe est requis pour l'export — gardez-le en lieu sûr."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PBKDF2を使用したAES-256-GCM。エクスポートにはパスワードが必要です — 安全に保管してください。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PBKDF2를 사용한 AES-256-GCM. 내보내기에 비밀번호가 필요합니다 — 안전하게 보관하세요"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "AES-256-GCM com PBKDF2. Uma senha é necessária para exportar — mantenha-a em segurança"
-          }
-        }
-      }
-    },
     "Algorithm": {
       "localizations": {
         "es-419": {
@@ -595,46 +583,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bloqueio do app"
-          }
-        }
-      }
-    },
-    "app.name": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keya Authenticator"
-          }
-        },
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keya Authenticator"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keya Authenticator"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keya Authenticator"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keya Authenticator"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keya Authenticator"
           }
         }
       }
@@ -923,46 +871,6 @@
         }
       }
     },
-    "Biometric database changed": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Biometric database changed"
-          }
-        },
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Base de datos biométrica cambiada"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Base de données biométrique modifiée"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "生体認証データベースが変更されました"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "생체 인식 데이터베이스가 변경되었습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Banco de dados biométrico alterado"
-          }
-        }
-      }
-    },
     "Biometric Unavailable": {
       "localizations": {
         "en": {
@@ -999,6 +907,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Biometria indisponível"
+          }
+        }
+      }
+    },
+    "Biometric database changed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biometric database changed"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Base de datos biométrica cambiada"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Base de données biométrique modifiée"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "生体認証データベースが変更されました"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "생체 인식 데이터베이스가 변경되었습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banco de dados biométrico alterado"
           }
         }
       }
@@ -1403,6 +1351,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Não foi possível ler o arquivo"
+          }
+        }
+      }
+    },
+    "Couldn't Save Settings": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo guardar la configuración"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d'enregistrer les réglages"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定を保存できませんでした"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설정을 저장할 수 없습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível salvar as configurações"
           }
         }
       }
@@ -2019,70 +2001,36 @@
         }
       }
     },
-    "e.g. AWS, GitHub, Google...": {
+    "Duplicate token": {
       "localizations": {
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "ej. AWS, GitHub, Google..."
+            "value": "Token duplicado"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "ex. AWS, GitHub, Google..."
+            "value": "Jeton en double"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "例：AWS、GitHub、Google..."
+            "value": "重複トークン"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "예: AWS, GitHub, Google..."
+            "value": "중복된 토큰"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "ex. AWS, GitHub, Google..."
-          }
-        }
-      }
-    },
-    "e.g. you@example.com": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ej. tu@ejemplo.com"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ex. vous@exemple.com"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "例：you@example.com"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "예: you@example.com"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ex. voce@exemplo.com"
+            "value": "Token duplicado"
           }
         }
       }
@@ -2433,46 +2381,6 @@
         }
       }
     },
-    "Export as encrypted JSON": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Export as encrypted JSON"
-          }
-        },
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Exportar como JSON cifrado"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Exporter en JSON chiffré"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暗号化JSONとしてエクスポート"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "암호화된 JSON으로 내보내기"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Exportar como JSON criptografado"
-          }
-        }
-      }
-    },
     "Export as JSON": {
       "localizations": {
         "es-419": {
@@ -2543,6 +2451,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Exportar como QR code"
+          }
+        }
+      }
+    },
+    "Export as encrypted JSON": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export as encrypted JSON"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exportar como JSON cifrado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exporter en JSON chiffré"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暗号化JSONとしてエクスポート"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "암호화된 JSON으로 내보내기"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exportar como JSON criptografado"
           }
         }
       }
@@ -2854,6 +2802,41 @@
         }
       }
     },
+    "HOTP": {
+      "comment": "Token type display name",
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basado en contador (HOTP)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HOTP"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "カウンターベース (HOTP)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HOTP"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HOTP"
+          }
+        }
+      }
+    },
     "Hide secret key": {
       "localizations": {
         "es-419": {
@@ -2918,41 +2901,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ocultar tokens"
-          }
-        }
-      }
-    },
-    "HOTP": {
-      "comment": "Token type display name",
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Basado en contador (HOTP)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HOTP"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "カウンターベース (HOTP)"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HOTP"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HOTP"
           }
         }
       }
@@ -3338,40 +3286,6 @@
         }
       }
     },
-    "Keya Authenticator is free and open-source with no ads, no tracking, and no subscription. If it gives you peace of mind, a small tip means a lot.": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keya Authenticator es gratuito y de código abierto, sin anuncios, sin rastreo y sin suscripción. Si te da tranquilidad, una pequeña propina significa mucho."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keya Authenticator est gratuit et open-source, sans publicités, sans pistage et sans abonnement. Si cela vous apporte la tranquillité d'esprit, un petit pourboire compte beaucoup."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keya Authenticatorは無料でオープンソースです。広告なし、追跡なし、サブスクリプションなし。安心感を提供できているなら、少しのチップが大きな励みになります。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keya Authenticator는 무료 오픈소스입니다. 광고, 추적, 구독이 없습니다. 마음의 평화를 드릴 수 있다면, 작은 팁이 큰 도움이 됩니다."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keya Authenticator é gratuito e open-source, sem anúncios, sem rastreamento e sem assinatura. Se ele traz tranquilidade para você, uma pequena gorjeta significa muito."
-          }
-        }
-      }
-    },
     "Keya Authenticator QR code %lld": {
       "localizations": {
         "es-419": {
@@ -3402,6 +3316,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Código QR do Keya Authenticator %lld"
+          }
+        }
+      }
+    },
+    "Keya Authenticator is free and open-source with no ads, no tracking, and no subscription. If it gives you peace of mind, a small tip means a lot.": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keya Authenticator es gratuito y de código abierto, sin anuncios, sin rastreo y sin suscripción. Si te da tranquilidad, una pequeña propina significa mucho."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keya Authenticator est gratuit et open-source, sans publicités, sans pistage et sans abonnement. Si cela vous apporte la tranquillité d'esprit, un petit pourboire compte beaucoup."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keya Authenticatorは無料でオープンソースです。広告なし、追跡なし、サブスクリプションなし。安心感を提供できているなら、少しのチップが大きな励みになります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keya Authenticator는 무료 오픈소스입니다. 광고, 추적, 구독이 없습니다. 마음의 평화를 드릴 수 있다면, 작은 팁이 큰 도움이 됩니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keya Authenticator é gratuito e open-source, sem anúncios, sem rastreamento e sem assinatura. Se ele traz tranquilidade para você, uma pequena gorjeta significa muito."
           }
         }
       }
@@ -3963,40 +3911,6 @@
         }
       }
     },
-    "Off": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Desactivado"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Désactivé"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "オフ"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "끄기"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Desativado"
-          }
-        }
-      }
-    },
     "OK": {
       "localizations": {
         "es-419": {
@@ -4027,6 +3941,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "OK"
+          }
+        }
+      }
+    },
+    "Off": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desactivado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désactivé"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オフ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "끄기"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desativado"
           }
         }
       }
@@ -4202,211 +4150,6 @@
         }
       }
     },
-    "otpauth-migration:// — compatible with Google Authenticator, Aegis, 2FAS, Raivo...": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "otpauth-migration:// — compatible con Google Authenticator, Aegis, 2FAS, Raivo..."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "otpauth-migration:// — compatible avec Google Authenticator, Aegis, 2FAS, Raivo..."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "otpauth-migration:// — Google Authenticator、Aegis、2FAS、Raivo...と互換性あり"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "otpauth-migration:// — Google Authenticator, Aegis, 2FAS, Raivo...와 호환"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "otpauth-migration:// — compatível com Google Authenticator, Aegis, 2FAS, Raivo..."
-          }
-        }
-      }
-    },
-    "otpauth:// URI": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "URI otpauth://"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "URI otpauth://"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "otpauth:// URI"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "otpauth:// URI"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "URI otpauth://"
-          }
-        }
-      }
-    },
-    "Password": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Contraseña"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mot de passe"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "パスワード"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "비밀번호"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Senha"
-          }
-        }
-      }
-    },
-    "Password must be at least 8 characters.": {},
-    "Passwords don't match": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Las contraseñas no coinciden"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les mots de passe ne correspondent pas"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "パスワードが一致しません"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "비밀번호가 일치하지 않습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "As senhas não coincidem"
-          }
-        }
-      }
-    },
-    "Period": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Período (s)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Période"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "期間 (秒)"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "주기"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Período"
-          }
-        }
-      }
-    },
-    "Period must be between 15 and 300 seconds": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El período debe estar entre 15 y 300 segundos"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La période doit être comprise entre 15 et 300 secondes"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "期間は15秒から300秒の間でなければなりません"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "주기는 15초에서 300초 사이여야 합니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O período deve estar entre 15 e 300 segundos"
-          }
-        }
-      }
-    },
     "PIN": {
       "localizations": {
         "es-419": {
@@ -4573,6 +4316,143 @@
           "stringUnit": {
             "state": "translated",
             "value": "Os PINs não coincidem"
+          }
+        }
+      }
+    },
+    "Password": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contraseña"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mot de passe"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワード"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비밀번호"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senha"
+          }
+        }
+      }
+    },
+    "Password must be at least 8 characters.": {},
+    "Passwords don't match": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las contraseñas no coinciden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les mots de passe ne correspondent pas"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワードが一致しません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비밀번호가 일치하지 않습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As senhas não coincidem"
+          }
+        }
+      }
+    },
+    "Period": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Período (s)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Période"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "期間 (秒)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "주기"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Período"
+          }
+        }
+      }
+    },
+    "Period must be between 15 and 300 seconds": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El período debe estar entre 15 y 300 segundos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La période doit être comprise entre 15 et 300 secondes"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "期間は15秒から300秒の間でなければなりません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "주기는 15초에서 300초 사이여야 합니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O período deve estar entre 15 e 300 segundos"
           }
         }
       }
@@ -4793,46 +4673,6 @@
         }
       }
     },
-    "QR code - %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "QR code - %@"
-          }
-        },
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "QR code - %@"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "QR code - %@"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "QRコード - %@"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "QR 코드 - %@"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "QR code - %@"
-          }
-        }
-      }
-    },
     "QR code %lld of %lld": {
       "localizations": {
         "en": {
@@ -4869,6 +4709,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "QR code %1$lld de %2$lld"
+          }
+        }
+      }
+    },
+    "QR code - %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QR code - %@"
+          }
+        },
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QR code - %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QR code - %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QRコード - %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QR 코드 - %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QR code - %@"
           }
         }
       }
@@ -5015,6 +4895,7 @@
         }
       }
     },
+    "Save Anyway": {},
     "Scan": {
       "localizations": {
         "es-419": {
@@ -5321,40 +5202,6 @@
         }
       }
     },
-    "Set password": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Establecer contraseña"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Définir le mot de passe"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "パスワードを設定"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "비밀번호 설정"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Definir senha"
-          }
-        }
-      }
-    },
     "Set PIN": {
       "localizations": {
         "es-419": {
@@ -5385,6 +5232,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Definir PIN"
+          }
+        }
+      }
+    },
+    "Set password": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Establecer contraseña"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Définir le mot de passe"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "パスワードを設定"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "비밀번호 설정"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definir senha"
           }
         }
       }
@@ -5491,6 +5372,40 @@
         }
       }
     },
+    "Something Went Wrong": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Algo salió mal"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un problème est survenu"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "問題が発生しました"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "문제가 발생했습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Algo deu errado"
+          }
+        }
+      }
+    },
     "Store in a secure location such as an encrypted disk or password manager": {
       "localizations": {
         "es-419": {
@@ -5555,6 +5470,41 @@
           "stringUnit": {
             "state": "translated",
             "value": "Apoiar o desenvolvimento"
+          }
+        }
+      }
+    },
+    "TOTP": {
+      "comment": "Token type display name",
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basado en tiempo (TOTP)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOTP"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "時間ベース (TOTP)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOTP"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TOTP"
           }
         }
       }
@@ -5769,6 +5719,40 @@
         }
       }
     },
+    "The Face ID / Touch ID database on this device has changed since your last login. Biometric unlock has been disabled as a security precaution. You can re-enable it in Settings → App lock once you've confirmed the change was made by you.": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La base de datos de Face ID / Touch ID en este dispositivo ha cambiado desde tu último inicio de sesión. El desbloqueo biométrico ha sido desactivado como precaución de seguridad. Puedes reactivarlo en Ajustes → Bloqueo de app una vez que hayas confirmado que el cambio fue realizado por ti."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La base de données Face ID / Touch ID sur cet appareil a changé depuis votre dernière connexion. Le déverrouillage biométrique a été désactivé par mesure de sécurité. Vous pouvez le réactiver dans Réglages → Verrouillage de l'app une fois que vous avez confirmé que le changement a été effectué par vous."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このデバイスのFace ID / Touch IDデータベースが前回のログイン以降に変更されました。セキュリティ上の予防措置として、生体認証のロック解除が無効化されました。変更が自分によって行われたことを確認したら、設定 → アプリロックで再度有効にできます"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 기기의 Face ID / Touch ID 데이터베이스가 마지막 로그인 이후 변경되었습니다. 보안 예방 조치로 생체 인식 잠금 해제가 비활성화되었습니다. 변경이 본인에 의해 이루어졌음을 확인한 후 설정 → 앱 잠금에서 다시 활성화할 수 있습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O banco de dados do Face ID / Touch ID neste dispositivo mudou desde o seu último login. O desbloqueio biométrico foi desativado como medida de segurança. Você pode reativá-lo em Configurações → Bloqueio do app depois de confirmar que a alteração foi feita por você."
+          }
+        }
+      }
+    },
     "The backup couldn't be encrypted. Please try again.": {
       "localizations": {
         "es-419": {
@@ -5871,40 +5855,6 @@
         }
       }
     },
-    "The Face ID / Touch ID database on this device has changed since your last login. Biometric unlock has been disabled as a security precaution. You can re-enable it in Settings → App lock once you've confirmed the change was made by you.": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La base de datos de Face ID / Touch ID en este dispositivo ha cambiado desde tu último inicio de sesión. El desbloqueo biométrico ha sido desactivado como precaución de seguridad. Puedes reactivarlo en Ajustes → Bloqueo de app una vez que hayas confirmado que el cambio fue realizado por ti."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La base de données Face ID / Touch ID sur cet appareil a changé depuis votre dernière connexion. Le déverrouillage biométrique a été désactivé par mesure de sécurité. Vous pouvez le réactiver dans Réglages → Verrouillage de l'app une fois que vous avez confirmé que le changement a été effectué par vous."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "このデバイスのFace ID / Touch IDデータベースが前回のログイン以降に変更されました。セキュリティ上の予防措置として、生体認証のロック解除が無効化されました。変更が自分によって行われたことを確認したら、設定 → アプリロックで再度有効にできます"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이 기기의 Face ID / Touch ID 데이터베이스가 마지막 로그인 이후 변경되었습니다. 보안 예방 조치로 생체 인식 잠금 해제가 비활성화되었습니다. 변경이 본인에 의해 이루어졌음을 확인한 후 설정 → 앱 잠금에서 다시 활성화할 수 있습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O banco de dados do Face ID / Touch ID neste dispositivo mudou desde o seu último login. O desbloqueio biométrico foi desativado como medida de segurança. Você pode reativá-lo em Configurações → Bloqueio do app depois de confirmar que a alteração foi feita por você."
-          }
-        }
-      }
-    },
     "The file couldn't be read. Try selecting it again.": {
       "localizations": {
         "es-419": {
@@ -5935,6 +5885,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "O arquivo não pôde ser lido. Tente selecioná-lo novamente."
+          }
+        }
+      }
+    },
+    "The token couldn't be deleted. Please try again.": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo eliminar el token. Inténtalo de nuevo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de supprimer le jeton. Veuillez réessayer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "トークンを削除できませんでした。もう一度お試しください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "토큰을 삭제할 수 없습니다. 다시 시도해 주세요."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível excluir o token. Tente novamente."
           }
         }
       }
@@ -6139,6 +6123,142 @@
           "stringUnit": {
             "state": "translated",
             "value": "Este formato de arquivo não é suportado. Formatos suportados: Aegis, 2FAS, andOTP, Raivo, LastPass, Keya Authenticator."
+          }
+        }
+      }
+    },
+    "This matches the secret already saved as %@. Add it anyway?": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esto coincide con la clave secreta ya guardada como %@. ¿Agregarlo de todos modos?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ceci correspond à la clé secrète déjà enregistrée sous %@. L'ajouter quand même ?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これは既に「%@」として保存されているシークレットキーと一致します。追加しますか？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 항목은 이미 %@(으)로 저장된 비밀 키와 일치합니다. 그래도 추가하시겠습니까?"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isso corresponde à chave secreta já salva como %@. Adicionar mesmo assim?"
+          }
+        }
+      }
+    },
+    "This matches the secret already saved as %@. Save it anyway?": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esto coincide con la clave secreta ya guardada como %@. ¿Guardarlo de todos modos?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ceci correspond à la clé secrète déjà enregistrée sous %@. L'enregistrer quand même ?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これは既に「%@」として保存されているシークレットキーと一致します。保存しますか？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 항목은 이미 %@(으)로 저장된 비밀 키와 일치합니다. 그래도 저장하시겠습니까?"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isso corresponde à chave secreta já salva como %@. Salvar mesmo assim?"
+          }
+        }
+      }
+    },
+    "This token's secret is already in your vault. Add it anyway?": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La clave secreta de este token ya está en tu bóveda. ¿Agregarlo de todos modos?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La clé secrète de ce jeton est déjà dans votre coffre. L'ajouter quand même ?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このトークンのシークレットキーはすでに保管庫に保存されています。追加しますか？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 토큰의 비밀 키는 이미 보관함에 있습니다. 그래도 추가하시겠습니까?"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A chave secreta deste token já está no seu cofre. Adicionar mesmo assim?"
+          }
+        }
+      }
+    },
+    "This token's secret is already in your vault. Save it anyway?": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La clave secreta de este token ya está en tu bóveda. ¿Guardarlo de todos modos?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La clé secrète de ce jeton est déjà dans votre coffre. L'enregistrer quand même ?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このトークンのシークレットキーはすでに保管庫に保存されています。保存しますか？"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 토큰의 비밀 키는 이미 보관함에 있습니다. 그래도 저장하시겠습니까?"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A chave secreta deste token já está no seu cofre. Salvar mesmo assim?"
           }
         }
       }
@@ -6349,41 +6469,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Muitas tentativas. Tente novamente em %llds."
-          }
-        }
-      }
-    },
-    "TOTP": {
-      "comment": "Token type display name",
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Basado en tiempo (TOTP)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TOTP"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "時間ベース (TOTP)"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TOTP"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TOTP"
           }
         }
       }
@@ -6695,142 +6780,6 @@
         }
       }
     },
-    "Your tokens have been saved to a JSON file": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tus tokens se han guardado en un archivo JSON"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vos jetons ont été enregistrés dans un fichier JSON"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "トークンがJSONファイルに保存されました"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "토큰이 JSON 파일에 저장되었습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seus tokens foram salvos em um arquivo JSON"
-          }
-        }
-      }
-    },
-    "Your tokens will be encrypted with AES-256-GCM. You'll need this password to import the backup.": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tus tokens se cifrarán con AES-256-GCM. Necesitarás esta contraseña para importar el respaldo."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vos jetons seront chiffrés avec AES-256-GCM. Vous aurez besoin de ce mot de passe pour importer la sauvegarde."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "トークンはAES-256-GCMで暗号化されます。バックアップをインポートするにはこのパスワードが必要です"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "토큰이 AES-256-GCM으로 암호화됩니다. 백업을 가져오려면 이 비밀번호가 필요합니다."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seus tokens serão criptografados com AES-256-GCM. Você precisará desta senha para importar o backup."
-          }
-        }
-      }
-    },
-    "Couldn't Save Settings": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudo guardar la configuración"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Impossible d'enregistrer les réglages"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "設定を保存できませんでした"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "설정을 저장할 수 없습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Não foi possível salvar as configurações"
-          }
-        }
-      }
-    },
-    "Something Went Wrong": {
-      "localizations": {
-        "es-419": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Algo salió mal"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un problème est survenu"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "問題が発生しました"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "문제가 발생했습니다"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Algo deu errado"
-          }
-        }
-      }
-    },
     "Your token couldn't be saved. Please try again.": {
       "localizations": {
         "es-419": {
@@ -6899,6 +6848,74 @@
         }
       }
     },
+    "Your tokens have been saved to a JSON file": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus tokens se han guardado en un archivo JSON"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos jetons ont été enregistrés dans un fichier JSON"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "トークンがJSONファイルに保存されました"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "토큰이 JSON 파일에 저장되었습니다"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seus tokens foram salvos em um arquivo JSON"
+          }
+        }
+      }
+    },
+    "Your tokens will be encrypted with AES-256-GCM. You'll need this password to import the backup.": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus tokens se cifrarán con AES-256-GCM. Necesitarás esta contraseña para importar el respaldo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos jetons seront chiffrés avec AES-256-GCM. Vous aurez besoin de ce mot de passe pour importer la sauvegarde."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "トークンはAES-256-GCMで暗号化されます。バックアップをインポートするにはこのパスワードが必要です"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "토큰이 AES-256-GCM으로 암호화됩니다. 백업을 가져오려면 이 비밀번호가 필요합니다."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seus tokens serão criptografados com AES-256-GCM. Você precisará desta senha para importar o backup."
+          }
+        }
+      }
+    },
     "Your vault data appears to be corrupted.": {
       "localizations": {
         "es-419": {
@@ -6933,40 +6950,195 @@
         }
       }
     },
-    "The token couldn't be deleted. Please try again.": {
+    "app.name": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keya Authenticator"
+          }
+        },
         "es-419": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudo eliminar el token. Inténtalo de nuevo."
+            "value": "Keya Authenticator"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Impossible de supprimer le jeton. Veuillez réessayer."
+            "value": "Keya Authenticator"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "トークンを削除できませんでした。もう一度お試しください。"
+            "value": "Keya Authenticator"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "토큰을 삭제할 수 없습니다. 다시 시도해 주세요."
+            "value": "Keya Authenticator"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não foi possível excluir o token. Tente novamente."
+            "value": "Keya Authenticator"
           }
         }
       }
-    }
+    },
+    "e.g. AWS, GitHub, Google...": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ej. AWS, GitHub, Google..."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ex. AWS, GitHub, Google..."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "例：AWS、GitHub、Google..."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예: AWS, GitHub, Google..."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ex. AWS, GitHub, Google..."
+          }
+        }
+      }
+    },
+    "e.g. you@example.com": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ej. tu@ejemplo.com"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ex. vous@exemple.com"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "例：you@example.com"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "예: you@example.com"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ex. voce@exemplo.com"
+          }
+        }
+      }
+    },
+    "otpauth-migration:// — compatible with Google Authenticator, Aegis, 2FAS, Raivo...": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "otpauth-migration:// — compatible con Google Authenticator, Aegis, 2FAS, Raivo..."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "otpauth-migration:// — compatible avec Google Authenticator, Aegis, 2FAS, Raivo..."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "otpauth-migration:// — Google Authenticator、Aegis、2FAS、Raivo...と互換性あり"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "otpauth-migration:// — Google Authenticator, Aegis, 2FAS, Raivo...와 호환"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "otpauth-migration:// — compatível com Google Authenticator, Aegis, 2FAS, Raivo..."
+          }
+        }
+      }
+    },
+    "otpauth:// URI": {
+      "localizations": {
+        "es-419": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URI otpauth://"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URI otpauth://"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "otpauth:// URI"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "otpauth:// URI"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URI otpauth://"
+          }
+        }
+      }
+    },
+    "© %@ Eldar SHAIDULLIN — Keya Authenticator %@ (%@) — GPL v3": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "© %1$@ Eldar SHAIDULLIN — Keya Authenticator %2$@ (%3$@) — GPL v3"
+          }
+        }
+      }
+    },
+    "·": {},
+    "••• •••": {},
+    "•••• ••••": {}
   },
   "version": "1.0"
 }
