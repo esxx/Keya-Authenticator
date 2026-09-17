@@ -16,6 +16,7 @@ struct MainContentView: View {
     @State private var addTokenViewModel: AddTokenViewModel?
     @State private var editTokenViewModel: EditTokenViewModel?
     @State private var exportImportViewModel: ExportImportViewModel?
+    @State private var qrExportViewModel: QRExportViewModel?
 
     var body: some View {
         NavigationStack {
@@ -84,8 +85,13 @@ struct MainContentView: View {
                         ) { viewModel.selectedTokenForEdit = nil }
                     }
                 }
-                .sheet(item: $viewModel.selectedTokenForQR) { token in
-                    QRExportView(viewModel: QRExportViewModel(token: token))
+                .onChange(of: viewModel.selectedTokenForQR) { _, token in
+                    qrExportViewModel = token.map { QRExportViewModel(token: $0) }
+                }
+                .sheet(item: $viewModel.selectedTokenForQR) { _ in
+                    if let qrExportViewModel {
+                        QRExportView(viewModel: qrExportViewModel)
+                    }
                 }
                 .alert("Back up your tokens", isPresented: $viewModel.showBackupNudge) {
                     Button("Export") { viewModel.handleBackupExport() }

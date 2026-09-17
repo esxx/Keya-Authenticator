@@ -58,7 +58,7 @@ struct TokenTransferView: View {
             MigrationQRExportView(exportImportManager: viewModel.exportImportManager)
         }
         .alert("Export successful", isPresented: $viewModel.showExportSuccess) {
-            Button("OK", role: .cancel) {}
+            Button("OK", role: .cancel) { viewModel.exportData = nil }
         } message: {
             Text("Your tokens have been saved to a JSON file")
         }

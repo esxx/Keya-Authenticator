@@ -55,7 +55,6 @@ final class ExportImportViewModel {
     func handleExportResult(_ result: Result<URL, Error>) {
         switch result {
         case .success:
-            exportData = nil
             settings.lastBackupDate = Date()
             showExportSuccess = true
         case let .failure(error):

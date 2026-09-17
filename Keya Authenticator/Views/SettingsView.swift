@@ -16,6 +16,20 @@ struct SettingsView: View {
     @State private var navigateToTransfer = false
     @State private var showingAppLockGate = false
     @State private var showingTransferGate = false
+    @State private var exportImportViewModel: ExportImportViewModel
+
+    init(
+        tokenStore: TokenStore,
+        authenticationManager: AuthenticationManager,
+        settings: AppSettings,
+        onResetRequested: (() -> Void)? = nil
+    ) {
+        self.tokenStore = tokenStore
+        self.authenticationManager = authenticationManager
+        self.settings = settings
+        self.onResetRequested = onResetRequested
+        _exportImportViewModel = State(initialValue: ExportImportViewModel(tokenStore: tokenStore, settings: settings))
+    }
 
     private var pinGatingEnabled: Bool {
         settings.isAuthenticationEnabled && KeychainManager.isPINSet()
@@ -211,7 +225,7 @@ struct SettingsView: View {
             }
             .sheet(isPresented: $navigateToTransfer) {
                 NavigationStack {
-                    TokenTransferView(viewModel: ExportImportViewModel(tokenStore: tokenStore, settings: settings))
+                    TokenTransferView(viewModel: exportImportViewModel)
                 }
             }
             .sheet(isPresented: $showingAppLockGate) {
