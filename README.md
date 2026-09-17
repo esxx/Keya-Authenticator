@@ -2,6 +2,8 @@
 
 A privacy-first, open-source two-factor authentication app for iOS. Your secrets never leave your device.
 
+[Download on the App Store](https://apps.apple.com/us/app/keya-authenticator/id6764358712)
+
 ## Features
 
 - **No cloud, no accounts, no tracking** — fully offline, zero network calls
