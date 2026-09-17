@@ -105,23 +105,43 @@ final class AppSettings {
             return
         }
 
-        if status == errSecItemNotFound {
+        guard status == errSecItemNotFound else {
+            return
+        }
+
+        // Sentinel is missing. Before wiping, check whether anything else under this
+        // service survived: a real fresh install has nothing at all, but a sentinel
+        // missing while other items remain is a contradiction, not evidence of a fresh
+        // install, so it must not be treated as one.
+        let anyItemQuery: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: Constants.keychainService,
+            kSecMatchLimit: kSecMatchLimitOne,
+        ]
+        let anyItemStatus = SecItemCopyMatching(anyItemQuery as CFDictionary, nil)
+
+        switch anyItemStatus {
+        case errSecItemNotFound:
             try? KeychainManager.deleteAllTokens()
             try? KeychainManager.deletePIN()
             KeychainManager.deleteSecuritySettings()
             KeychainManager.deleteBiometricFingerprint()
             try? KeychainManager.deleteLockoutState(account: KeychainManager.pinLockoutAccount)
             try? KeychainManager.deleteLockoutState(account: KeychainManager.biometricLockoutAccount)
-
-            let add: [CFString: Any] = [
-                kSecClass: kSecClassGenericPassword,
-                kSecAttrService: Constants.keychainService,
-                kSecAttrAccount: "app.installSentinel",
-                kSecValueData: Data([1]),
-                kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
-            ]
-            SecItemAdd(add as CFDictionary, nil)
+        case errSecSuccess:
+            break
+        default:
+            return
         }
+
+        let add: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: Constants.keychainService,
+            kSecAttrAccount: "app.installSentinel",
+            kSecValueData: Data([1]),
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
+        ]
+        SecItemAdd(add as CFDictionary, nil)
     }
 
     private func loadFromUserDefaults() {
