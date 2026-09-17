@@ -159,10 +159,10 @@ final class AuthenticationManager {
         return max(0, Int(lockedUntil.timeIntervalSinceNow.rounded(.toNearestOrAwayFromZero)))
     }
 
-    func setPIN(_ pin: String, confirmPin: String) throws {
+    func setPIN(_ pin: String, confirmPin: String, allowOverwrite: Bool = false) throws {
         guard pin == confirmPin else { throw AuthenticationError.invalidPIN }
         guard pin.count == 6, pin.allSatisfy(\.isNumber) else { throw AuthenticationError.invalidPIN }
-        try KeychainManager.savePIN(pin)
+        try KeychainManager.savePIN(pin, allowOverwrite: allowOverwrite)
         saveCurrentBiometricBaselineIfNeeded()
     }
 

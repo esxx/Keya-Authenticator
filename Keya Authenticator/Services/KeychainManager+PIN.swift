@@ -25,7 +25,11 @@ extension KeychainManager {
 
     // MARK: - PIN Storage
 
-    static func savePIN(_ pin: String) throws {
+    static func savePIN(_ pin: String, allowOverwrite: Bool = false) throws {
+        if !allowOverwrite, pinPresence() != .notSet {
+            throw TokenError.keychainError("A PIN already exists. Please try again.")
+        }
+
         var salt = Data(count: 32)
         let saltResult = salt.withUnsafeMutableBytes { buffer -> OSStatus in
             guard let ptr = buffer.baseAddress else { return errSecParam }
@@ -39,22 +43,23 @@ extension KeychainManager {
         let pinData = PINData(salt: salt, hash: hash, iterations: pinIterations)
         let encoded = try JSONEncoder().encode(pinData)
 
-        let deleteQuery: [String: Any] = [
+        let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: pinAccount,
         ]
-        SecItemDelete(deleteQuery as CFDictionary)
-
-        let addQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: pinAccount,
-            kSecAttrAccessible as String: accessibility,
-            kSecValueData as String: encoded,
-        ]
-        guard SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess else {
-            throw TokenError.keychainError("Your PIN couldn't be saved. Please try again.")
+        let updateStatus = SecItemUpdate(query as CFDictionary, [kSecValueData as String: encoded] as CFDictionary)
+        if updateStatus == errSecItemNotFound {
+            var addQuery = query
+            addQuery[kSecAttrAccessible as String] = accessibility
+            addQuery[kSecValueData as String] = encoded
+            guard SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess else {
+                throw TokenError.keychainError("Your PIN couldn't be saved. Please try again.")
+            }
+        } else {
+            guard updateStatus == errSecSuccess else {
+                throw TokenError.keychainError("Your PIN couldn't be saved. Please try again.")
+            }
         }
     }
 
@@ -78,7 +83,9 @@ extension KeychainManager {
         return constantTimeCompare(candidateHash, pinData.hash)
     }
 
-    static func isPINSet() -> Bool {
+    enum PINPresence { case set, notSet, unknown }
+
+    static func pinPresence() -> PINPresence {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -86,7 +93,15 @@ extension KeychainManager {
             kSecMatchLimit as String: kSecMatchLimitOne,
         ]
         var result: AnyObject?
-        return SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess
+        switch SecItemCopyMatching(query as CFDictionary, &result) {
+        case errSecSuccess: return .set
+        case errSecItemNotFound: return .notSet
+        default: return .unknown
+        }
+    }
+
+    static func isPINSet() -> Bool {
+        pinPresence() != .notSet
     }
 
     static func deletePIN() throws {
@@ -106,22 +121,23 @@ extension KeychainManager {
     static func saveLockoutState(_ state: LockoutState, account: String = "pin_lockout_state") throws {
         let encoded = try JSONEncoder().encode(state)
 
-        let deleteQuery: [String: Any] = [
+        let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
         ]
-        SecItemDelete(deleteQuery as CFDictionary)
-
-        let addQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: account,
-            kSecAttrAccessible as String: accessibility,
-            kSecValueData as String: encoded,
-        ]
-        guard SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess else {
-            throw TokenError.keychainError("Security state couldn't be saved. Please try again.")
+        let updateStatus = SecItemUpdate(query as CFDictionary, [kSecValueData as String: encoded] as CFDictionary)
+        if updateStatus == errSecItemNotFound {
+            var addQuery = query
+            addQuery[kSecAttrAccessible as String] = accessibility
+            addQuery[kSecValueData as String] = encoded
+            guard SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess else {
+                throw TokenError.keychainError("Security state couldn't be saved. Please try again.")
+            }
+        } else {
+            guard updateStatus == errSecSuccess else {
+                throw TokenError.keychainError("Security state couldn't be saved. Please try again.")
+            }
         }
     }
 

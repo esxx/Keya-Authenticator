@@ -87,7 +87,11 @@ struct PINSetupSheet: View {
                     let result = try authenticationManager.authenticateWithPIN(currentPIN)
                     biometricChanged = (result == .successBiometricChanged)
                 }
-                try authenticationManager.setPIN(newPIN, confirmPin: confirmPIN)
+                try authenticationManager.setPIN(
+                    newPIN,
+                    confirmPin: confirmPIN,
+                    allowOverwrite: mode == .changeExisting
+                )
                 await MainActor.run {
                     onComplete(true, biometricChanged)
                     dismiss()

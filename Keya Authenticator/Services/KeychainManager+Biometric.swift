@@ -8,21 +8,18 @@ extension KeychainManager {
     private static let biometricFingerprintAccount = "biometric_fingerprint"
 
     static func saveBiometricFingerprint(_ fingerprint: Data) {
-        let deleteQuery: [String: Any] = [
+        let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: biometricFingerprintAccount,
         ]
-        SecItemDelete(deleteQuery as CFDictionary)
-
-        let addQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: biometricFingerprintAccount,
-            kSecAttrAccessible as String: accessibility,
-            kSecValueData as String: fingerprint,
-        ]
-        SecItemAdd(addQuery as CFDictionary, nil)
+        let updateStatus = SecItemUpdate(query as CFDictionary, [kSecValueData as String: fingerprint] as CFDictionary)
+        if updateStatus == errSecItemNotFound {
+            var addQuery = query
+            addQuery[kSecAttrAccessible as String] = accessibility
+            addQuery[kSecValueData as String] = fingerprint
+            SecItemAdd(addQuery as CFDictionary, nil)
+        }
     }
 
     static func loadBiometricFingerprint() -> Data? {
@@ -63,22 +60,23 @@ extension KeychainManager {
     static func saveSecuritySettings(_ settings: SecuritySettings) throws {
         let encoded = try JSONEncoder().encode(settings)
 
-        let deleteQuery: [String: Any] = [
+        let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: securitySettingsAccount,
         ]
-        SecItemDelete(deleteQuery as CFDictionary)
-
-        let addQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: securitySettingsAccount,
-            kSecAttrAccessible as String: accessibility,
-            kSecValueData as String: encoded,
-        ]
-        guard SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess else {
-            throw TokenError.keychainError("Failed to save security settings.")
+        let updateStatus = SecItemUpdate(query as CFDictionary, [kSecValueData as String: encoded] as CFDictionary)
+        if updateStatus == errSecItemNotFound {
+            var addQuery = query
+            addQuery[kSecAttrAccessible as String] = accessibility
+            addQuery[kSecValueData as String] = encoded
+            guard SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess else {
+                throw TokenError.keychainError("Failed to save security settings.")
+            }
+        } else {
+            guard updateStatus == errSecSuccess else {
+                throw TokenError.keychainError("Failed to save security settings.")
+            }
         }
     }
 
