@@ -3,7 +3,6 @@ import SwiftUI
 struct PINSetupSheet: View {
     let mode: AppLockSettingsView.PINSetupMode
     let authenticationManager: AuthenticationManager
-    @Binding var currentPIN: String
     @Binding var newPIN: String
     @Binding var confirmPIN: String
     @Binding var errorMessage: String?
@@ -15,10 +14,6 @@ struct PINSetupSheet: View {
         NavigationStack {
             Form {
                 Section {
-                    if mode == .changeExisting {
-                        SecureField("Current PIN", text: $currentPIN)
-                            .keyboardType(.numberPad)
-                    }
                     SecureField("New PIN", text: $newPIN)
                         .keyboardType(.numberPad)
                     SecureField("Confirm", text: $confirmPIN)
@@ -71,10 +66,6 @@ struct PINSetupSheet: View {
 
     private var isSaveDisabled: Bool {
         let newPINInvalid = newPIN.count != 6 || !newPIN.allSatisfy(\.isNumber)
-        if mode == .changeExisting {
-            return currentPIN.isEmpty || newPIN.isEmpty || confirmPIN.isEmpty
-                || newPIN != confirmPIN || newPINInvalid
-        }
         return newPIN.isEmpty || confirmPIN.isEmpty || newPIN != confirmPIN || newPINInvalid
     }
 
@@ -82,11 +73,7 @@ struct PINSetupSheet: View {
         guard !isSaveDisabled else { return }
         Task {
             do {
-                var biometricChanged = false
-                if mode == .changeExisting {
-                    let result = try authenticationManager.authenticateWithPIN(currentPIN)
-                    biometricChanged = (result == .successBiometricChanged)
-                }
+                let biometricChanged = mode == .changeExisting && authenticationManager.hasBiometricFingerprintChanged
                 try authenticationManager.setPIN(
                     newPIN,
                     confirmPin: confirmPIN,

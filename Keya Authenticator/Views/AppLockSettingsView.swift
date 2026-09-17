@@ -5,10 +5,8 @@ struct AppLockSettingsView: View {
     @Bindable var authenticationManager: AuthenticationManager
     @Bindable var settings: AppSettings
 
-    @State private var showingPINSetup = false
-    @State private var pinSetupMode: PINSetupMode = .setNew
+    @State private var pinSetupPresentation: PINSetupPresentation?
     @State private var showingPINVerify = false
-    @State private var currentPIN = ""
     @State private var newPIN = ""
     @State private var confirmPIN = ""
     @State private var pinErrorMessage: String?
@@ -19,6 +17,11 @@ struct AppLockSettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     enum PINSetupMode { case setNew, changeExisting }
+
+    struct PINSetupPresentation: Identifiable {
+        let id = UUID()
+        let mode: PINSetupMode
+    }
 
     var body: some View {
         List {
@@ -31,8 +34,7 @@ struct AppLockSettingsView: View {
 
                 if settings.isAuthenticationEnabled, KeychainManager.isPINSet() {
                     Button("Change PIN") {
-                        pinSetupMode = .changeExisting
-                        showingPINSetup = true
+                        pinSetupPresentation = PINSetupPresentation(mode: .changeExisting)
                     }
                     .foregroundColor(.blue)
                     .listRowBackground(Constants.Colors.background)
@@ -99,17 +101,20 @@ struct AppLockSettingsView: View {
         } message: {
             Text(biometricErrorMessage ?? "")
         }
-        .sheet(isPresented: $showingPINSetup) {
+        .sheet(item: $pinSetupPresentation, onDismiss: {
+            newPIN = ""
+            confirmPIN = ""
+            pinErrorMessage = nil
+        }) { presentation in
             PINSetupSheet(
-                mode: pinSetupMode,
+                mode: presentation.mode,
                 authenticationManager: authenticationManager,
-                currentPIN: $currentPIN,
                 newPIN: $newPIN,
                 confirmPIN: $confirmPIN,
                 errorMessage: $pinErrorMessage
             ) { success, biometricChanged in
                 if success {
-                    if pinSetupMode == .setNew {
+                    if presentation.mode == .setNew {
                         settings.isAuthenticationEnabled = true
                     }
                     if biometricChanged {
@@ -118,11 +123,7 @@ struct AppLockSettingsView: View {
                         authenticationManager.clearBiometricFingerprint()
                     }
                 }
-                showingPINSetup = false
-                currentPIN = ""
-                newPIN = ""
-                confirmPIN = ""
-                pinErrorMessage = nil
+                pinSetupPresentation = nil
             }
         }
         .sheet(isPresented: $showingPINVerify) {
@@ -155,8 +156,7 @@ struct AppLockSettingsView: View {
             set: { newValue in
                 if newValue {
                     if !KeychainManager.isPINSet() {
-                        pinSetupMode = .setNew
-                        showingPINSetup = true
+                        pinSetupPresentation = PINSetupPresentation(mode: .setNew)
                     } else {
                         settings.isAuthenticationEnabled = true
                     }
