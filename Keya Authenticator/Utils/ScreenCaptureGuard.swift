@@ -6,6 +6,12 @@ final class ScreenCaptureGuard {
     private var observer: (any NSObjectProtocol)?
 
     init() {
+        #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-UITestIgnoreScreenCapture") {
+                isCapturing = false
+                return
+            }
+        #endif
         isCapturing = UIScreen.main.isCaptured
         observer = NotificationCenter.default.addObserver(
             forName: UIScreen.capturedDidChangeNotification,

@@ -35,6 +35,20 @@
                ReferencedContainer = "container:Keya Authenticator.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "46DD00082F71DA2E00839783"
+               BuildableName = "Keya AuthenticatorUITests.xctest"
+               BlueprintName = "Keya AuthenticatorUITests"
+               ReferencedContainer = "container:Keya Authenticator.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -46,6 +60,9 @@
          <TestPlanReference
             reference = "container:Keya Authenticator/Keya Authenticator.xctestplan"
             default = "YES">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Keya Authenticator/Keya Authenticator UI.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>

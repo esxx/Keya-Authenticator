@@ -1,0 +1,28 @@
+{
+  "configurations" : [
+    {
+      "id" : "2F0B6E1A-7C3D-4E5F-9A1B-3C4D5E6F7A8B",
+      "name" : "UI Tests",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Keya Authenticator.xcodeproj",
+      "identifier" : "460FE18A2F71DA2E00839783",
+      "name" : "Keya Authenticator"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Keya Authenticator.xcodeproj",
+        "identifier" : "46DD00082F71DA2E00839783",
+        "name" : "Keya AuthenticatorUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

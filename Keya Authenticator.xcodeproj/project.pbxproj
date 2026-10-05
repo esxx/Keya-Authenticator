@@ -39,6 +39,13 @@
 			remoteGlobalIDString = 460FE18A2F71DA2E00839783;
 			remoteInfo = "Keya Authenticator";
 		};
+		46DD00062F71DA2E00839783 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 460FE1832F71DA2E00839783 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 460FE18A2F71DA2E00839783;
+			remoteInfo = "Keya Authenticator";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -63,6 +70,7 @@
 		460FE1A42F71DB0A00839783 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		460FE1A62F71DB1500839783 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		46AA00012F71DA2E00839783 /* Keya AuthenticatorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Keya AuthenticatorTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		46DD00012F71DA2E00839783 /* Keya AuthenticatorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Keya AuthenticatorUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AF4561661DA4E77C0326C7D /* TokenError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TokenError.swift; path = "Keya Authenticator/Models/TokenError.swift"; sourceTree = SOURCE_ROOT; };
 		A2F0D9FF7FBBF6C430735AB4 /* String+Base32.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "String+Base32.swift"; path = "Keya Authenticator/Utils/Extensions/String+Base32.swift"; sourceTree = SOURCE_ROOT; };
 		A56E80C0A7B25F37BE473A01 /* CredentialProviderViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CredentialProviderViewController.swift; sourceTree = "<group>"; };
@@ -100,6 +108,11 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		46DD00022F71DA2E00839783 /* UITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = UITests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +136,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		46AA00042F71DA2E00839783 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		46DD00042F71DA2E00839783 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -155,6 +175,7 @@
 			children = (
 				460FE18D2F71DA2F00839783 /* Keya Authenticator */,
 				46AA00022F71DA2E00839783 /* Tests */,
+				46DD00022F71DA2E00839783 /* UITests */,
 				460FE19F2F71DAF000839783 /* Frameworks */,
 				460FE18C2F71DA2F00839783 /* Products */,
 				16F7847384A2B0A51D2041E7 /* CredentialProviderExtension */,
@@ -174,6 +195,7 @@
 			children = (
 				460FE18B2F71DA2F00839783 /* Keya Authenticator.app */,
 				46AA00012F71DA2E00839783 /* Keya AuthenticatorTests.xctest */,
+				46DD00012F71DA2E00839783 /* Keya AuthenticatorUITests.xctest */,
 				E85A4517458D969C283DB4FD /* CredentialProviderExtension.appex */,
 			);
 			name = Products;
@@ -246,6 +268,27 @@
 			productReference = 46AA00012F71DA2E00839783 /* Keya AuthenticatorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		46DD00082F71DA2E00839783 /* Keya AuthenticatorUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 46DD00092F71DA2E00839783 /* Build configuration list for PBXNativeTarget "Keya AuthenticatorUITests" */;
+			buildPhases = (
+				46DD00032F71DA2E00839783 /* Sources */,
+				46DD00042F71DA2E00839783 /* Frameworks */,
+				46DD00052F71DA2E00839783 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				46DD00072F71DA2E00839783 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				46DD00022F71DA2E00839783 /* UITests */,
+			);
+			name = "Keya AuthenticatorUITests";
+			productName = "Keya AuthenticatorUITests";
+			productReference = 46DD00012F71DA2E00839783 /* Keya AuthenticatorUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		5A7FF73FE3AD6B373EB83E3B /* CredentialProviderExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7AEFB84C86C326E3981A5648 /* Build configuration list for PBXNativeTarget "CredentialProviderExtension" */;
@@ -280,6 +323,10 @@
 						CreatedOnToolsVersion = 26.3;
 						TestTargetID = 460FE18A2F71DA2E00839783;
 					};
+					46DD00082F71DA2E00839783 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 460FE18A2F71DA2E00839783;
+					};
 				};
 			};
 			buildConfigurationList = 460FE1862F71DA2E00839783 /* Build configuration list for PBXProject "Keya Authenticator" */;
@@ -303,6 +350,7 @@
 			targets = (
 				460FE18A2F71DA2E00839783 /* Keya Authenticator */,
 				46AA00082F71DA2E00839783 /* Keya AuthenticatorTests */,
+				46DD00082F71DA2E00839783 /* Keya AuthenticatorUITests */,
 				5A7FF73FE3AD6B373EB83E3B /* CredentialProviderExtension */,
 			);
 		};
@@ -317,6 +365,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		46AA00052F71DA2E00839783 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		46DD00052F71DA2E00839783 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -388,6 +443,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		46DD00032F71DA2E00839783 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F068DE3A05F80F13FA6E1BAC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -411,6 +473,11 @@
 			isa = PBXTargetDependency;
 			target = 460FE18A2F71DA2E00839783 /* Keya Authenticator */;
 			targetProxy = 46AA00062F71DA2E00839783 /* PBXContainerItemProxy */;
+		};
+		46DD00072F71DA2E00839783 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 460FE18A2F71DA2E00839783 /* Keya Authenticator */;
+			targetProxy = 46DD00062F71DA2E00839783 /* PBXContainerItemProxy */;
 		};
 		F1703762A40514B0204AC66A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -654,6 +721,42 @@
 			};
 			name = Release;
 		};
+		46DD000A2F71DA2E00839783 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ee.exx.KeyaAuthenticator.UITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = "Keya Authenticator";
+			};
+			name = Debug;
+		};
+		46DD000B2F71DA2E00839783 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ee.exx.KeyaAuthenticator.UITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = "Keya Authenticator";
+			};
+			name = Release;
+		};
 		8342C4D23B58A4BD64BB9D44 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -741,6 +844,15 @@
 			buildConfigurations = (
 				46AA000A2F71DA2E00839783 /* Debug */,
 				46AA000B2F71DA2E00839783 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		46DD00092F71DA2E00839783 /* Build configuration list for PBXNativeTarget "Keya AuthenticatorUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				46DD000A2F71DA2E00839783 /* Debug */,
+				46DD000B2F71DA2E00839783 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
