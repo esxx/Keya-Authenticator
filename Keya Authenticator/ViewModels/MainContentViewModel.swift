@@ -21,6 +21,7 @@ final class MainContentViewModel {
     var tokenPendingDelete: Token?
     var showBackupNudge = false
     var showExportSheet = false
+    var showingPINAuthForBackupExport = false
     var operationErrorMessage: String?
 
     // MARK: - Private State
@@ -134,6 +135,7 @@ final class MainContentViewModel {
         selectedTokenForQR = nil
         tokenPendingDelete = nil
         showExportSheet = false
+        showingPINAuthForBackupExport = false
         showBackupNudge = false
     }
 
@@ -183,7 +185,11 @@ final class MainContentViewModel {
     func handleBackupExport() {
         settings.backupNudgeCount += 1
         showBackupNudge = false
-        showExportSheet = true
+        if settings.isAuthenticationEnabled, KeychainManager.isPINSet() {
+            showingPINAuthForBackupExport = true
+        } else {
+            showExportSheet = true
+        }
     }
 
     // MARK: - Copy to Clipboard

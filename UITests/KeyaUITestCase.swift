@@ -25,7 +25,20 @@ class KeyaUITestCase: XCTestCase {
         }
     }
 
-    func addToken(issuer: String, account: String, secret: String) {
+    func startFromFreshVault() throws {
+        try reachMainScreen()
+        openSettings(scrollingTo: "Delete all data")
+        button(containing: "Delete all data").tap()
+        if app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 3) {
+            enterPIN()
+        }
+        let confirm = app.alerts["Delete all data?"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5), app.debugDescription)
+        confirm.buttons["Delete"].tap()
+        try reachMainScreen()
+    }
+
+    func addToken(issuer: String, account: String, secret: String, dismissBackupNudge: Bool = true) {
         app.buttons["Add"].tap()
         dismissSystemAlertIfPresent()
 
@@ -56,7 +69,7 @@ class KeyaUITestCase: XCTestCase {
         }
 
         let backupNudge = app.alerts["Back up your tokens"]
-        if backupNudge.waitForExistence(timeout: 3) {
+        if dismissBackupNudge, backupNudge.waitForExistence(timeout: 3) {
             backupNudge.buttons["Later"].tap()
         }
     }

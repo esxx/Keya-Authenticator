@@ -124,6 +124,14 @@ struct MainContentView: View {
                         onResetRequested: onResetRequested
                     )
                 }
+                .sheet(isPresented: $viewModel.showingPINAuthForBackupExport) {
+                    PINAuthSheet(authenticationManager: viewModel.authenticationManager) {
+                        viewModel.showExportSheet = true
+                        viewModel.showingPINAuthForBackupExport = false
+                    } onCancel: {
+                        viewModel.showingPINAuthForBackupExport = false
+                    }
+                }
                 .sheet(isPresented: $showingPINAuthForExport) {
                     PINAuthSheet(authenticationManager: viewModel.authenticationManager) {
                         if let token = tokenPendingPINAuth {
