@@ -152,6 +152,20 @@ final class TokenStoreTests: XCTestCase {
         XCTAssertEqual(store.tokens.first?.name, "Keep")
     }
 
+    func testUpdateChangingOneTokenKeepsAllOthers() throws {
+        let tokens = (0 ..< 5).map { makeToken(name: "T\($0)") }
+        try store.update(tokens)
+
+        var changed = store.tokens
+        changed[2].isFavorite = true
+        try store.update(changed)
+
+        let reloaded = TokenStore()
+        try reloaded.load()
+        XCTAssertEqual(Set(reloaded.tokens.map(\.id)), Set(tokens.map(\.id)))
+        XCTAssertEqual(reloaded.tokens.filter(\.isFavorite).map(\.id), [changed[2].id])
+    }
+
     func testDeleteAllEmptiesStore() throws {
         try store.update([makeToken(name: "A"), makeToken(name: "B")])
         store.deleteAll()

@@ -34,6 +34,28 @@ final class KeychainMigrationTests: XCTestCase {
         )
     }
 
+    // MARK: - saveToken writes in place
+
+    func testSaveToken_sameIDUpdatesExistingItemInPlace() throws {
+        var token = makeToken(name: "Before")
+        try KeychainManager.saveToken(token)
+        token.name = "After"
+        try KeychainManager.saveToken(token)
+
+        let loaded = try KeychainManager.loadAllTokens()
+        XCTAssertEqual(loaded.count, 1)
+        XCTAssertEqual(loaded.first?.id, token.id)
+        XCTAssertEqual(loaded.first?.name, "After")
+    }
+
+    func testSaveToken_newIDCreatesItem() throws {
+        let token = makeToken()
+        try KeychainManager.saveToken(token)
+
+        let loaded = try KeychainManager.loadAllTokens()
+        XCTAssertEqual(loaded.map(\.id), [token.id])
+    }
+
     // MARK: - Round-trip
 
     func testMigration_allTokensSurviveIntact() throws {

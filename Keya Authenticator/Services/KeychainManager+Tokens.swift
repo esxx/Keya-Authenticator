@@ -10,23 +10,23 @@ extension KeychainManager {
         encoder.dateEncodingStrategy = .iso8601
         let tokenData = try encoder.encode(token)
 
-        let deleteQuery: [String: Any] = [
+        let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: token.id.uuidString,
         ]
-        SecItemDelete(deleteQuery as CFDictionary)
-
-        let addQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: token.id.uuidString,
-            kSecAttrAccessible as String: accessibility,
-            kSecValueData as String: tokenData,
-        ]
-        let status = SecItemAdd(addQuery as CFDictionary, nil)
-        guard status == errSecSuccess else {
-            throw TokenError.keychainError(String(localized: "Your token couldn't be saved. Please try again."))
+        let updateStatus = SecItemUpdate(query as CFDictionary, [kSecValueData as String: tokenData] as CFDictionary)
+        if updateStatus == errSecItemNotFound {
+            var addQuery = query
+            addQuery[kSecAttrAccessible as String] = accessibility
+            addQuery[kSecValueData as String] = tokenData
+            guard SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess else {
+                throw TokenError.keychainError(String(localized: "Your token couldn't be saved. Please try again."))
+            }
+        } else {
+            guard updateStatus == errSecSuccess else {
+                throw TokenError.keychainError(String(localized: "Your token couldn't be saved. Please try again."))
+            }
         }
     }
 
@@ -69,24 +69,6 @@ extension KeychainManager {
         }
 
         return allTokens.sorted { $0.createdAt < $1.createdAt }
-    }
-
-    static func updateToken(_ token: Token) throws {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        let tokenData = try encoder.encode(token)
-
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service,
-            kSecAttrAccount as String: token.id.uuidString,
-        ]
-        let attributes: [String: Any] = [kSecValueData as String: tokenData]
-        let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
-        if status != errSecSuccess {
-            try deleteToken(id: token.id)
-            try saveToken(token)
-        }
     }
 
     static func deleteToken(id: UUID) throws {
