@@ -131,7 +131,7 @@ struct AddTokenView: View {
             } message: {
                 let n = viewModel.importSkippedCount
                 Text(
-                    "\(n) token\(n == 1 ? "" : "s") could not be imported because the data was missing or invalid. The remaining tokens were imported successfully."
+                    "\(n) tokens could not be imported because the data was missing or invalid. The remaining tokens were imported successfully."
                 )
             }
             .alert("Duplicate token", isPresented: Binding(

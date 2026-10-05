@@ -490,7 +490,7 @@ struct PINAuthSheet: View {
                 lockoutSecondsRemaining = seconds
             }
         } catch {
-            pinError = "PIN verification failed"
+            pinError = String(localized: "PIN verification failed. Please try again.")
             pinText = ""
             shake()
         }

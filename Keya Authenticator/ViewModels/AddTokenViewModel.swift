@@ -138,7 +138,7 @@ final class AddTokenViewModel {
             finishCreatingToken(token)
         } catch {
             ClipboardManager.shared.provideHapticFeedback(.error)
-            errorMessage = "Failed to create token: \(error.localizedDescription)"
+            errorMessage = String(localized: "Failed to create token: \(error.localizedDescription)")
             isAddingToken = false
         }
     }
@@ -154,7 +154,7 @@ final class AddTokenViewModel {
             shouldDismiss = true
         } catch {
             ClipboardManager.shared.provideHapticFeedback(.error)
-            errorMessage = "Failed to create token: \(error.localizedDescription)"
+            errorMessage = String(localized: "Failed to create token: \(error.localizedDescription)")
         }
         isAddingToken = false
     }
@@ -164,7 +164,9 @@ final class AddTokenViewModel {
             throw NSError(
                 domain: "TokenError",
                 code: 1,
-                userInfo: [NSLocalizedDescriptionKey: "Invalid secret"]
+                userInfo: [
+                    NSLocalizedDescriptionKey: String(localized: "Invalid Base32 secret. Check the key and try again."),
+                ]
             )
         }
         return Token(
@@ -489,7 +491,7 @@ final class AddTokenViewModel {
             return .failure(NSError(
                 domain: "Gallery",
                 code: 1,
-                userInfo: [NSLocalizedDescriptionKey: "Could not load the selected photo."]
+                userInfo: [NSLocalizedDescriptionKey: String(localized: "Could not load the selected photo.")]
             ))
         }
         let detector = CIDetector(
@@ -501,7 +503,7 @@ final class AddTokenViewModel {
             return .failure(NSError(
                 domain: "Gallery",
                 code: 2,
-                userInfo: [NSLocalizedDescriptionKey: "No QR code found in the selected photo."]
+                userInfo: [NSLocalizedDescriptionKey: String(localized: "No QR code found in the selected photo.")]
             ))
         }
         return .success(qr)

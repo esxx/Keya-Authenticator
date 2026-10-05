@@ -82,7 +82,7 @@ final class AuthenticationManager {
         do {
             let success = try await context.evaluatePolicy(
                 .deviceOwnerAuthenticationWithBiometrics,
-                localizedReason: "Unlock your 2FA tokens"
+                localizedReason: String(localized: "Unlock your 2FA tokens")
             )
             guard success else {
                 throw AuthenticationError.biometricFailed
@@ -212,22 +212,24 @@ extension AuthenticationManager.AuthenticationError {
     var localizedDescription: String {
         switch self {
         case .invalidPIN:
-            return "Incorrect PIN"
+            return String(localized: "Incorrect PIN")
         case .noPINSet:
-            return "No PIN is set"
+            return String(localized: "No PIN is set")
         case let .pinLocked(until):
             let seconds = Int(until.timeIntervalSinceNow.rounded(.up))
             return AuthenticationManager.lockoutMessage(seconds: max(0, seconds))
         case .biometricFailed:
-            return "Biometric authentication failed"
+            return String(localized: "Biometric authentication failed")
         case .biometricNotAvailable:
-            return "Biometric authentication is not available"
+            return String(localized: "Biometric authentication is not available")
         case .biometricLockedWithGuidance:
-            return "Biometric authentication is locked. Please unlock your device with your passcode and try again."
+            return String(
+                localized: "Biometric authentication is locked. Please unlock your device with your passcode and try again."
+            )
         case .biometricFingerprintChanged:
-            return "Biometric database changed. Please authenticate with PIN first."
+            return String(localized: "Biometric database changed. Please authenticate with PIN first.")
         case .userCancelled:
-            return "Authentication cancelled"
+            return String(localized: "Authentication cancelled")
         }
     }
 }

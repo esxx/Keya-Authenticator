@@ -71,11 +71,13 @@ extension KeychainManager {
             addQuery[kSecAttrAccessible as String] = accessibility
             addQuery[kSecValueData as String] = encoded
             guard SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess else {
-                throw TokenError.keychainError("Failed to save security settings.")
+                throw TokenError
+                    .keychainError(String(localized: "Security settings could not be saved. Please try again."))
             }
         } else {
             guard updateStatus == errSecSuccess else {
-                throw TokenError.keychainError("Failed to save security settings.")
+                throw TokenError
+                    .keychainError(String(localized: "Security settings could not be saved. Please try again."))
             }
         }
     }

@@ -119,7 +119,7 @@ struct PINVerifySheet: View {
             pinText = ""
             isVerifying = false
         } catch {
-            errorMessage = "PIN verification failed"
+            errorMessage = String(localized: "PIN verification failed. Please try again.")
             pinText = ""
             isVerifying = false
         }

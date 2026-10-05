@@ -189,16 +189,31 @@ struct AppLockSettingsView: View {
                     if let laError = error as? LAError {
                         switch laError.code {
                         case .biometryNotAvailable:
-                            biometricErrorMessage = "\(Constants.appName) doesn't have permission to use \(authenticationManager.biometricDisplayName). Tap 'Open Settings' to allow it."
+                            biometricErrorMessage =
+                                String(
+                                    localized: "\(Constants.appName) doesn't have permission to use \(authenticationManager.biometricDisplayName). Tap 'Open Settings' to allow it."
+                                )
                         case .biometryNotEnrolled:
-                            biometricErrorMessage = "\(authenticationManager.biometricDisplayName) is not set up on this device. Go to iOS Settings → \(authenticationManager.biometricDisplayName) & Passcode to enroll."
+                            biometricErrorMessage =
+                                String(
+                                    localized: "\(authenticationManager.biometricDisplayName) is not set up on this device. Go to iOS Settings → \(authenticationManager.biometricDisplayName) & Passcode to enroll."
+                                )
                         case .passcodeNotSet:
-                            biometricErrorMessage = "A device passcode is required to use \(authenticationManager.biometricDisplayName). Set one in iOS Settings → Face ID & Passcode."
+                            biometricErrorMessage =
+                                String(
+                                    localized: "A device passcode is required to use \(authenticationManager.biometricDisplayName). Set one in iOS Settings → \(authenticationManager.biometricDisplayName) & Passcode."
+                                )
                         default:
-                            biometricErrorMessage = "\(authenticationManager.biometricDisplayName) is not available right now."
+                            biometricErrorMessage =
+                                String(
+                                    localized: "\(authenticationManager.biometricDisplayName) is not available right now."
+                                )
                         }
                     } else {
-                        biometricErrorMessage = "\(authenticationManager.biometricDisplayName) is not available right now."
+                        biometricErrorMessage =
+                            String(
+                                localized: "\(authenticationManager.biometricDisplayName) is not available right now."
+                            )
                     }
                     showingBiometricError = true
                     return
@@ -207,7 +222,9 @@ struct AppLockSettingsView: View {
                     do {
                         try await ctx.evaluatePolicy(
                             .deviceOwnerAuthenticationWithBiometrics,
-                            localizedReason: "Confirm to enable \(authenticationManager.biometricDisplayName) unlock"
+                            localizedReason: String(
+                                localized: "Confirm to enable \(authenticationManager.biometricDisplayName) unlock"
+                            )
                         )
                         await MainActor.run {
                             settings.useBiometricAuthentication = true

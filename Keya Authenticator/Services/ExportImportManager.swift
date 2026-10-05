@@ -78,9 +78,7 @@ final class ExportImportManager {
         if let recognisedFormatError {
             throw recognisedFormatError
         }
-        throw NSError(domain: "Import", code: 10, userInfo: [
-            NSLocalizedDescriptionKey: "Unrecognised format. Supported: otpauth:// URI list, Aegis/2FAS JSON, Keya Authenticator JSON backup.",
-        ])
+        throw ExportImportError.unsupportedFormat
     }
 
     // MARK: - OTP Auth URI Parser

@@ -10,7 +10,7 @@ enum KeychainManager {
 
     static let accessibility = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
 
-    static let biometricPrompt = "Unlock your 2FA tokens"
+    static let biometricPrompt = String(localized: "Unlock your 2FA tokens")
 
     // MARK: - Lockout Account Keys
 

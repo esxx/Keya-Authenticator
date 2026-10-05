@@ -107,7 +107,7 @@ extension KeychainManager {
             return
         }
         guard listStatus == errSecSuccess, let items = result as? [[String: Any]] else {
-            throw TokenError.keychainError("Your tokens couldn't be deleted. Please try again.")
+            throw TokenError.keychainError(String(localized: "Your tokens couldn't be deleted. Please try again."))
         }
 
         let reserved = Token.reservedKeychainAccounts
@@ -122,7 +122,7 @@ extension KeychainManager {
             ]
             let status = SecItemDelete(deleteQuery as CFDictionary)
             guard status == errSecSuccess || status == errSecItemNotFound else {
-                throw TokenError.keychainError("Your tokens couldn't be deleted. Please try again.")
+                throw TokenError.keychainError(String(localized: "Your tokens couldn't be deleted. Please try again."))
             }
         }
     }

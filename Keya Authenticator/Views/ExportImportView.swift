@@ -309,7 +309,7 @@ struct MigrationQRExportView: View {
     private func generateMigrationQRs() async {
         let allTokens = exportImportManager.tokenStore.tokens
         guard !allTokens.isEmpty else {
-            errorMessage = "No tokens to export"
+            errorMessage = String(localized: "Nothing to export")
             isLoading = false
             return
         }
@@ -573,7 +573,7 @@ struct EncryptedImportPasswordSheet: View {
                 dismiss()
             } catch ExportImportError.wrongPassword {
                 isDecrypting = false
-                errorMessage = "Incorrect password — try again."
+                errorMessage = ExportImportError.wrongPassword.localizedDescription
                 password = ""
             } catch {
                 isDecrypting = false

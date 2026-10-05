@@ -179,13 +179,19 @@ final class CameraManager: NSObject {
                     self?.configureAndStart()
                 } else {
                     DispatchQueue.main.async {
-                        self?.onError?("Camera access is required to scan QR codes. Enable it in Settings.")
+                        self?
+                            .onError?(
+                                String(localized: "Camera access is required to scan QR codes. Enable it in Settings.")
+                            )
                     }
                 }
             }
         case .denied, .restricted:
             DispatchQueue.main.async { [weak self] in
-                self?.onError?("Camera access denied. Enable it in Settings > Privacy > Camera.")
+                self?
+                    .onError?(
+                        String(localized: "Camera access denied. Enable it in Settings > Privacy & Security > Camera.")
+                    )
             }
         @unknown default: break
         }
@@ -284,21 +290,21 @@ final class CameraManager: NSObject {
             session.beginConfiguration()
             guard let device = CameraManager.scanningDevice() else {
                 session.commitConfiguration()
-                DispatchQueue.main.async { self.onError?("No camera available") }
+                DispatchQueue.main.async { self.onError?(String(localized: "No camera available")) }
                 return
             }
             do {
                 let input = try AVCaptureDeviceInput(device: device)
                 guard session.canAddInput(input) else {
                     session.commitConfiguration()
-                    DispatchQueue.main.async { self.onError?("Could not configure camera") }
+                    DispatchQueue.main.async { self.onError?(String(localized: "Could not configure camera")) }
                     return
                 }
                 session.addInput(input)
                 let output = AVCaptureMetadataOutput()
                 guard session.canAddOutput(output) else {
                     session.commitConfiguration()
-                    DispatchQueue.main.async { self.onError?("Could not configure scanner") }
+                    DispatchQueue.main.async { self.onError?(String(localized: "Could not configure scanner")) }
                     return
                 }
                 session.addOutput(output)
@@ -320,7 +326,9 @@ final class CameraManager: NSObject {
                 }
             } catch {
                 session.commitConfiguration()
-                DispatchQueue.main.async { self.onError?("Failed to setup camera: \(error.localizedDescription)") }
+                DispatchQueue.main
+                    .async { self.onError?(String(localized: "Failed to set up camera: \(error.localizedDescription)"))
+                    }
             }
         }
     }
