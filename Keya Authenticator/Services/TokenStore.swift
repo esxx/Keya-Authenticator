@@ -7,6 +7,7 @@ final class TokenStore {
     // MARK: - Properties
 
     private(set) var tokens: [Token] = []
+    private(set) var unreadableTokenCount = 0
 
     private var sortedIDs: [UUID] = []
     private let sortOrderKey = "tokenSortOrder"
@@ -14,7 +15,9 @@ final class TokenStore {
     // MARK: - Load / Clear
 
     func load(using authContext: LAContext? = nil) throws {
-        var loaded = try KeychainManager.loadAllTokens(using: authContext)
+        let result = try KeychainManager.loadAllTokensCountingUnreadable(using: authContext)
+        var loaded = result.tokens
+        unreadableTokenCount = result.unreadable
         applySort(to: &loaded)
         if loaded != tokens {
             tokens = loaded
@@ -156,6 +159,7 @@ final class TokenStore {
         }
         var snapshot = tokens
         tokens = []
+        unreadableTokenCount = 0
         sortedIDs = []
         UserDefaults.standard.removeObject(forKey: sortOrderKey)
         for i in 0 ..< snapshot.count where !snapshot[i].secret.isEmpty {

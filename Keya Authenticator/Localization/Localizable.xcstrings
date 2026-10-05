@@ -5071,6 +5071,40 @@
         }
       }
     },
+    "QR codes couldn't be created for all tokens. Use JSON export instead." : {
+      "localizations" : {
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron crear los QR codes para todos los tokens. Usa la exportación JSON en su lugar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de créer les QR codes pour tous les jetons. Utilisez plutôt l'export JSON."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのトークンのQRコードを作成できませんでした。代わりにJSONでエクスポートしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 토큰의 QR 코드를 만들 수 없습니다. 대신 JSON으로 내보내세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível criar os QR codes para todos os tokens. Use a exportação em JSON."
+          }
+        }
+      }
+    },
     "Save" : {
       "localizations" : {
         "es-419" : {
@@ -5546,6 +5580,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compartilhar QR code"
+          }
+        }
+      }
+    },
+    "Some tokens couldn't be read and aren't shown (%lld). Your other tokens are not affected." : {
+      "localizations" : {
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algunos tokens no se pudieron leer y no se muestran (%lld). Tus otros tokens no se ven afectados."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certains jetons n'ont pas pu être lus et ne sont pas affichés (%lld). Vos autres jetons ne sont pas concernés."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一部のトークンを読み込めなかったため表示されていません（%lld件）。他のトークンには影響ありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일부 토큰을 읽을 수 없어 표시되지 않습니다(%lld개). 다른 토큰에는 영향이 없습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alguns tokens não puderam ser lidos e não são exibidos (%lld). Seus outros tokens não foram afetados."
+          }
+        }
+      }
+    },
+    "Some tokens couldn't be read and won't be included in this backup (%lld)." : {
+      "localizations" : {
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algunos tokens no se pudieron leer y no se incluirán en esta copia de seguridad (%lld)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Certains jetons n'ont pas pu être lus et ne seront pas inclus dans cette sauvegarde (%lld)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一部のトークンを読み込めなかったため、このバックアップには含まれません（%lld件）。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일부 토큰을 읽을 수 없어 이 백업에 포함되지 않습니다(%lld개)."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alguns tokens não puderam ser lidos e não serão incluídos neste backup (%lld)."
           }
         }
       }
@@ -6572,6 +6674,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Token não encontrado"
+          }
+        }
+      }
+    },
+    "Tokens with a time period other than 30 seconds aren't included (%lld). Use JSON export for them." : {
+      "localizations" : {
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los tokens con un período distinto de 30 segundos no se incluyen (%lld). Usa la exportación JSON para ellos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les jetons dont la période n'est pas de 30 secondes ne sont pas inclus (%lld). Utilisez l'export JSON pour ceux-ci."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期間が30秒以外のトークンは含まれていません（%lld件）。それらはJSONでエクスポートしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주기가 30초가 아닌 토큰은 포함되지 않습니다(%lld개). 해당 토큰은 JSON으로 내보내세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tokens com período diferente de 30 segundos não estão incluídos (%lld). Use a exportação em JSON para eles."
           }
         }
       }

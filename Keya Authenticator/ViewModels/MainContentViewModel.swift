@@ -29,6 +29,7 @@ final class MainContentViewModel {
     private var newTokenIDs: Set<UUID> = []
     private var snapshotIDsBeforeAdd: Set<UUID> = []
     private var hotpIncrementInProgress = false
+    private var reportedUnreadableCount = 0
 
     // MARK: - Computed Properties
 
@@ -81,6 +82,13 @@ final class MainContentViewModel {
     func loadTokens() {
         do {
             try tokenStore.load()
+            let unreadable = tokenStore.unreadableTokenCount
+            if unreadable > 0, unreadable != reportedUnreadableCount {
+                reportedUnreadableCount = unreadable
+                operationErrorMessage = String(
+                    localized: "Some tokens couldn't be read and aren't shown (\(unreadable)). Your other tokens are not affected."
+                )
+            }
         } catch {
             operationErrorMessage = error.localizedDescription
         }

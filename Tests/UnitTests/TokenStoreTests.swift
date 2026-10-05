@@ -81,6 +81,23 @@ final class TokenStoreTests: XCTestCase {
         SecItemDelete(deleteQuery as CFDictionary)
     }
 
+    func testLoadCountsUnreadableEntriesInsteadOfHidingThem() throws {
+        try store.update([makeToken(name: "Readable")])
+        let corruptQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: "ee.exx.KeyaAuthenticator",
+            kSecAttrAccount as String: UUID().uuidString,
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            kSecValueData as String: Data("not-json".utf8),
+        ]
+        SecItemAdd(corruptQuery as CFDictionary, nil)
+
+        try store.load()
+
+        XCTAssertEqual(store.tokens.map(\.name), ["Readable"])
+        XCTAssertEqual(store.unreadableTokenCount, 1, "The unreadable entry must be counted so the user can be told")
+    }
+
     // MARK: - Duplicate UUID regression (crash fix)
 
     func testDuplicateUUIDInUpdateDoesNotCrash() throws {

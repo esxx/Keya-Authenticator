@@ -31,6 +31,12 @@ extension KeychainManager {
     }
 
     static func loadAllTokens(using authContext: LAContext? = nil) throws -> [Token] {
+        try loadAllTokensCountingUnreadable(using: authContext).tokens
+    }
+
+    static func loadAllTokensCountingUnreadable(
+        using authContext: LAContext? = nil
+    ) throws -> (tokens: [Token], unreadable: Int) {
         let query = makeQuery(
             matchLimit: kSecMatchLimitAll,
             returnData: true,
@@ -41,7 +47,7 @@ extension KeychainManager {
         let status = SecItemCopyMatching(query as CFDictionary, &result)
 
         if status == errSecItemNotFound {
-            return []
+            return ([], 0)
         }
         guard status == errSecSuccess else {
             throw TokenError
@@ -56,19 +62,23 @@ extension KeychainManager {
         let reservedAccounts = Token.reservedKeychainAccounts
 
         var allTokens: [Token] = []
+        var unreadable = 0
         for item in items {
             if let account = item[kSecAttrAccount as String] as? String,
                reservedAccounts.contains(account)
             {
                 continue
             }
-            guard let data = item[kSecValueData as String] as? Data else { continue }
-            if let token = try? decoder.decode(Token.self, from: data) {
+            if let data = item[kSecValueData as String] as? Data,
+               let token = try? decoder.decode(Token.self, from: data)
+            {
                 allTokens.append(token)
+            } else {
+                unreadable += 1
             }
         }
 
-        return allTokens.sorted { $0.createdAt < $1.createdAt }
+        return (allTokens.sorted { $0.createdAt < $1.createdAt }, unreadable)
     }
 
     static func deleteToken(id: UUID) throws {

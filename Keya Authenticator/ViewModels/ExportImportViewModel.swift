@@ -25,6 +25,10 @@ final class ExportImportViewModel {
         !tokenStore.tokens.isEmpty
     }
 
+    var unreadableTokenCount: Int {
+        tokenStore.unreadableTokenCount
+    }
+
     // MARK: - Initialization
 
     init(tokenStore: TokenStore, settings: AppSettings) {

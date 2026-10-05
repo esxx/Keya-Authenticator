@@ -130,6 +130,14 @@ struct TokenTransferView: View {
             if let err = viewModel.exportError {
                 Text(err).font(.caption).foregroundColor(.red)
             }
+
+            if viewModel.unreadableTokenCount > 0 {
+                Text(
+                    "Some tokens couldn't be read and won't be included in this backup (\(viewModel.unreadableTokenCount))."
+                )
+                .font(.caption).foregroundColor(.orange)
+                .listRowBackground(Constants.Colors.background)
+            }
         } header: {
             Text("Export").textCase(.uppercase)
         }
@@ -197,6 +205,7 @@ struct MigrationQRExportView: View {
     @State private var currentPage = 0
     @State private var isLoading = true
     @State private var errorMessage: String? = nil
+    @State private var excludedCount = 0
 
     var body: some View {
         NavigationStack {
@@ -276,15 +285,37 @@ struct MigrationQRExportView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
-                .padding(.bottom, 24)
+                .padding(.bottom, excludedCount > 0 ? 8 : 24)
+
+            if excludedCount > 0 {
+                Text(excludedNote)
+                    .font(.caption)
+                    .foregroundColor(.orange)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 24)
+            }
         }
+    }
+
+    private var excludedNote: String {
+        String(
+            localized: "Tokens with a time period other than 30 seconds aren't included (\(excludedCount)). Use JSON export for them."
+        )
     }
 
     @MainActor
     private func generateMigrationQRs() async {
-        let tokens = exportImportManager.tokenStore.tokens
-        guard !tokens.isEmpty else {
+        let allTokens = exportImportManager.tokenStore.tokens
+        guard !allTokens.isEmpty else {
             errorMessage = "No tokens to export"
+            isLoading = false
+            return
+        }
+        let tokens = allTokens.filter { $0.type == .hotp || $0.period == 30 }
+        excludedCount = allTokens.count - tokens.count
+        guard !tokens.isEmpty else {
+            errorMessage = excludedNote
             isLoading = false
             return
         }
@@ -310,9 +341,13 @@ struct MigrationQRExportView: View {
                 .replacingOccurrences(of: "/", with: "%2F")
                 .replacingOccurrences(of: "=", with: "%3D")
             let uriString = "otpauth-migration://offline?data=\(urlEncoded)"
-            if let img = QRCodeGenerator.generateQRCode(from: uriString, correctionLevel: "M") {
-                images.append(img)
+            guard let img = QRCodeGenerator.generateQRCode(from: uriString, correctionLevel: "M") else {
+                errorMessage =
+                    String(localized: "QR codes couldn't be created for all tokens. Use JSON export instead.")
+                isLoading = false
+                return
             }
+            images.append(img)
         }
 
         qrImages = images
