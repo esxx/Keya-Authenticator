@@ -15,6 +15,9 @@ final class AppCoordinator {
     var showPrivacyOverlay = false
     private var pendingIncomingURL: URL?
     private var wentToBackground = false
+    #if DEBUG
+        private static var didResetForUITest = false
+    #endif
 
     // MARK: - Child ViewModels
 
@@ -45,6 +48,16 @@ final class AppCoordinator {
     // MARK: - App Lifecycle
 
     func determineInitialState() {
+        #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-UITestResetState"), !Self.didResetForUITest {
+                Self.didResetForUITest = true
+                do {
+                    try authenticationManager.performReset(tokenStore: tokenStore, settings: settings)
+                } catch {
+                    assertionFailure("UI test reset failed: \(error)")
+                }
+            }
+        #endif
         if !KeychainManager.isPINSet() {
             appState = .pinSetup
         } else if settings.isAuthenticationEnabled {

@@ -2,7 +2,7 @@ import XCTest
 
 final class BackupReminderExportUITests: KeyaUITestCase {
     func testExportFromBackupReminderAsksForPIN() throws {
-        try startFromFreshVault()
+        try reachMainScreen()
         addToken(issuer: "NudgeTest", account: "nudge@example.com", secret: "JBSWY3DPEHPK3PXPJBSWY3DP",
                  dismissBackupNudge: false)
 

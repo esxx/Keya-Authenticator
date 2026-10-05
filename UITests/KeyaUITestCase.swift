@@ -8,7 +8,7 @@ class KeyaUITestCase: XCTestCase {
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
-        app.launchArguments = ["-UITestIgnoreScreenCapture"]
+        app.launchArguments = ["-UITestIgnoreScreenCapture", "-UITestResetState"]
         app.launch()
     }
 
@@ -21,24 +21,17 @@ class KeyaUITestCase: XCTestCase {
             enterPIN()
         }
         guard app.buttons["Add"].waitForExistence(timeout: 5) else {
-            throw XCTSkip("Could not reach the token list; the app may be locked with a PIN other than the test PIN")
+            throw XCTSkip("Could not reach the token list; the app may be locked with a PIN other than the test PIN\n\(app.debugDescription)")
         }
     }
 
-    func startFromFreshVault() throws {
-        try reachMainScreen()
-        openSettings(scrollingTo: "Delete all data")
-        button(containing: "Delete all data").tap()
-        if app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 3) {
-            enterPIN()
-        }
-        let confirm = app.alerts["Delete all data?"]
-        XCTAssertTrue(confirm.waitForExistence(timeout: 5), app.debugDescription)
-        confirm.buttons["Delete"].tap()
-        try reachMainScreen()
-    }
-
-    func addToken(issuer: String, account: String, secret: String, dismissBackupNudge: Bool = true) {
+    func addToken(
+        issuer: String,
+        account: String,
+        secret: String,
+        period: String? = nil,
+        dismissBackupNudge: Bool = true
+    ) {
         app.buttons["Add"].tap()
         dismissSystemAlertIfPresent()
 
@@ -54,6 +47,14 @@ class KeyaUITestCase: XCTestCase {
         let accountField = app.textFields["e.g. you@example.com"]
         accountField.tap()
         accountField.typeText(account)
+
+        if let period {
+            button(containing: "Advanced options").tap()
+            let periodField = app.textFields["30"]
+            XCTAssertTrue(periodField.waitForExistence(timeout: 3), app.debugDescription)
+            periodField.tap()
+            periodField.typeText(period)
+        }
 
         let secretField = app.secureTextFields["Base32 encoded key"]
         secretField.tap()
