@@ -3,6 +3,8 @@ import SwiftUI
 struct QRExportView: View {
     @Bindable var viewModel: QRExportViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var uriCopied = false
+    @State private var imagePendingShare: UIImage?
 
     var body: some View {
         NavigationStack {
@@ -50,16 +52,31 @@ struct QRExportView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .background(Color(.tertiarySystemFill))
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .textSelection(.enabled)
+
+                            Button {
+                                ClipboardManager.shared.copyToClipboard(viewModel.otpauthURI, autoClearDelay: 30)
+                                ClipboardManager.shared.provideHapticFeedback(.success)
+                                uriCopied = true
+                            } label: {
+                                Label(
+                                    uriCopied ? LocalizedStringKey("Copied") : LocalizedStringKey("Copy"),
+                                    systemImage: uriCopied ? "checkmark" : "doc.on.doc"
+                                )
+                                .font(.caption.weight(.medium))
+                            }
+                            .task(id: uriCopied) {
+                                guard uriCopied else { return }
+                                try? await Task.sleep(for: .seconds(1.5))
+                                uriCopied = false
+                            }
                         }
                         .padding(.horizontal, 24)
                     }
 
                     if let img = viewModel.qrImage {
-                        ShareLink(
-                            item: Image(uiImage: img),
-                            preview: SharePreview("QR code - \(viewModel.displayName)", image: Image(uiImage: img))
-                        ) {
+                        Button {
+                            imagePendingShare = img
+                        } label: {
                             Label("Share QR code", systemImage: "square.and.arrow.up")
                                 .font(.body.weight(.medium))
                                 .frame(maxWidth: .infinity)
@@ -82,6 +99,7 @@ struct QRExportView: View {
             .background(Constants.Colors.background)
             .navigationTitle("Export")
             .navigationBarTitleDisplayMode(.inline)
+            .confirmingSecretShare($imagePendingShare)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }

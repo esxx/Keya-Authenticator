@@ -206,6 +206,7 @@ struct MigrationQRExportView: View {
     @State private var isLoading = true
     @State private var errorMessage: String? = nil
     @State private var excludedCount = 0
+    @State private var imagePendingShare: UIImage?
 
     var body: some View {
         NavigationStack {
@@ -234,6 +235,7 @@ struct MigrationQRExportView: View {
                 }
             }
             .task { await generateMigrationQRs() }
+            .confirmingSecretShare($imagePendingShare)
         }
     }
 
@@ -258,10 +260,9 @@ struct MigrationQRExportView: View {
                             .background(Color.white)
                             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
-                        ShareLink(
-                            item: Image(uiImage: img),
-                            preview: SharePreview("Keya Authenticator QR code \(index + 1)", image: Image(uiImage: img))
-                        ) {
+                        Button {
+                            imagePendingShare = img
+                        } label: {
                             Label(
                                 "Share QR code",
                                 systemImage: "square.and.arrow.up"

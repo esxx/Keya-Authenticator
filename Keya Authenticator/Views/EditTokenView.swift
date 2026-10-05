@@ -8,6 +8,7 @@ struct EditTokenView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var secretRevealed = false
+    @State private var secretCopied = false
     @State private var showRevealSheet = false
 
     var body: some View {
@@ -95,10 +96,26 @@ struct EditTokenView: View {
                         Text(viewModel.secretDisplay)
                             .font(.system(.caption, design: .monospaced))
                             .foregroundColor(.secondary)
-                            .textSelection(.enabled)
                             .accessibilityHidden(true)
                             .listRowBackground(Constants.Colors.background)
                             .listRowSeparator(.visible)
+                        Button {
+                            ClipboardManager.shared.copyToClipboard(viewModel.secretDisplay, autoClearDelay: 30)
+                            ClipboardManager.shared.provideHapticFeedback(.success)
+                            secretCopied = true
+                        } label: {
+                            Label(
+                                secretCopied ? LocalizedStringKey("Copied") : LocalizedStringKey("Copy"),
+                                systemImage: secretCopied ? "checkmark" : "doc.on.doc"
+                            )
+                        }
+                        .task(id: secretCopied) {
+                            guard secretCopied else { return }
+                            try? await Task.sleep(for: .seconds(1.5))
+                            secretCopied = false
+                        }
+                        .listRowBackground(Constants.Colors.background)
+                        .listRowSeparator(.visible)
                         Button {
                             secretRevealed = false
                         } label: {
