@@ -68,12 +68,12 @@ extension String {
 
         var name: String
         if let colonRange = label.range(of: ":") {
-            name = String(label[colonRange.upperBound...])
+            name = label[colonRange.upperBound...].trimmingCharacters(in: .whitespaces)
             if issuer == nil {
-                issuer = String(label[..<colonRange.lowerBound])
+                issuer = label[..<colonRange.lowerBound].trimmingCharacters(in: .whitespaces)
             }
         } else {
-            name = label
+            name = label.trimmingCharacters(in: .whitespaces)
         }
 
         return (tokenType, secret, name, issuer, algorithm, digits, period, counter)

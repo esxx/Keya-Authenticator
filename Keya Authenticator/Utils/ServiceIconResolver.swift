@@ -252,13 +252,20 @@ enum ServiceIconResolver {
 
     private static func prefixMatch(_ raw: String) -> ServiceInfo? {
         let key = raw.lowercased()
-        return catalog.first(where: { key.hasPrefix($0.key) || $0.key.hasPrefix(key) })?.value
+        guard key.count >= minFuzzyLength else { return nil }
+        return fuzzyKeys.first(where: { key.hasPrefix($0) || $0.hasPrefix(key) }).flatMap { catalog[$0] }
     }
 
     private static func containsMatch(_ raw: String) -> ServiceInfo? {
         let key = raw.lowercased()
-        return catalog.first(where: { key.contains($0.key) || $0.key.contains(key) })?.value
+        guard key.count >= minFuzzyLength else { return nil }
+        return fuzzyKeys.first(where: { key.contains($0) || $0.contains(key) }).flatMap { catalog[$0] }
     }
+
+    private static let minFuzzyLength = 3
+    private static let fuzzyKeys: [String] = catalog.keys
+        .filter { $0.count >= minFuzzyLength }
+        .sorted { $0.count != $1.count ? $0.count > $1.count : $0 < $1 }
 
     // MARK: - Catalog
 

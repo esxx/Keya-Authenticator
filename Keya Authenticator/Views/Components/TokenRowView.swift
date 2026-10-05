@@ -43,7 +43,15 @@ struct TokenRowView: View {
             return (info.brandColor, info.foregroundColor)
         }
         let key = displayIssuer ?? token.name
-        return Self.fallbackPalette[abs(key.hashValue) % Self.fallbackPalette.count]
+        return Self.fallbackPalette[Self.paletteIndex(for: key, count: Self.fallbackPalette.count)]
+    }
+
+    static func paletteIndex(for key: String, count: Int) -> Int {
+        var hash: UInt = 0
+        for scalar in key.unicodeScalars {
+            hash = hash &* 31 &+ UInt(scalar.value)
+        }
+        return Int(hash % UInt(count))
     }
 
     private var monogram: String {

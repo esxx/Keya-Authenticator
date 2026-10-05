@@ -108,4 +108,22 @@ final class ServiceIconResolverTests: XCTestCase {
             "Unknown service should return nil"
         )
     }
+
+    func testResolve_shortCatalogKeysDoNotMatchInsideOtherNames() {
+        XCTAssertNil(ServiceIconResolver.resolve(issuer: "Foxtrot Bank", name: "me"),
+                     "The 'x' key must not give an unrelated issuer the X logo")
+        XCTAssertNil(ServiceIconResolver.resolve(issuer: "Real Estate Portal", name: "me"),
+                     "The 'ea' key must not give an unrelated issuer the EA logo")
+    }
+
+    func testResolve_shortCatalogKeysStillMatchExactly() {
+        XCTAssertNotNil(ServiceIconResolver.resolve(issuer: "X", name: "me"))
+        XCTAssertNotNil(ServiceIconResolver.resolve(issuer: "EA", name: "me"))
+    }
+
+    @MainActor
+    func testAvatarPaletteIndexIsStableAcrossLaunches() {
+        XCTAssertEqual(TokenRowView.paletteIndex(for: "GitHub", count: 8), 3,
+                       "A fixed value proves the index doesn't depend on per-launch hash seeding")
+    }
 }

@@ -188,4 +188,12 @@ final class OTPAuthURITests: XCTestCase {
         XCTAssertFalse(secretValue.localizedCaseInsensitiveContains("%3D"),
                        "Percent-encoded '=' must not appear in secret value: \(secretValue)")
     }
+
+    // MARK: - Scanned link label
+
+    func testScannedLinkTrimsSpaceAfterColon() {
+        let params = "otpauth://totp/Google:%20user@example.com?secret=JBSWY3DPEHPK3PXP".extractOTPParameters()
+        XCTAssertEqual(params?.name, "user@example.com")
+        XCTAssertEqual(params?.issuer, "Google")
+    }
 }
