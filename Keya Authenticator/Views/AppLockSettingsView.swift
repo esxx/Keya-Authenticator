@@ -105,7 +105,7 @@ struct AppLockSettingsView: View {
             newPIN = ""
             confirmPIN = ""
             pinErrorMessage = nil
-        }) { presentation in
+        }, content: { presentation in
             PINSetupSheet(
                 mode: presentation.mode,
                 authenticationManager: authenticationManager,
@@ -125,12 +125,11 @@ struct AppLockSettingsView: View {
                 }
                 pinSetupPresentation = nil
             }
-        }
+        })
         .sheet(isPresented: $showingPINVerify) {
             PINVerifySheet(authenticationManager: authenticationManager) { verified in
                 showingPINVerify = false
                 if verified {
-                    try? authenticationManager.removePIN()
                     settings.isAuthenticationEnabled = false
                 }
             }
