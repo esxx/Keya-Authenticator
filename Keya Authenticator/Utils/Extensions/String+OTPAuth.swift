@@ -153,7 +153,7 @@ private extension String {
             let wireType = Int(tag & 0x7)
             if fieldNumber == 1, wireType == 2 {
                 guard let length = protoReadVarint(data, pos: &pos),
-                      length <= UInt64(Int.max) else { break }
+                      length <= UInt64(data.count - pos) else { break }
                 let end = pos + Int(length)
                 guard end <= data.count else { break }
                 if let params = parseOtpParameters(Data(data[pos ..< end])) {
@@ -186,19 +186,19 @@ private extension String {
             let wireType = Int(tag & 0x7)
             switch (fieldNumber, wireType) {
             case (1, 2):
-                guard let len = protoReadVarint(data, pos: &pos), len <= UInt64(Int.max) else { return nil }
+                guard let len = protoReadVarint(data, pos: &pos), len <= UInt64(data.count - pos) else { return nil }
                 let end = pos + Int(len)
                 guard end <= data.count else { return nil }
                 secret = Data(data[pos ..< end])
                 pos = end
             case (2, 2):
-                guard let len = protoReadVarint(data, pos: &pos), len <= UInt64(Int.max) else { return nil }
+                guard let len = protoReadVarint(data, pos: &pos), len <= UInt64(data.count - pos) else { return nil }
                 let end = pos + Int(len)
                 guard end <= data.count else { return nil }
                 name = String(data: data[pos ..< end], encoding: .utf8) ?? name
                 pos = end
             case (3, 2):
-                guard let len = protoReadVarint(data, pos: &pos), len <= UInt64(Int.max) else { return nil }
+                guard let len = protoReadVarint(data, pos: &pos), len <= UInt64(data.count - pos) else { return nil }
                 let end = pos + Int(len)
                 guard end <= data.count else { return nil }
                 issuer = String(data: data[pos ..< end], encoding: .utf8)
@@ -255,7 +255,7 @@ private extension String {
             return true
         case 2:
             guard let len = protoReadVarint(data, pos: &pos),
-                  len <= UInt64(Int.max),
+                  len <= UInt64(data.count - pos),
                   pos + Int(len) <= data.count else { return false }
             pos += Int(len)
             return true

@@ -1121,6 +1121,36 @@ final class MigrationURISecurityTests: XCTestCase {
                      "Parser must return nil for overflow-length inner field, not trap")
     }
 
+    private static let intMaxLengthVarint: [UInt8] = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F]
+
+    private func migrationURI(_ bytes: [UInt8]) -> String {
+        "otpauth-migration://offline?data=\(Data(bytes).base64EncodedString())"
+    }
+
+    func testOuterFieldIntMaxLengthReturnsNil() {
+        let bytes: [UInt8] = [0x0A] + Self.intMaxLengthVarint
+        XCTAssertNil(migrationURI(bytes).parseMigrationURI(),
+                     "Length of Int.max fits in Int but must not overflow pos + length")
+    }
+
+    func testInnerFieldIntMaxLengthReturnsNil() {
+        let inner: [UInt8] = [0x0A] + Self.intMaxLengthVarint
+        let bytes: [UInt8] = [0x0A, UInt8(inner.count)] + inner
+        XCTAssertNil(migrationURI(bytes).parseMigrationURI(),
+                     "Inner length of Int.max must not overflow pos + length")
+    }
+
+    func testSkippedFieldIntMaxLengthReturnsNil() {
+        let bytes: [UInt8] = [0x1A] + Self.intMaxLengthVarint
+        XCTAssertNil(migrationURI(bytes).parseMigrationURI(),
+                     "Skipped length-delimited field of Int.max must not overflow pos + length")
+    }
+
+    func testLengthOneBytePastEndReturnsNil() {
+        let bytes: [UInt8] = [0x0A, 0x02, 0x00]
+        XCTAssertNil(migrationURI(bytes).parseMigrationURI())
+    }
+
     func testValidMigrationURI_parsesSuccessfully() {
         let uri = "otpauth-migration://offline?data=CgwKCkhlbGxvV29ybGQ"
         let result = uri.parseMigrationURI()
