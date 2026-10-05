@@ -126,6 +126,17 @@ final class MainContentViewModel {
         }
     }
 
+    func dismissPresentedContent() {
+        showingAddSheet = false
+        pendingOTPAuthURI = nil
+        showingSettings = false
+        selectedTokenForEdit = nil
+        selectedTokenForQR = nil
+        tokenPendingDelete = nil
+        showExportSheet = false
+        showBackupNudge = false
+    }
+
     func openAddSheet(prefillURI uri: String) {
         pendingOTPAuthURI = uri
         showingAddSheet = true

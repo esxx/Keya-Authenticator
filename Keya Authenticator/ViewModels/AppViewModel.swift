@@ -86,6 +86,10 @@ final class AppCoordinator {
 
     private func performLock() {
         guard settings.isAuthenticationEnabled, appState == .main else { return }
+        if let uri = mainContentViewModel.pendingOTPAuthURI, let url = URL(string: uri) {
+            pendingIncomingURL = url
+        }
+        mainContentViewModel.dismissPresentedContent()
         tokenStore.clear()
         withAnimation {
             appState = .appUnlock
