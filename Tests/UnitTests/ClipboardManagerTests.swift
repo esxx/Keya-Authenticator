@@ -24,13 +24,6 @@ final class ClipboardManagerTests: XCTestCase {
         XCTAssertEqual(UIPasteboard.general.string, "654321")
     }
 
-    func testClearEmptiesPasteboard() {
-        ClipboardManager.shared.copyToClipboard("123456", autoClearDelay: nil)
-        XCTAssertFalse(UIPasteboard.general.items.isEmpty)
-        ClipboardManager.shared.clearClipboard()
-        XCTAssertTrue(UIPasteboard.general.items.isEmpty)
-    }
-
     func testSecondCopyOverwritesFirst() {
         ClipboardManager.shared.copyToClipboard("111111", autoClearDelay: nil)
         ClipboardManager.shared.copyToClipboard("999999", autoClearDelay: nil)

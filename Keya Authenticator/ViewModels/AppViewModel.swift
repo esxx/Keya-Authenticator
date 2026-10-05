@@ -58,7 +58,6 @@ final class AppCoordinator {
 
     func handleAppBackground() {
         let timestampSaved = KeychainManager.saveBackgroundTimestamp(Date())
-        ClipboardManager.shared.clearClipboard()
 
         if settings.isAuthenticationEnabled, settings.lockGracePeriod == 0 || !timestampSaved {
             performLock()

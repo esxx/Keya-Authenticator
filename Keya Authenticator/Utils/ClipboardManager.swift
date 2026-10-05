@@ -18,10 +18,6 @@ final class ClipboardManager {
 
         pasteboard.setItems([[UIPasteboard.typeAutomatic: text]], options: options)
     }
-
-    func clearClipboard() {
-        UIPasteboard.general.items = []
-    }
 }
 
 // MARK: - Haptic Feedback
