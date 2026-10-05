@@ -97,7 +97,7 @@ struct AddTokenView: View {
             }
             .fileImporter(
                 isPresented: $showFiles,
-                allowedContentTypes: [.json, .plainText],
+                allowedContentTypes: [.json, .plainText] + [UTType(filenameExtension: "2fas")].compactMap { $0 },
                 allowsMultipleSelection: false
             ) { result in
                 viewModel.handleFileImport(result)

@@ -10,6 +10,7 @@ struct QRScannerView: View {
 
     @State private var errorMessage: String?
     @State private var cameraManager = CameraManager()
+    @State private var isOnScreen = false
 
     var body: some View {
         if isEmbedded {
@@ -86,11 +87,15 @@ struct QRScannerView: View {
             }
         }
         .onAppear {
+            isOnScreen = true
             cameraManager.onCodeScanned = { code in handleScannedCode(code) }
             cameraManager.onError = { error in errorMessage = error }
             cameraManager.start()
         }
-        .onDisappear { cameraManager.stop() }
+        .onDisappear {
+            isOnScreen = false
+            cameraManager.stop()
+        }
     }
 
     private func cornerAccent() -> some View {
@@ -107,20 +112,18 @@ struct QRScannerView: View {
     private func handleScannedCode(_ code: String) {
         AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
 
-        if code.hasPrefix("otpauth://") || code.hasPrefix("otpauth-migration://") {
+        if code.hasPrefix("otpauth://") || code.hasPrefix("otpauth-migration://") || code.isValidOTPSecret {
             onResult(.success(code))
-            if !isEmbedded {
-                dismiss()
-            }
-        } else if code.isValidOTPSecret {
-            onResult(.success(code))
-            if !isEmbedded {
+            if isEmbedded {
+                cameraManager.resumeScanning()
+            } else {
                 dismiss()
             }
         } else {
             errorMessage = String(localized: "Invalid QR code")
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 errorMessage = nil
+                guard isOnScreen else { return }
                 cameraManager.resumeScanning()
             }
         }
@@ -318,6 +321,7 @@ final class MetadataDelegate: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     var isPaused = false
     weak var session: AVCaptureSession?
     var sessionQueue: DispatchQueue?
+    private var lastDeliveredValue: String?
 
     func metadataOutput(
         _ output: AVCaptureMetadataOutput,
@@ -326,9 +330,11 @@ final class MetadataDelegate: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     ) {
         guard !isPaused,
               let object = metadataObjects.first as? AVMetadataMachineReadableCodeObject,
-              let value = object.stringValue else { return }
+              let value = object.stringValue,
+              value != lastDeliveredValue else { return }
 
         isPaused = true
+        lastDeliveredValue = value
 
         if let sessionQueue, let session {
             sessionQueue.async {
