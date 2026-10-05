@@ -23,6 +23,54 @@ final class AppCoordinatorTests: XCTestCase {
         try? KeychainManager.deleteLockoutState(account: KeychainManager.pinLockoutAccount)
     }
 
+    // MARK: - Lock on return from background
+
+    @MainActor
+    private func makeUnlockedCoordinator() throws -> AppCoordinator {
+        try KeychainManager.savePIN("123456")
+        try KeychainManager.saveSecuritySettings(
+            KeychainManager.SecuritySettings(
+                isAuthenticationEnabled: true,
+                useBiometricAuthentication: false,
+                lockGracePeriod: 30
+            )
+        )
+        KeychainManager.deleteBackgroundTimestamp()
+        let coordinator = AppCoordinator(
+            tokenStore: TokenStore(),
+            authenticationManager: AuthenticationManager(),
+            settings: AppSettings()
+        )
+        coordinator.determineInitialState()
+        coordinator.completeUnlock()
+        XCTAssertEqual(coordinator.appState, .main)
+        return coordinator
+    }
+
+    @MainActor
+    func testReturnFromBackground_withUnreadableTimestamp_locks() throws {
+        let coordinator = try makeUnlockedCoordinator()
+        coordinator.handleAppBackground()
+        KeychainManager.deleteBackgroundTimestamp()
+        coordinator.handleAppBecameActive()
+        XCTAssertEqual(coordinator.appState, .appUnlock, "Time away is unknown, so the app must lock")
+    }
+
+    @MainActor
+    func testBecomingActiveWithoutBackground_doesNotLock() throws {
+        let coordinator = try makeUnlockedCoordinator()
+        coordinator.handleAppBecameActive()
+        XCTAssertEqual(coordinator.appState, .main, "Control Center or an alert must not lock the app")
+    }
+
+    @MainActor
+    func testReturnFromBackground_withinGracePeriod_doesNotLock() throws {
+        let coordinator = try makeUnlockedCoordinator()
+        coordinator.handleAppBackground()
+        coordinator.handleAppBecameActive()
+        XCTAssertEqual(coordinator.appState, .main)
+    }
+
     // MARK: - Reset
 
     @MainActor

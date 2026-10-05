@@ -14,6 +14,7 @@ final class AppCoordinator {
     var appState: AppState = .loading
     var showPrivacyOverlay = false
     private var pendingIncomingURL: URL?
+    private var wentToBackground = false
 
     // MARK: - Child ViewModels
 
@@ -57,6 +58,7 @@ final class AppCoordinator {
     }
 
     func handleAppBackground() {
+        wentToBackground = true
         let timestampSaved = KeychainManager.saveBackgroundTimestamp(Date())
 
         if settings.isAuthenticationEnabled, settings.lockGracePeriod == 0 || !timestampSaved {
@@ -75,8 +77,15 @@ final class AppCoordinator {
     }
 
     private func checkGracePeriodAndLock() {
+        let returningFromBackground = wentToBackground
+        wentToBackground = false
         defer { KeychainManager.deleteBackgroundTimestamp() }
-        guard let bg = KeychainManager.loadBackgroundTimestamp() else { return }
+        guard let bg = KeychainManager.loadBackgroundTimestamp() else {
+            if returningFromBackground {
+                performLock()
+            }
+            return
+        }
         let elapsed = Date().timeIntervalSince(bg)
         if settings.isAuthenticationEnabled, elapsed >= TimeInterval(settings.lockGracePeriod) {
             performLock()
