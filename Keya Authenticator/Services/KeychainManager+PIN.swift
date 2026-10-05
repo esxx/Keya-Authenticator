@@ -180,7 +180,10 @@ extension KeychainManager {
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
         ]
-        SecItemDelete(query as CFDictionary)
+        let status = SecItemDelete(query as CFDictionary)
+        guard status == errSecSuccess || status == errSecItemNotFound else {
+            throw TokenError.keychainError("Security state couldn't be saved. Please try again.")
+        }
     }
 
     // MARK: - PBKDF2 Key Derivation

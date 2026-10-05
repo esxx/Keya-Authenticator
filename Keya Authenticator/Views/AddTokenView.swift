@@ -23,7 +23,7 @@ struct AddTokenView: View {
                     } else if case let .failure(err) = result {
                         viewModel.errorMessage = err.localizedDescription
                     }
-                }, isEmbedded: true)
+                }, isEmbedded: true, isActive: !(showManual || showGallery || showFiles))
                     .frame(maxWidth: .infinity)
                     .aspectRatio(1.33, contentMode: .fit)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))

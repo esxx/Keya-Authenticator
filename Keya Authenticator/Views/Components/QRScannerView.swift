@@ -5,12 +5,14 @@ import SwiftUI
 struct QRScannerView: View {
     let onResult: (Result<String, Error>) -> Void
     var isEmbedded: Bool = false
+    var isActive: Bool = true
 
     @Environment(\.dismiss) private var dismiss
 
     @State private var errorMessage: String?
     @State private var cameraManager = CameraManager()
     @State private var isOnScreen = false
+    @State private var isUncovered = true
 
     var body: some View {
         if isEmbedded {
@@ -96,6 +98,14 @@ struct QRScannerView: View {
             isOnScreen = false
             cameraManager.stop()
         }
+        .onChange(of: isActive) { _, active in
+            isUncovered = active
+            if active, isOnScreen {
+                cameraManager.resumeScanning()
+            } else if !active {
+                cameraManager.stop()
+            }
+        }
     }
 
     private func cornerAccent() -> some View {
@@ -123,7 +133,7 @@ struct QRScannerView: View {
             errorMessage = String(localized: "Invalid QR code")
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 errorMessage = nil
-                guard isOnScreen else { return }
+                guard isOnScreen, isUncovered else { return }
                 cameraManager.resumeScanning()
             }
         }

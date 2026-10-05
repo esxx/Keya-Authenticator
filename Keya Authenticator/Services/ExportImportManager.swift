@@ -250,7 +250,7 @@ extension ExportImportManager {
 
 // MARK: - ExportImportError
 
-enum ExportImportError: LocalizedError {
+nonisolated enum ExportImportError: LocalizedError {
     case invalidFileFormat
     case fileReadError
     case fileWriteError

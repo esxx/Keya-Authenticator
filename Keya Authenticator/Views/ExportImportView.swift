@@ -482,15 +482,17 @@ struct EncryptedExportPasswordSheet: View {
     private func doExport() {
         isExporting = true
         errorMessage = nil
+        let password = password
         Task {
             do {
-                let data = try exportImportManager.exportVaultEncrypted(password: password)
-                await MainActor.run { onComplete(data) }
+                let plaintext = try exportImportManager.exportVault()
+                let data = try await Task.detached(priority: .userInitiated) {
+                    try EncryptionService.encrypt(plaintext, password: password)
+                }.value
+                onComplete(data)
             } catch {
-                await MainActor.run {
-                    isExporting = false
-                    errorMessage = error.localizedDescription
-                }
+                isExporting = false
+                errorMessage = error.localizedDescription
             }
         }
     }
@@ -559,23 +561,23 @@ struct EncryptedImportPasswordSheet: View {
     private func doImport() {
         isDecrypting = true
         errorMessage = nil
+        let encrypted = encryptedData
+        let enteredPassword = password
         Task {
             do {
-                let result = try exportImportManager.parseEncryptedTokens(from: encryptedData, password: password)
-                await MainActor.run { onComplete(result)
-                    dismiss()
-                }
+                let plaintext = try await Task.detached(priority: .userInitiated) {
+                    try EncryptionService.decrypt(encrypted, password: enteredPassword)
+                }.value
+                let result = try exportImportManager.parseTokens(from: plaintext)
+                onComplete(result)
+                dismiss()
             } catch ExportImportError.wrongPassword {
-                await MainActor.run {
-                    isDecrypting = false
-                    errorMessage = "Incorrect password — try again."
-                    password = ""
-                }
+                isDecrypting = false
+                errorMessage = "Incorrect password — try again."
+                password = ""
             } catch {
-                await MainActor.run {
-                    isDecrypting = false
-                    errorMessage = error.localizedDescription
-                }
+                isDecrypting = false
+                errorMessage = error.localizedDescription
             }
         }
     }

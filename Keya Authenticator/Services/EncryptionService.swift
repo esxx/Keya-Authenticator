@@ -5,7 +5,7 @@ import Security
 
 // MARK: - Encrypted Backup Container
 
-struct EncryptedExportFile: Codable {
+nonisolated struct EncryptedExportFile: Codable {
     let version: Int
     let encryption: String
     let kdf: String
@@ -16,7 +16,7 @@ struct EncryptedExportFile: Codable {
 
 // MARK: - Encryption Service
 
-enum EncryptionService {
+nonisolated enum EncryptionService {
     static let kdfIterations = 600_000
     private static let saltByteCount = 32
 
