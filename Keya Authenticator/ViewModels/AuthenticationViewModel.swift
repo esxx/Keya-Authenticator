@@ -128,8 +128,11 @@ final class AuthenticationViewModel {
 
     private func startLockoutCountdown() {
         lockoutTimer?.invalidate()
-        lockoutTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self else { return }
+        lockoutTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            guard let self else {
+                timer.invalidate()
+                return
+            }
             guard let seconds = pinLockoutSecondsRemaining, seconds > 0 else {
                 stopLockoutTimer()
                 return

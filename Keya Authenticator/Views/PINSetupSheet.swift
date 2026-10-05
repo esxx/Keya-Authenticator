@@ -24,7 +24,7 @@ struct PINSetupSheet: View {
                             .font(.caption)
                             .foregroundColor(.red)
                     }
-                    if !newPIN.isEmpty, newPIN.count < 6 || !newPIN.allSatisfy(\.isNumber) {
+                    if !newPIN.isEmpty, newPIN.count != 6 || !newPIN.allSatisfy(\.isNumber) {
                         Text("PIN must be 6 digits")
                             .font(.caption)
                             .foregroundColor(.orange)

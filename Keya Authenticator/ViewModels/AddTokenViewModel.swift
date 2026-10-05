@@ -345,8 +345,12 @@ final class AddTokenViewModel {
         case let .success(urls):
             guard let url = urls.first else { return }
             Task {
-                guard url.startAccessingSecurityScopedResource() else { return }
-                defer { url.stopAccessingSecurityScopedResource() }
+                let accessing = url.startAccessingSecurityScopedResource()
+                defer {
+                    if accessing {
+                        url.stopAccessingSecurityScopedResource()
+                    }
+                }
                 let data: Data
                 do {
                     data = try Data(contentsOf: url)

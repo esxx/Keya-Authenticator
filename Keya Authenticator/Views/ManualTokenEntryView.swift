@@ -13,6 +13,7 @@ struct ManualTokenEntryView: View {
     @State private var selectedPhoto: PhotosPickerItem? = nil
 
     @State private var showAdvanced = false
+    @State private var periodText = ""
 
     private var canAdd: Bool {
         !viewModel.name.trimmingCharacters(in: .whitespaces).isEmpty &&
@@ -191,15 +192,25 @@ struct ManualTokenEntryView: View {
             if viewModel.tokenType == .totp {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Period").font(.caption).foregroundColor(.secondary)
-                    TextField("30", text: Binding(
-                        get: { String(viewModel.period) },
-                        set: { viewModel.period = Int($0) ?? 30 }
-                    ))
-                    .keyboardType(.numberPad)
-                    .padding(10)
-                    .background(Constants.Colors.background)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(.separator).opacity(0.3), lineWidth: 0.5))
+                    TextField("30", text: $periodText)
+                        .keyboardType(.numberPad)
+                        .onAppear { periodText = viewModel.period == 30 ? "" : String(viewModel.period) }
+                        .onChange(of: periodText) { _, text in
+                            viewModel.period = text.isEmpty ? 30 : (Int(text) ?? 0)
+                        }
+                        .onChange(of: viewModel.period) { _, period in
+                            let shown = periodText.isEmpty ? 30 : Int(periodText)
+                            if shown != period {
+                                periodText = String(period)
+                            }
+                        }
+                        .padding(10)
+                        .background(Constants.Colors.background)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(
+                            Color(.separator).opacity(0.3),
+                            lineWidth: 0.5
+                        ))
                 }
             } else {
                 VStack(alignment: .leading, spacing: 6) {

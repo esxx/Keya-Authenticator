@@ -89,11 +89,7 @@ struct PINVerifySheet: View {
             }
             .onAppear {
                 if let seconds = authenticationManager.pinLockoutSecondsRemaining(), seconds > 0 {
-                    if seconds >= 60 {
-                        errorMessage = "Too many attempts. Try again in \(seconds / 60)m \(seconds % 60)s."
-                    } else {
-                        errorMessage = "Too many attempts. Try again in \(seconds)s."
-                    }
+                    errorMessage = AuthenticationManager.lockoutMessage(seconds: seconds)
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     pinFocused = true
