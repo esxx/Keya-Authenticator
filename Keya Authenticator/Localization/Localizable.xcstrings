@@ -274,6 +274,41 @@
         }
       }
     },
+    "Authenticate to access your 2FA codes." : {
+      "comment" : "Biometric / passcode prompt shown by the AutoFill extension",
+      "localizations" : {
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autentícate para acceder a tus códigos 2FA."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Authentifiez-vous pour accéder à vos codes 2FA."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2FAコードにアクセスするには認証してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2FA 코드에 접근하려면 인증하세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autentique-se para acessar seus códigos 2FA."
+          }
+        }
+      }
+    },
     "Authentication cancelled" : {
       "localizations" : {
         "es-419" : {

@@ -165,13 +165,36 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     // MARK: - UI
 
     private func showTableView() {
-        let tv = UITableView(frame: view.bounds, style: .plain)
-        tv.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        guard !displayedTokens.isEmpty else {
+            extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
+            return
+        }
+        let tv = UITableView(frame: .zero, style: .plain)
         tv.dataSource = self
         tv.delegate = self
         tv.register(UITableViewCell.self, forCellReuseIdentifier: "TokenCell")
+
+        let list = UIViewController()
+        list.view = tv
+        list.navigationItem.leftBarButtonItem = UIBarButtonItem(
+            systemItem: .cancel,
+            primaryAction: UIAction { [weak self] _ in
+                self?.extensionContext.cancelRequest(withError: ASExtensionError(.userCanceled))
+            }
+        )
+        let navigation = UINavigationController(rootViewController: list)
+
+        children.forEach {
+            $0.willMove(toParent: nil)
+            $0.view.removeFromSuperview()
+            $0.removeFromParent()
+        }
         view.subviews.forEach { $0.removeFromSuperview() }
-        view.addSubview(tv)
+        addChild(navigation)
+        navigation.view.frame = view.bounds
+        navigation.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.addSubview(navigation.view)
+        navigation.didMove(toParent: self)
         self.tableView = tv
     }
 
