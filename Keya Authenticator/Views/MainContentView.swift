@@ -64,7 +64,7 @@ struct MainContentView: View {
                         addTokenViewModel = nil
                     }
                 }
-                .sheet(isPresented: $viewModel.showingAddSheet) {
+                .sheet(isPresented: $viewModel.showingAddSheet, onDismiss: { viewModel.addSheetDismissed() }) {
                     if let addTokenViewModel {
                         AddTokenView(
                             viewModel: addTokenViewModel,

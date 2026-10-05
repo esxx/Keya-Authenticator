@@ -8,6 +8,8 @@ struct AuthenticationView: View {
     @State private var shakeOffset: CGFloat = 0
     @State private var contentOpacity: Double
     @State private var showBiometricChangedAlert = false
+    @State private var biometricPromptPending = false
+    @Environment(\.scenePhase) private var scenePhase
 
     private let pinLength = 6
 
@@ -102,10 +104,19 @@ struct AuthenticationView: View {
             viewModel.checkLockoutOnAppear()
             if willAutoTriggerBiometric {
                 contentOpacity = 0
-                authenticateWithBiometrics()
+                if scenePhase == .active {
+                    authenticateWithBiometrics()
+                } else {
+                    biometricPromptPending = true
+                }
             } else {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { pinFocused = true }
             }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active, biometricPromptPending else { return }
+            biometricPromptPending = false
+            authenticateWithBiometrics()
         }
         .onChange(of: viewModel.pinText) { _, newValue in
             let filtered = String(newValue.filter(\.isNumber).prefix(pinLength))
@@ -127,7 +138,7 @@ struct AuthenticationView: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel(String(localized: "PIN unlock screen"))
         .alert("Biometric database changed", isPresented: $showBiometricChangedAlert) {
-            Button("OK", role: .cancel) {}
+            Button("OK", role: .cancel) { onUnlock() }
         } message: {
             Text(
                 "The Face ID / Touch ID database on this device has changed since your last login. Biometric unlock has been disabled as a security precaution. You can re-enable it in Settings → App lock once you've confirmed the change was made by you."
@@ -135,8 +146,6 @@ struct AuthenticationView: View {
         }
         .onChange(of: viewModel.biometricChangedDetected) { _, detected in
             guard detected else { return }
-            viewModel.settings.useBiometricAuthentication = false
-            viewModel.settings.biometricActivated = false
             showBiometricChangedAlert = true
         }
     }

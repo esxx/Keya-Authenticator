@@ -67,7 +67,12 @@ final class AuthenticationViewModel {
             pinText = ""
             ClipboardManager.shared.provideHapticFeedback(.success)
             if result == .successBiometricChanged {
+                settings.useBiometricAuthentication = false
+                settings.biometricActivated = false
+                authenticationManager.clearBiometricFingerprint()
                 biometricChangedDetected = true
+                isAuthenticating = false
+                return
             }
             onUnlock?()
         } catch let error as AuthenticationManager.AuthenticationError {

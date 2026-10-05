@@ -30,6 +30,7 @@ final class MainContentViewModel {
     private var snapshotIDsBeforeAdd: Set<UUID> = []
     private var hotpIncrementInProgress = false
     private var reportedUnreadableCount = 0
+    private var backupNudgeCheckPending = false
 
     // MARK: - Computed Properties
 
@@ -160,6 +161,12 @@ final class MainContentViewModel {
         DispatchQueue.main.asyncAfter(deadline: .now() + 8) { [weak self] in
             self?.newTokenIDs.subtract(added)
         }
+        backupNudgeCheckPending = true
+    }
+
+    func addSheetDismissed() {
+        guard backupNudgeCheckPending else { return }
+        backupNudgeCheckPending = false
         checkBackupNudge()
     }
 
