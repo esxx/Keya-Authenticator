@@ -109,10 +109,6 @@ final class AppSettings {
             return
         }
 
-        // Sentinel is missing. Before wiping, check whether anything else under this
-        // service survived: a real fresh install has nothing at all, but a sentinel
-        // missing while other items remain is a contradiction, not evidence of a fresh
-        // install, so it must not be treated as one.
         let anyItemQuery: [CFString: Any] = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: Constants.keychainService,
@@ -146,24 +142,24 @@ final class AppSettings {
 
     private func loadFromUserDefaults() {
         let sec = KeychainManager.loadSecuritySettings()
-        isAuthenticationEnabled = sec.isAuthenticationEnabled
-
         let ud = UserDefaults.standard
+
+        isPersisting = true
+        isAuthenticationEnabled = sec.isAuthenticationEnabled
         hideCodesByDefault = ud.bool(forKey: Keys.hideCodesByDefault)
         appTheme = AppTheme(rawValue: ud.string(forKey: Keys.appTheme) ?? "") ?? .auto
         biometricActivated = ud.bool(forKey: Keys.biometricActivated)
-
         useBiometricAuthentication = sec.useBiometricAuthentication && biometricActivated
-
-        if let keychainGrace = sec.lockGracePeriod {
-            lockGracePeriod = AppSettings.clampLockPeriod(keychainGrace)
-        } else {
-            lockGracePeriod = AppSettings.clampLockPeriod(ud.object(forKey: Keys.lockGracePeriod) as? Int ?? 30)
-            persistSecuritySettings()
-        }
-
+        lockGracePeriod = AppSettings.clampLockPeriod(
+            sec.lockGracePeriod ?? (ud.object(forKey: Keys.lockGracePeriod) as? Int ?? 30)
+        )
         backupNudgeCount = ud.integer(forKey: Keys.backupNudgeCount)
         lastBackupDate = ud.object(forKey: Keys.lastBackupDate) as? Date
+        isPersisting = false
+
+        if useBiometricAuthentication != sec.useBiometricAuthentication || lockGracePeriod != sec.lockGracePeriod {
+            persistSecuritySettings()
+        }
     }
 
     private func registerDefaults() {

@@ -5,9 +5,9 @@ import UniformTypeIdentifiers
 struct AppEntry: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
-    @State private var tokenStore = TokenStore()
-    @State private var authenticationManager = AuthenticationManager()
-    @State private var settings = AppSettings()
+    @State private var tokenStore: TokenStore
+    @State private var authenticationManager: AuthenticationManager
+    @State private var settings: AppSettings
     @State private var appViewModel: AppCoordinator
     @State private var totpClock = TOTPClock()
     @State private var captureGuard = ScreenCaptureGuard()

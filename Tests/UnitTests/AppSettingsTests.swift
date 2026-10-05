@@ -116,6 +116,43 @@ final class AppSettingsTests: XCTestCase {
                        "lockGracePeriod must survive the biometric sync correction")
     }
 
+    // MARK: - What launch writes back
+
+    func testLaunchCorrection_isSavedWithFinalValues() throws {
+        try KeychainManager.saveSecuritySettings(
+            KeychainManager.SecuritySettings(
+                isAuthenticationEnabled: true,
+                useBiometricAuthentication: true,
+                lockGracePeriod: 15
+            )
+        )
+        UserDefaults.standard.removeObject(forKey: "biometricActivated")
+
+        _ = AppSettings()
+
+        let saved = KeychainManager.loadSecuritySettings()
+        XCTAssertTrue(saved.isAuthenticationEnabled)
+        XCTAssertFalse(saved.useBiometricAuthentication, "The corrected biometric flag must be saved")
+        XCTAssertEqual(saved.lockGracePeriod, 15, "Unrelated values must be saved unchanged")
+    }
+
+    func testLaunchMigratesMissingGracePeriodFromUserDefaults() throws {
+        try KeychainManager.saveSecuritySettings(
+            KeychainManager.SecuritySettings(
+                isAuthenticationEnabled: true,
+                useBiometricAuthentication: false,
+                lockGracePeriod: nil
+            )
+        )
+        UserDefaults.standard.set(60, forKey: "lockGracePeriod")
+        defer { UserDefaults.standard.removeObject(forKey: "lockGracePeriod") }
+
+        let settings = AppSettings()
+
+        XCTAssertEqual(settings.lockGracePeriod, 60)
+        XCTAssertEqual(KeychainManager.loadSecuritySettings().lockGracePeriod, 60)
+    }
+
     // MARK: - Helpers
 
     private func writeInstallSentinel() {
