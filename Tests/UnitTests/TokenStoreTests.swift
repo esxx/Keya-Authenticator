@@ -168,8 +168,9 @@ final class TokenStoreTests: XCTestCase {
 
     func testDeleteAllEmptiesStore() throws {
         try store.update([makeToken(name: "A"), makeToken(name: "B")])
-        store.deleteAll()
+        try store.deleteAll()
         XCTAssertTrue(store.tokens.isEmpty)
+        XCTAssertTrue(try KeychainManager.loadAllTokens().isEmpty)
     }
 
     func testDeleteAllTokensPreservesReservedAccounts() throws {

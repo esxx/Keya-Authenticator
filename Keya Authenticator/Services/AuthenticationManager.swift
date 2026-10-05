@@ -172,9 +172,9 @@ final class AuthenticationManager {
 
     // MARK: - Full Reset
 
-    func performReset(tokenStore: TokenStore, settings: AppSettings) {
-        tokenStore.deleteAll()
-        try? removePIN()
+    func performReset(tokenStore: TokenStore, settings: AppSettings) throws {
+        try tokenStore.deleteAll()
+        try removePIN()
         clearBiometricFingerprint()
         try? KeychainManager.deleteLockoutState(account: KeychainManager.pinLockoutAccount)
         try? KeychainManager.deleteLockoutState(account: KeychainManager.biometricLockoutAccount)

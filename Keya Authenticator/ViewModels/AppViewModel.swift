@@ -128,8 +128,8 @@ final class AppCoordinator {
 
     // MARK: - Reset Everything
 
-    func resetEverything() {
-        authenticationManager.performReset(tokenStore: tokenStore, settings: settings)
+    func resetEverything() throws {
+        try authenticationManager.performReset(tokenStore: tokenStore, settings: settings)
         withAnimation { appState = .pinSetup }
     }
 }

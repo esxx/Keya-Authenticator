@@ -147,12 +147,17 @@ final class TokenStore {
         }
     }
 
-    func deleteAll() {
+    func deleteAll() throws {
+        do {
+            try KeychainManager.deleteAllTokens()
+        } catch {
+            try? load()
+            throw error
+        }
         var snapshot = tokens
         tokens = []
         sortedIDs = []
         UserDefaults.standard.removeObject(forKey: sortOrderKey)
-        try? KeychainManager.deleteAllTokens()
         for i in 0 ..< snapshot.count where !snapshot[i].secret.isEmpty {
             snapshot[i].zeroSecret()
         }

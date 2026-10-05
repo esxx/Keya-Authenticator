@@ -55,7 +55,7 @@ struct AppEntry: App {
                 case .main:
                     MainContentView(
                         viewModel: appViewModel.mainContentViewModel,
-                        onResetRequested: { appViewModel.resetEverything() }
+                        onResetRequested: { try appViewModel.resetEverything() }
                     )
                 }
 

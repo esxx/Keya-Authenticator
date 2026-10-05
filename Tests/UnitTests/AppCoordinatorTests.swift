@@ -1,3 +1,4 @@
+import Security
 import XCTest
 @testable import Keya_Authenticator
 
@@ -20,6 +21,50 @@ final class AppCoordinatorTests: XCTestCase {
         try? KeychainManager.deletePIN()
         KeychainManager.deleteSecuritySettings()
         try? KeychainManager.deleteLockoutState(account: KeychainManager.pinLockoutAccount)
+    }
+
+    // MARK: - Reset
+
+    @MainActor
+    func testResetEverything_deletesTokensAndPIN_andOpensPINSetup() throws {
+        try KeychainManager.savePIN("123456")
+        let tokenStore = TokenStore()
+        let secret = Data("reset-test-secret-1".utf8)
+        try tokenStore.update([Token(name: "A", secret: secret), Token(name: "B", secret: secret + Data([1]))])
+
+        let coordinator = AppCoordinator(
+            tokenStore: tokenStore,
+            authenticationManager: AuthenticationManager(),
+            settings: AppSettings()
+        )
+        try coordinator.resetEverything()
+
+        XCTAssertEqual(coordinator.appState, .pinSetup)
+        XCTAssertTrue(tokenStore.tokens.isEmpty)
+        XCTAssertTrue(try KeychainManager.loadAllTokens().isEmpty)
+        XCTAssertEqual(KeychainManager.pinPresence(), .notSet)
+    }
+
+    @MainActor
+    func testResetEverything_keepsInstallSentinel() throws {
+        _ = AppSettings()
+        let sentinelQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: Constants.keychainService,
+            kSecAttrAccount as String: "app.installSentinel",
+        ]
+        XCTAssertEqual(SecItemCopyMatching(sentinelQuery as CFDictionary, nil), errSecSuccess)
+
+        let tokenStore = TokenStore()
+        let coordinator = AppCoordinator(
+            tokenStore: tokenStore,
+            authenticationManager: AuthenticationManager(),
+            settings: AppSettings()
+        )
+        try coordinator.resetEverything()
+
+        XCTAssertEqual(SecItemCopyMatching(sentinelQuery as CFDictionary, nil), errSecSuccess,
+                       "Reset must not delete the install sentinel, or the next launch looks like a fresh install")
     }
 
     // MARK: - Pending URL on no-auth path

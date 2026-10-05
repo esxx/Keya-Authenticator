@@ -3,7 +3,7 @@ import UniformTypeIdentifiers
 
 struct MainContentView: View {
     @Bindable var viewModel: MainContentViewModel
-    var onResetRequested: (() -> Void)?
+    var onResetRequested: (() throws -> Void)?
 
     @Environment(\.editMode) private var editMode
     @Environment(\.colorScheme) private var colorScheme

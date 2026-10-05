@@ -5,9 +5,10 @@ struct SettingsView: View {
     @Bindable var tokenStore: TokenStore
     @Bindable var authenticationManager: AuthenticationManager
     @Bindable var settings: AppSettings
-    var onResetRequested: (() -> Void)?
+    var onResetRequested: (() throws -> Void)?
 
     @State private var showingResetConfirmation = false
+    @State private var resetErrorMessage: String?
     @State private var showingResetGate = false
     @State private var showingTipJar = false
     @Environment(\.dismiss) private var dismiss
@@ -22,7 +23,7 @@ struct SettingsView: View {
         tokenStore: TokenStore,
         authenticationManager: AuthenticationManager,
         settings: AppSettings,
-        onResetRequested: (() -> Void)? = nil
+        onResetRequested: (() throws -> Void)? = nil
     ) {
         self.tokenStore = tokenStore
         self.authenticationManager = authenticationManager
@@ -212,11 +213,27 @@ struct SettingsView: View {
             .alert("Delete all data?", isPresented: $showingResetConfirmation) {
                 Button("Cancel", role: .cancel) {}
                 Button("Delete", role: .destructive) {
-                    dismiss()
-                    onResetRequested?()
+                    do {
+                        try onResetRequested?()
+                        dismiss()
+                    } catch {
+                        resetErrorMessage = error.localizedDescription
+                    }
                 }
             } message: {
                 Text("This will permanently delete all your tokens and settings. This cannot be undone.")
+            }
+            .alert("Something Went Wrong", isPresented: Binding(
+                get: { resetErrorMessage != nil },
+                set: {
+                    if !$0 {
+                        resetErrorMessage = nil
+                    }
+                }
+            )) {
+                Button("OK", role: .cancel) { resetErrorMessage = nil }
+            } message: {
+                Text(resetErrorMessage ?? "")
             }
             .sheet(isPresented: $navigateToAppLock) {
                 NavigationStack {
