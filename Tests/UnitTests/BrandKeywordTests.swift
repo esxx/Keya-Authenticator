@@ -38,4 +38,26 @@ final class BrandKeywordTests: XCTestCase {
     func testUppercaseHostIsLowercased() {
         XCTAssertEqual(BrandKeyword.extract(fromHost: "Accounts.GitHub.COM"), "github")
     }
+
+    // MARK: - Token matching
+
+    func testIssuerWordMatches() {
+        XCTAssertTrue(BrandKeyword.matches(issuer: "GitHub", name: "me", keyword: "github"))
+        XCTAssertTrue(BrandKeyword.matches(issuer: "Amazon Web Services", name: "me", keyword: "amazon"))
+    }
+
+    func testShortKeywordDoesNotMatchInsideWords() {
+        XCTAssertFalse(BrandKeyword.matches(issuer: "Dropbox", name: "alex@example.com", keyword: "x"))
+        XCTAssertFalse(BrandKeyword.matches(issuer: nil, name: "alex@gmail.com", keyword: "x"))
+        XCTAssertTrue(BrandKeyword.matches(issuer: "X", name: "me", keyword: "x"))
+    }
+
+    func testNameIsIgnoredWhenIssuerIsPresent() {
+        XCTAssertFalse(BrandKeyword.matches(issuer: "Google", name: "me@company.com", keyword: "company"))
+    }
+
+    func testNameIsUsedWhenIssuerIsMissingOrBlank() {
+        XCTAssertTrue(BrandKeyword.matches(issuer: nil, name: "me@github.com", keyword: "github"))
+        XCTAssertTrue(BrandKeyword.matches(issuer: "  ", name: "me@github.com", keyword: "github"))
+    }
 }

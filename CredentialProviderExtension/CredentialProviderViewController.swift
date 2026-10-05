@@ -56,7 +56,8 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
                 return
             }
             self.allTokens = tokens
-            self.displayedTokens = self.filtered(self.allTokens, for: serviceIdentifiers)
+            let matches = self.matching(self.allTokens, for: serviceIdentifiers)
+            self.displayedTokens = matches.isEmpty ? self.allTokens : matches
             self.showTableView()
         }
     }
@@ -71,7 +72,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
             self.allTokens = tokens
 
             let serviceID = request.credentialIdentity.serviceIdentifier
-            let candidates = self.filtered(self.allTokens, for: [serviceID])
+            let candidates = self.matching(self.allTokens, for: [serviceID])
 
             if candidates.count == 1, let token = candidates.first,
                let code = try? token.generateCode() {
@@ -133,6 +134,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
             else { return nil }
             return try? decoder.decode(Token.self, from: data)
         }
+        .filter { $0.type == .totp }
 
         var bestByContent: [String: Token] = [:]
         for token in tokens {
@@ -147,26 +149,17 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
 
     // MARK: - Filtering
 
-    private func filtered(
+    private func matching(
         _ tokens: [Token],
         for identifiers: [ASCredentialServiceIdentifier]
     ) -> [Token] {
         let keywords = identifiers.compactMap { id -> String? in
-            if id.type == .URL,
-               let host = URL(string: id.identifier)?.host {
-                return BrandKeyword.extract(fromHost: host)
-            }
-            return id.identifier.lowercased()
+            let host = id.type == .URL ? URL(string: id.identifier)?.host : id.identifier
+            return host.map { BrandKeyword.extract(fromHost: $0) }
         }
-        guard !keywords.isEmpty else { return tokens }
-
-        let matches = tokens.filter { token in
-            let haystack = [token.name, token.issuer ?? ""]
-                .joined(separator: " ")
-                .lowercased()
-            return keywords.contains { haystack.contains($0) }
+        return tokens.filter { token in
+            keywords.contains { BrandKeyword.matches(issuer: token.issuer, name: token.name, keyword: $0) }
         }
-        return matches.isEmpty ? tokens : matches
     }
 
     // MARK: - UI

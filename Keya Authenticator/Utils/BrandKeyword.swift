@@ -17,4 +17,16 @@ enum BrandKeyword {
         }
         return String(parts[brandIndex])
     }
+
+    static func matches(issuer: String?, name: String, keyword: String) -> Bool {
+        let trimmedIssuer = issuer?.trimmingCharacters(in: .whitespaces) ?? ""
+        let source = trimmedIssuer.isEmpty ? name : trimmedIssuer
+        return words(of: source).contains(keyword.lowercased())
+    }
+
+    private static func words(of text: String) -> Set<String> {
+        Set(text.lowercased()
+            .split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+            .map(String.init))
+    }
 }
