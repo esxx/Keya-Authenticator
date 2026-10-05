@@ -182,16 +182,15 @@ final class ExportImportManager {
         }
 
         if type == .totp {
-            let p = period ?? 30
-            period = (p >= 15 && p <= 300) ? p : 30
+            period = period ?? 30
             counter = nil
         } else {
             period = nil
             counter = counter ?? 0
         }
 
-        if digits != 6, digits != 8 {
-            digits = 6
+        guard Token.isSupported(digits: digits, period: period) else {
+            throw ExportImportError.invalidFileFormat
         }
 
         return Token(

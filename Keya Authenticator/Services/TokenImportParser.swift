@@ -16,6 +16,14 @@ func algorithmFromString(_ string: String?) -> Algorithm {
     }
 }
 
+func tokenTypeFromString(_ string: String?) -> TokenType? {
+    switch (string ?? "TOTP").uppercased() {
+    case "TOTP": return .totp
+    case "HOTP": return .hotp
+    default: return nil
+    }
+}
+
 // MARK: - Keya plaintext adapter
 
 struct KeyaPlaintextParser: TokenImportParser {
@@ -56,14 +64,15 @@ struct AegisParser: TokenImportParser {
             }
 
             let issuer = entry["issuer"] as? String
-            let rawDigits = info["digits"] as? Int ?? 6
-            let digits = (rawDigits == 6 || rawDigits == 8) ? rawDigits : 6
-            let rawPeriod = info["period"] as? Int ?? 30
-            let period = (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30
+            let digits = info["digits"] as? Int ?? 6
+            let period = info["period"] as? Int ?? 30
             let counter = info["counter"] as? UInt64 ?? 0
             let algorithm = algorithmFromString(info["algo"] as? String)
-            let typeStr = ((entry["type"] as? String) ?? "totp").lowercased()
-            let tokenType: TokenType = typeStr == "hotp" ? .hotp : .totp
+            guard let tokenType = tokenTypeFromString(entry["type"] as? String),
+                  Token.isSupported(digits: digits, period: tokenType == .totp ? period : nil)
+            else { skipped += 1
+                continue
+            }
 
             tokens.append(Token(
                 name: name, issuer: issuer, secret: secretData,
@@ -99,14 +108,15 @@ struct TwoFASParser: TokenImportParser {
             let otp = service["otp"] as? [String: Any]
             let issuer = service["issuer"] as? String ?? otp?["issuer"] as? String ?? serviceName
             let name = otp?["account"] as? String ?? otp?["label"] as? String ?? serviceName
-            let rawDigits = otp?["digits"] as? Int ?? service["digits"] as? Int ?? 6
-            let digits = (rawDigits == 6 || rawDigits == 8) ? rawDigits : 6
-            let rawPeriod = otp?["period"] as? Int ?? service["period"] as? Int ?? 30
-            let period = (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30
+            let digits = otp?["digits"] as? Int ?? service["digits"] as? Int ?? 6
+            let period = otp?["period"] as? Int ?? service["period"] as? Int ?? 30
             let algorithm = algorithmFromString(otp?["algorithm"] as? String ?? service["algorithm"] as? String)
-            let typeStr = ((otp?["tokenType"] as? String) ?? (service["tokenType"] as? String) ?? "TOTP").uppercased()
-            let tokenType: TokenType = typeStr == "HOTP" ? .hotp : .totp
             let counter = otp?["counter"] as? UInt64 ?? service["counter"] as? UInt64 ?? 0
+            guard let tokenType = tokenTypeFromString(otp?["tokenType"] as? String ?? service["tokenType"] as? String),
+                  Token.isSupported(digits: digits, period: tokenType == .totp ? period : nil)
+            else { skipped += 1
+                continue
+            }
 
             tokens.append(Token(
                 name: name, issuer: issuer, secret: secretData,
@@ -140,11 +150,12 @@ struct LastPassParser: TokenImportParser {
 
             let issuer = entry["issuerName"] as? String
             let name = (entry["userName"] as? String) ?? issuer ?? "Imported Token"
-            let rawDigits = (entry["digits"] as? Int) ?? 6
-            let digits = (rawDigits == 6 || rawDigits == 8) ? rawDigits : 6
-            let rawPeriod = (entry["timeStep"] as? Int) ?? 30
-            let period = (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30
+            let digits = (entry["digits"] as? Int) ?? 6
+            let period = (entry["timeStep"] as? Int) ?? 30
             let algorithm = algorithmFromString(entry["algorithm"] as? String)
+            guard Token.isSupported(digits: digits, period: period) else { skipped += 1
+                continue
+            }
             tokens.append(Token(
                 name: name, issuer: issuer, secret: secretData,
                 algorithm: algorithm, digits: digits, type: .totp, period: period
@@ -175,14 +186,15 @@ struct AndOTPParser: TokenImportParser {
 
             let name = (entry["label"] as? String) ?? "Imported Token"
             let issuer = entry["issuer"] as? String
-            let rawDigits = (entry["digits"] as? Int) ?? 6
-            let digits = (rawDigits == 6 || rawDigits == 8) ? rawDigits : 6
-            let rawPeriod = (entry["period"] as? Int) ?? 30
-            let period = (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30
+            let digits = (entry["digits"] as? Int) ?? 6
+            let period = (entry["period"] as? Int) ?? 30
             let counter = (entry["counter"] as? UInt64) ?? 0
-            let typeStr = ((entry["type"] as? String) ?? "TOTP").uppercased()
-            let type: TokenType = typeStr == "HOTP" ? .hotp : .totp
             let algorithm = algorithmFromString(entry["algorithm"] as? String)
+            guard let type = tokenTypeFromString(entry["type"] as? String),
+                  Token.isSupported(digits: digits, period: type == .totp ? period : nil)
+            else { skipped += 1
+                continue
+            }
             tokens.append(Token(
                 name: name, issuer: issuer, secret: secretData,
                 algorithm: algorithm, digits: digits, type: type,
@@ -226,14 +238,15 @@ struct RaivoParser: TokenImportParser {
 
             let issuer = entry["issuer"] as? String
             let name = (entry["account"] as? String) ?? issuer ?? "Imported Token"
-            let rawDigits = Int(entry["digits"] as? String ?? "") ?? 6
-            let digits = (rawDigits == 6 || rawDigits == 8) ? rawDigits : 6
-            let rawPeriod = Int(entry["timer"] as? String ?? "") ?? 30
-            let period = (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30
+            let digits = Int(entry["digits"] as? String ?? "") ?? 6
+            let period = Int(entry["timer"] as? String ?? "") ?? 30
             let counter = UInt64(entry["counter"] as? String ?? "") ?? 0
-            let typeStr = ((entry["kind"] as? String) ?? "TOTP").uppercased()
-            let type: TokenType = typeStr == "HOTP" ? .hotp : .totp
             let algorithm = algorithmFromString(entry["algorithm"] as? String)
+            guard let type = tokenTypeFromString(entry["kind"] as? String),
+                  Token.isSupported(digits: digits, period: type == .totp ? period : nil)
+            else { skipped += 1
+                continue
+            }
             tokens.append(Token(
                 name: name, issuer: issuer, secret: secretData,
                 algorithm: algorithm, digits: digits, type: type,

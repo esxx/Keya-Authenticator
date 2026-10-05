@@ -221,13 +221,13 @@ final class AddTokenViewModelTests: XCTestCase {
         XCTAssertNil(tokenStore.tokens.first?.issuer, "Empty issuer string must be stored as nil")
     }
 
-    // MARK: - handleScannedQR digit and period clamping
+    // MARK: - handleScannedQR unsupported digits and period
 
-    func testHandleScannedQR_invalidDigits_clampsToSix() {
+    func testHandleScannedQR_unsupportedDigits_isRejected() {
         let uri = "otpauth://totp/Test:user@example.com?secret=\(validSecret)&digits=7"
         viewModel.handleScannedQR(uri)
-        XCTAssertEqual(tokenStore.tokens.first?.digits, 6,
-                       "digits=7 must be clamped to 6")
+        XCTAssertTrue(tokenStore.tokens.isEmpty, "digits=7 can't produce correct codes and must not be saved")
+        XCTAssertNotNil(viewModel.errorMessage)
     }
 
     func testHandleScannedQR_eightDigitsPreserved() {
@@ -237,18 +237,18 @@ final class AddTokenViewModelTests: XCTestCase {
                        "digits=8 is valid and must be stored unchanged")
     }
 
-    func testHandleScannedQR_belowMinPeriod_clampsToThirty() {
+    func testHandleScannedQR_belowMinPeriod_isRejected() {
         let uri = "otpauth://totp/Test:user@example.com?secret=\(validSecret)&period=5"
         viewModel.handleScannedQR(uri)
-        XCTAssertEqual(tokenStore.tokens.first?.period, 30,
-                       "period=5 is below minimum 15 — must be clamped to 30")
+        XCTAssertTrue(tokenStore.tokens.isEmpty, "period=5 is below the supported range and must not be saved")
+        XCTAssertNotNil(viewModel.errorMessage)
     }
 
-    func testHandleScannedQR_aboveMaxPeriod_clampsToThirty() {
+    func testHandleScannedQR_aboveMaxPeriod_isRejected() {
         let uri = "otpauth://totp/Test:user@example.com?secret=\(validSecret)&period=600"
         viewModel.handleScannedQR(uri)
-        XCTAssertEqual(tokenStore.tokens.first?.period, 30,
-                       "period=600 is above maximum 300 — must be clamped to 30")
+        XCTAssertTrue(tokenStore.tokens.isEmpty, "period=600 is above the supported range and must not be saved")
+        XCTAssertNotNil(viewModel.errorMessage)
     }
 
     func testHandleScannedQR_validPeriod_preserved() {

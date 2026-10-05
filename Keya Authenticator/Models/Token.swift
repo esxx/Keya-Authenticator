@@ -92,6 +92,12 @@ struct Token: Identifiable, Codable, Equatable {
         touch()
     }
 
+    static func isSupported(digits: Int, period: Int?) -> Bool {
+        guard digits == 6 || digits == 8 else { return false }
+        guard let period else { return true }
+        return (15 ... 300).contains(period)
+    }
+
     var displayName: String {
         if let issuer, !issuer.isEmpty {
             return "\(issuer): \(name)"

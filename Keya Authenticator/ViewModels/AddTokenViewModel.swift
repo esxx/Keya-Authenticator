@@ -112,8 +112,8 @@ final class AddTokenViewModel {
             issuer = p.issuer ?? ""
             secret = p.secret
             algorithm = p.algorithm
-            digits = (p.digits == 6 || p.digits == 8) ? p.digits : 6
-            period = p.period.map { ($0 >= 15 && $0 <= 300) ? $0 : 30 } ?? 30
+            digits = p.digits
+            period = p.period ?? 30
             counter = p.counter ?? 0
         }
     }
@@ -242,13 +242,22 @@ final class AddTokenViewModel {
                 errorMessage = String(localized: "Invalid Base32 secret. Check the key and try again.")
                 return
             }
+            let period = p.type == .totp ? (p.period ?? 30) : nil
+            guard p.digits == 6 || p.digits == 8 else {
+                errorMessage = String(localized: "Digits must be 6 or 8")
+                return
+            }
+            guard Token.isSupported(digits: p.digits, period: period) else {
+                errorMessage = String(localized: "Period must be between 15 and 300 seconds")
+                return
+            }
             persistImported([Token(
                 name: p.name.isEmpty ? "Imported Token" : p.name,
                 issuer: p.issuer?.isEmpty == true ? nil : p.issuer,
                 secret: secretData, algorithm: p.algorithm,
-                digits: (p.digits == 8) ? 8 : 6,
+                digits: p.digits,
                 type: p.type,
-                period: p.type == .totp ? (p.period.map { ($0 >= 15 && $0 <= 300) ? $0 : 30 } ?? 30) : nil,
+                period: period,
                 counter: p.type == .hotp ? (p.counter ?? 0) : nil
             )])
         } else {
@@ -292,9 +301,9 @@ final class AddTokenViewModel {
                 secret = params.secret
                 tokenType = params.type
                 algorithm = params.algorithm
-                digits = (params.digits == 8) ? 8 : 6
+                digits = params.digits
                 if let p = params.period {
-                    period = (p >= 15 && p <= 300) ? p : 30
+                    period = p
                 }
                 if let c = params.counter {
                     counter = c

@@ -308,11 +308,13 @@ final class OTPAuthURIStressTests: XCTestCase {
 
     // MARK: Invalid digit values fall back to 6
 
-    func testInvalidDigitsFallBackTo6() throws {
-        for bad in ["0", "1", "7", "9", "abc"] {
-            let token = try parse("otpauth://totp/T?secret=JBSWY3DPEHPK3PXP&digits=\(bad)")
-            XCTAssertEqual(token.digits, 6, "digits='\(bad)' must fall back to 6")
+    func testUnsupportedDigitsAreRejected() throws {
+        for bad in ["0", "1", "7", "9"] {
+            XCTAssertThrowsError(try parse("otpauth://totp/T?secret=JBSWY3DPEHPK3PXP&digits=\(bad)"),
+                                 "digits='\(bad)' can't produce correct codes and must be rejected")
         }
+        let unparseable = try parse("otpauth://totp/T?secret=JBSWY3DPEHPK3PXP&digits=abc")
+        XCTAssertEqual(unparseable.digits, 6, "A non-numeric digits value is treated as absent")
     }
 
     // MARK: Counter at UInt64 boundaries
@@ -450,7 +452,7 @@ final class ExportImportFormatStressTests: XCTestCase {
         XCTAssertEqual(result.tokens[0].period, 60)
     }
 
-    func testAegisUnknownTypeDefaultsToTOTP() throws {
+    func testAegisUnsupportedTypeIsSkipped() throws {
         let json = """
         {
             "db": {
@@ -459,13 +461,35 @@ final class ExportImportFormatStressTests: XCTestCase {
                     "name": "steam-user",
                     "issuer": "Steam",
                     "info": { "secret": "JBSWY3DPEHPK3PXP", "algo": "SHA1", "digits": 5, "period": 30 }
+                }, {
+                    "type": "totp",
+                    "name": "alice",
+                    "issuer": "Corp",
+                    "info": { "secret": "JBSWY3DPEHPK3PXP", "algo": "SHA1", "digits": 6, "period": 30 }
                 }]
             }
         }
         """.data(using: .utf8)!
         let result = try manager.parseTokens(from: json)
-        XCTAssertEqual(result.tokens.count, 1)
-        XCTAssertEqual(result.tokens[0].type, .totp)
+        XCTAssertEqual(result.tokens.map(\.name), ["alice"])
+        XCTAssertEqual(result.skipped, 1, "Steam codes can't be generated as TOTP; the entry must be skipped and counted")
+    }
+
+    func testOutOfRangeDigitsAndPeriodAreSkipped() throws {
+        let json = """
+        {
+            "db": {
+                "entries": [
+                    { "type": "totp", "name": "seven", "info": { "secret": "JBSWY3DPEHPK3PXP", "digits": 7, "period": 30 } },
+                    { "type": "totp", "name": "fast", "info": { "secret": "JBSWY3DPEHPK3PXP", "digits": 6, "period": 10 } },
+                    { "type": "totp", "name": "ok", "info": { "secret": "JBSWY3DPEHPK3PXP", "digits": 8, "period": 60 } }
+                ]
+            }
+        }
+        """.data(using: .utf8)!
+        let result = try manager.parseTokens(from: json)
+        XCTAssertEqual(result.tokens.map(\.name), ["ok"])
+        XCTAssertEqual(result.skipped, 2)
     }
 
     func testAegisAllEntriesMissingSecretThrows() {
