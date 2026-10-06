@@ -103,8 +103,8 @@ struct AegisParser: TokenImportParser {
             tokens.append(Token(
                 name: name, issuer: issuer, secret: secretData,
                 algorithm: algorithm, digits: digits, type: tokenType,
-                period: tokenType == .totp ? period : nil,
-                counter: tokenType == .hotp ? counter : nil
+                period: period,
+                counter: counter
             ))
         }
         guard !tokens.isEmpty else { throw ExportImportError.invalidFileFormat }
@@ -147,8 +147,8 @@ struct TwoFASParser: TokenImportParser {
             tokens.append(Token(
                 name: name, issuer: issuer, secret: secretData,
                 algorithm: algorithm, digits: digits, type: tokenType,
-                period: tokenType == .totp ? period : nil,
-                counter: tokenType == .hotp ? counter : nil
+                period: period,
+                counter: counter
             ))
         }
         guard !tokens.isEmpty else { throw ExportImportError.invalidFileFormat }
@@ -224,8 +224,8 @@ struct AndOTPParser: TokenImportParser {
             tokens.append(Token(
                 name: name, issuer: issuer, secret: secretData,
                 algorithm: algorithm, digits: digits, type: type,
-                period: type == .totp ? period : nil,
-                counter: type == .hotp ? counter : nil
+                period: period,
+                counter: counter
             ))
         }
         guard !tokens.isEmpty else { throw ExportImportError.invalidFileFormat }
@@ -276,8 +276,8 @@ struct RaivoParser: TokenImportParser {
             tokens.append(Token(
                 name: name, issuer: issuer, secret: secretData,
                 algorithm: algorithm, digits: digits, type: type,
-                period: type == .totp ? period : nil,
-                counter: type == .hotp ? counter : nil
+                period: period,
+                counter: counter
             ))
         }
         guard !tokens.isEmpty else { throw ExportImportError.invalidFileFormat }
@@ -288,16 +288,12 @@ struct RaivoParser: TokenImportParser {
 // MARK: - OTPAuth URI adapter
 
 struct OTPAuthURIParser: TokenImportParser {
-    private let parseURI: (String) throws -> Token
-
-    init(parseURI: @escaping (String) throws -> Token) {
-        self.parseURI = parseURI
-    }
-
     func parse(from data: Data) throws -> ExportImportManager.ImportResult {
         guard let text = String(data: data, encoding: .utf8),
-              text.components(separatedBy: .newlines)
-              .contains(where: { $0.hasPrefix("otpauth://") || $0.hasPrefix("otpauth-migration://") })
+              text.components(separatedBy: .newlines).contains(where: {
+                  TokenIntake.hasScheme($0, TokenIntake.otpAuthScheme)
+                      || TokenIntake.hasScheme($0, TokenIntake.migrationScheme)
+              })
         else { throw ExportImportError.unsupportedFormat }
 
         let lines = text.components(separatedBy: .newlines)
@@ -308,28 +304,16 @@ struct OTPAuthURIParser: TokenImportParser {
             let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else { continue }
 
-            if trimmed.hasPrefix("otpauth://") {
-                if let token = try? parseURI(trimmed) {
+            if TokenIntake.hasScheme(trimmed, TokenIntake.otpAuthScheme) {
+                if let token = try? TokenIntake.token(fromOTPAuth: trimmed) {
                     tokens.append(token)
                 } else {
                     skipped += 1
                 }
-            } else if trimmed.hasPrefix("otpauth-migration://") {
-                if let params = trimmed.parseMigrationURI() {
-                    for p in params {
-                        guard p.secret.count >= 10 else { skipped += 1
-                            continue
-                        }
-                        let rawPeriod = p.period ?? 30
-                        tokens.append(Token(
-                            name: p.name, issuer: p.issuer, secret: p.secret,
-                            algorithm: p.algorithm,
-                            digits: (p.digits == 6 || p.digits == 8) ? p.digits : 6,
-                            type: p.type,
-                            period: (rawPeriod >= 15 && rawPeriod <= 300) ? rawPeriod : 30,
-                            counter: p.counter
-                        ))
-                    }
+            } else if TokenIntake.hasScheme(trimmed, TokenIntake.migrationScheme) {
+                if let migrated = TokenIntake.tokens(fromMigration: trimmed) {
+                    tokens.append(contentsOf: migrated.tokens)
+                    skipped += migrated.skipped
                 } else {
                     skipped += 1
                 }

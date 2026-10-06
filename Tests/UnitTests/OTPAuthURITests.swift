@@ -3,10 +3,8 @@ import XCTest
 
 final class OTPAuthURITests: XCTestCase {
 
-    private let manager = ExportImportManager(tokenStore: TokenStore())
-
     private func parse(_ uri: String) throws -> Token {
-        try manager.parseOTPAuthURI(uri)
+        try TokenIntake.token(fromOTPAuth: uri)
     }
 
     // MARK: - Basic TOTP
@@ -192,7 +190,7 @@ final class OTPAuthURITests: XCTestCase {
     // MARK: - Scanned link label
 
     func testScannedLinkTrimsSpaceAfterColon() {
-        let params = "otpauth://totp/Google:%20user@example.com?secret=JBSWY3DPEHPK3PXP".extractOTPParameters()
+        let params = TokenIntake.parameters(fromOTPAuth: "otpauth://totp/Google:%20user@example.com?secret=JBSWY3DPEHPK3PXP")
         XCTAssertEqual(params?.name, "user@example.com")
         XCTAssertEqual(params?.issuer, "Google")
     }

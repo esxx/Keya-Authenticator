@@ -3,82 +3,6 @@ import Foundation
 // MARK: - OTP Auth URI Parsing
 
 extension String {
-    func extractOTPParameters() -> (
-        type: TokenType,
-        secret: String,
-        name: String,
-        issuer: String?,
-        algorithm: Algorithm,
-        digits: Int,
-        period: Int?,
-        counter: UInt64?
-    )? {
-        guard hasPrefix("otpauth://") else { return nil }
-
-        let safeURIString = replacingOccurrences(of: " ", with: "%20")
-
-        guard let url = URL(string: safeURIString), url.scheme == "otpauth" else { return nil }
-
-        let tokenType: TokenType
-        switch url.host?.lowercased() {
-        case "totp": tokenType = .totp
-        case "hotp": tokenType = .hotp
-        default: return nil
-        }
-
-        let label = url.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-
-        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-              let queryItems = components.queryItems else { return nil }
-
-        var secret: String?
-        var issuer: String?
-        var algorithm: Algorithm = .sha1
-        var digits = 6
-        var period: Int?
-        var counter: UInt64?
-
-        for item in queryItems {
-            switch item.name.lowercased() {
-            case "secret": secret = item.value
-            case "issuer": issuer = item.value
-            case "algorithm":
-                switch item.value?.uppercased() {
-                case "SHA256": algorithm = .sha256
-                case "SHA512": algorithm = .sha512
-                default: algorithm = .sha1
-                }
-            case "digits":
-                if let v = item.value, let n = Int(v) {
-                    digits = n
-                }
-            case "period":
-                if let v = item.value, let n = Int(v) {
-                    period = n
-                }
-            case "counter":
-                if let v = item.value, let n = UInt64(v) {
-                    counter = n
-                }
-            default: break
-            }
-        }
-
-        guard let secret, !secret.isEmpty else { return nil }
-
-        var name: String
-        if let colonRange = label.range(of: ":") {
-            name = label[colonRange.upperBound...].trimmingCharacters(in: .whitespaces)
-            if issuer == nil {
-                issuer = label[..<colonRange.lowerBound].trimmingCharacters(in: .whitespaces)
-            }
-        } else {
-            name = label.trimmingCharacters(in: .whitespaces)
-        }
-
-        return (tokenType, secret, name, issuer, algorithm, digits, period, counter)
-    }
-
     var isValidOTPSecret: Bool {
         guard let data = base32DecodedData else { return false }
         return data.count >= 10
@@ -98,7 +22,7 @@ extension String {
         period: Int?,
         counter: UInt64?
     )]? {
-        guard hasPrefix("otpauth-migration://") else { return nil }
+        guard TokenIntake.hasScheme(self, TokenIntake.migrationScheme) else { return nil }
 
         let encoded: String
         if let url = URL(string: self),

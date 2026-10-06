@@ -286,7 +286,7 @@ final class OTPAuthURIStressTests: XCTestCase {
     }
 
     private func parse(_ uri: String) throws -> Token {
-        try manager.parseOTPAuthURI(uri)
+        try TokenIntake.token(fromOTPAuth: uri)
     }
 
     // MARK: Unusual but valid percent-encoding

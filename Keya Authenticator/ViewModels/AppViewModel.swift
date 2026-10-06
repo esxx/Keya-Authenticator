@@ -133,7 +133,7 @@ final class AppCoordinator {
     }
 
     func handleIncomingURL(_ url: URL) {
-        guard url.scheme == "otpauth" else { return }
+        guard url.scheme?.lowercased() == "otpauth" else { return }
         if appState == .main {
             mainContentViewModel.openAddSheet(prefillURI: url.absoluteString)
         } else {

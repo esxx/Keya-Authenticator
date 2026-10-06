@@ -461,7 +461,7 @@ final class ExportImportTests: XCTestCase {
 
     func testOTPAuthURIParserDirectly() throws {
         let text = "otpauth://totp/GitHub:user?secret=JBSWY3DPEHPK3PXP&issuer=GitHub"
-        let parser = OTPAuthURIParser(parseURI: manager.parseOTPAuthURI)
+        let parser = OTPAuthURIParser()
         let result = try parser.parse(from: text.data(using: .utf8)!)
         XCTAssertEqual(result.tokens.count, 1)
         XCTAssertEqual(result.tokens[0].issuer, "GitHub")
@@ -469,7 +469,7 @@ final class ExportImportTests: XCTestCase {
 
     func testOTPAuthURIParserThrowsOnNonURIData() {
         let data = #"{"not": "a uri"}"#.data(using: .utf8)!
-        let parser = OTPAuthURIParser(parseURI: manager.parseOTPAuthURI)
+        let parser = OTPAuthURIParser()
         XCTAssertThrowsError(try parser.parse(from: data))
     }
 

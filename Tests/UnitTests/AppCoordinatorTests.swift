@@ -148,6 +148,37 @@ final class AppCoordinatorTests: XCTestCase {
         )
     }
 
+    func testDetermineInitialState_noAuth_consumesUppercaseSchemeURL() throws {
+        try KeychainManager.savePIN("123456")
+        try KeychainManager.saveSecuritySettings(
+            KeychainManager.SecuritySettings(
+                isAuthenticationEnabled: false,
+                useBiometricAuthentication: false,
+                lockGracePeriod: nil
+            )
+        )
+
+        let coordinator = AppCoordinator(
+            tokenStore: TokenStore(),
+            authenticationManager: AuthenticationManager(),
+            settings: AppSettings()
+        )
+
+        let url = URL(string: "OTPAUTH://totp/Test:user@example.com?secret=JBSWY3DPEHPK3PXP")!
+        coordinator.handleIncomingURL(url)
+
+        coordinator.determineInitialState()
+
+        XCTAssertTrue(
+            coordinator.mainContentViewModel.showingAddSheet,
+            "Add sheet must open after URL-triggered cold launch when auth is disabled"
+        )
+        XCTAssertNotNil(
+            coordinator.mainContentViewModel.pendingOTPAuthURI,
+            "Pending URI must be forwarded to the add sheet"
+        )
+    }
+
     func testDetermineInitialState_noAuth_noPendingURL_doesNotOpenSheet() throws {
         try KeychainManager.savePIN("123456")
         try KeychainManager.saveSecuritySettings(

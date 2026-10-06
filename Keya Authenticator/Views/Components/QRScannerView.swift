@@ -122,7 +122,12 @@ struct QRScannerView: View {
     private func handleScannedCode(_ code: String) {
         AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
 
-        if code.hasPrefix("otpauth://") || code.hasPrefix("otpauth-migration://") || code.isValidOTPSecret {
+        if TokenIntake.hasScheme(code, TokenIntake.otpAuthScheme) || TokenIntake.hasScheme(
+            code,
+            TokenIntake.migrationScheme
+        )
+            || code.isValidOTPSecret
+        {
             onResult(.success(code))
             if isEmbedded {
                 cameraManager.resumeScanning()

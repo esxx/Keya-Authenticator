@@ -49,7 +49,7 @@ final class ExportImportManager {
         }
         let parsers: [TokenImportParser] = [
             KeyaPlaintextParser(),
-            OTPAuthURIParser(parseURI: parseOTPAuthURI),
+            OTPAuthURIParser(),
             AegisParser(),
             TwoFASParser(),
             LastPassParser(),
@@ -70,7 +70,7 @@ final class ExportImportManager {
         if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
            let uris = json["uris"] as? [String]
         {
-            let tokens = uris.compactMap { try? parseOTPAuthURI($0) }
+            let tokens = uris.compactMap { try? TokenIntake.token(fromOTPAuth: $0) }
             if !tokens.isEmpty {
                 return ImportResult(tokens: tokens, skipped: uris.count - tokens.count)
             }
@@ -79,128 +79,6 @@ final class ExportImportManager {
             throw recognisedFormatError
         }
         throw ExportImportError.unsupportedFormat
-    }
-
-    // MARK: - OTP Auth URI Parser
-
-    func parseOTPAuthURI(_ uriString: String) throws -> Token {
-        let schemePrefix = "otpauth://"
-        guard uriString.lowercased().hasPrefix(schemePrefix) else {
-            throw ExportImportError.invalidFileFormat
-        }
-        let safeURIString = uriString.replacingOccurrences(of: " ", with: "%20")
-
-        guard let url = URL(string: safeURIString) else {
-            throw ExportImportError.invalidFileFormat
-        }
-
-        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            throw ExportImportError.invalidFileFormat
-        }
-
-        let type: TokenType
-        switch url.host?.lowercased() {
-        case "totp":
-            type = .totp
-        case "hotp":
-            type = .hotp
-        default:
-            throw ExportImportError.invalidFileFormat
-        }
-
-        guard let queryItems = components.queryItems else {
-            throw ExportImportError.invalidFileFormat
-        }
-
-        var secret: String?
-        var issuer: String?
-        var algorithm: Algorithm = .sha1
-        var digits = 6
-        var period: Int? = nil
-        var counter: UInt64? = nil
-
-        for item in queryItems {
-            switch item.name.lowercased() {
-            case "secret":
-                secret = item.value
-            case "issuer":
-                issuer = item.value
-            case "algorithm":
-                if let value = item.value?.uppercased() {
-                    switch value {
-                    case "SHA256":
-                        algorithm = .sha256
-                    case "SHA512":
-                        algorithm = .sha512
-                    default:
-                        algorithm = .sha1
-                    }
-                }
-            case "digits":
-                if let value = item.value, let intValue = Int(value) {
-                    digits = intValue
-                }
-            case "period":
-                if let value = item.value, let intValue = Int(value) {
-                    period = intValue
-                }
-            case "counter":
-                if let value = item.value, let intValue = UInt64(value) {
-                    counter = intValue
-                }
-            default:
-                break
-            }
-        }
-
-        guard let secret, !secret.isEmpty,
-              let secretData = secret.base32DecodedData,
-              secretData.count >= 10
-        else {
-            throw ExportImportError.invalidFileFormat
-        }
-
-        let label = components.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        let decodedLabel = label
-
-        let name: String
-        let finalIssuer: String?
-
-        if decodedLabel.contains(":") {
-            let parts = decodedLabel.split(separator: ":", maxSplits: 1)
-            let labelIssuer = String(parts[0]).trimmingCharacters(in: .whitespaces)
-            let labelName = parts.count > 1 ? String(parts[1]).trimmingCharacters(in: .whitespaces) : ""
-
-            finalIssuer = issuer ?? (labelIssuer.isEmpty ? nil : labelIssuer)
-
-            name = labelName.isEmpty ? (labelIssuer.isEmpty ? "Imported Token" : labelIssuer) : labelName
-        } else {
-            name = decodedLabel.isEmpty ? "Imported Token" : decodedLabel
-            finalIssuer = issuer
-        }
-
-        if type == .totp {
-            period = period ?? 30
-            counter = nil
-        } else {
-            period = nil
-            counter = counter ?? 0
-        }
-
-        guard Token.isSupported(digits: digits, period: period) else {
-            throw ExportImportError.invalidFileFormat
-        }
-
-        return Token(
-            name: name,
-            issuer: finalIssuer,
-            secret: secretData,
-            algorithm: algorithm,
-            digits: digits,
-            type: type,
-            period: period,
-            counter: counter
-        )
     }
 }
 

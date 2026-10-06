@@ -130,7 +130,7 @@ final class AddTokenViewModel {
         self.tokenStore = tokenStore
         self.settings = settings
         importManager = ExportImportManager(tokenStore: tokenStore)
-        if let uri = prefillURI, let p = uri.extractOTPParameters() {
+        if let uri = prefillURI, let p = TokenIntake.parameters(fromOTPAuth: uri) {
             tokenType = p.type
             name = p.name
             issuer = p.issuer ?? ""
@@ -237,56 +237,34 @@ final class AddTokenViewModel {
 
     func handleScannedQR(_ string: String) {
         errorMessage = nil
-        if string.hasPrefix("otpauth-migration://") {
-            guard let params = string.parseMigrationURI() else {
-                errorMessage = String(localized: "Could not decode Google Authenticator QR code")
-                return
-            }
-            let validParams = params.filter { $0.secret.count >= 10 }
-            guard !validParams.isEmpty else {
-                errorMessage = String(localized: "No valid tokens found in QR code")
-                return
-            }
-            pendingSkippedCount = params.count - validParams.count
-            let tokens = validParams.map {
-                Token(
-                    name: $0.name,
-                    issuer: $0.issuer,
-                    secret: $0.secret,
-                    algorithm: $0.algorithm,
-                    digits: ($0.digits == 6 || $0.digits == 8) ? $0.digits : 6,
-                    type: $0.type,
-                    period: $0.period.map { p in (p >= 15 && p <= 300) ? p : 30 } ?? 30,
-                    counter: $0.counter
-                )
-            }
-            persistImported(tokens)
-        } else if let p = string.extractOTPParameters() {
-            guard let secretData = p.secret.base32DecodedData, secretData.count >= 10 else {
-                errorMessage = String(localized: "Invalid Base32 secret. Check the key and try again.")
-                return
-            }
-            let period = p.type == .totp ? (p.period ?? 30) : nil
-            guard p.digits == 6 || p.digits == 8 else {
-                errorMessage = String(localized: "Digits must be 6 or 8")
-                return
-            }
-            guard Token.isSupported(digits: p.digits, period: period) else {
-                errorMessage = String(localized: "Period must be between 15 and 300 seconds")
-                return
-            }
-            persistImported([Token(
-                name: p.name.isEmpty ? "Imported Token" : p.name,
-                issuer: p.issuer?.isEmpty == true ? nil : p.issuer,
-                secret: secretData, algorithm: p.algorithm,
-                digits: p.digits,
-                type: p.type,
-                period: period,
-                counter: p.type == .hotp ? (p.counter ?? 0) : nil
-            )])
-        } else {
+        if TokenIntake.hasScheme(string, TokenIntake.migrationScheme) {
+            importMigration(string)
+            return
+        }
+        do {
+            try persistImported([TokenIntake.token(fromOTPAuth: string)])
+        } catch TokenIntakeError.invalidSecret {
+            errorMessage = String(localized: "Invalid Base32 secret. Check the key and try again.")
+        } catch TokenIntakeError.unsupportedDigits {
+            errorMessage = String(localized: "Digits must be 6 or 8")
+        } catch TokenIntakeError.unsupportedPeriod {
+            errorMessage = String(localized: "Period must be between 15 and 300 seconds")
+        } catch {
             errorMessage = String(localized: "Invalid QR code")
         }
+    }
+
+    private func importMigration(_ string: String) {
+        guard let migrated = TokenIntake.tokens(fromMigration: string) else {
+            errorMessage = String(localized: "Could not decode Google Authenticator QR code")
+            return
+        }
+        guard !migrated.tokens.isEmpty else {
+            errorMessage = String(localized: "No valid tokens found in QR code")
+            return
+        }
+        pendingSkippedCount = migrated.skipped
+        persistImported(migrated.tokens)
     }
 
     // MARK: - QR — manual form (ManualTokenEntryView: populates form fields)
@@ -295,31 +273,9 @@ final class AddTokenViewModel {
         switch result {
         case let .success(qr):
             errorMessage = nil
-            if qr.hasPrefix("otpauth-migration://") {
-                guard let params = qr.parseMigrationURI() else {
-                    errorMessage = String(localized: "Could not decode Google Authenticator QR code")
-                    return
-                }
-                let validParams = params.filter { $0.secret.count >= 10 }
-                guard !validParams.isEmpty else {
-                    errorMessage = String(localized: "No valid tokens found in QR code")
-                    return
-                }
-                pendingSkippedCount = params.count - validParams.count
-                let tokens = validParams.map {
-                    Token(
-                        name: $0.name,
-                        issuer: $0.issuer,
-                        secret: $0.secret,
-                        algorithm: $0.algorithm,
-                        digits: ($0.digits == 6 || $0.digits == 8) ? $0.digits : 6,
-                        type: $0.type,
-                        period: $0.period.map { p in (p >= 15 && p <= 300) ? p : 30 } ?? 30,
-                        counter: $0.counter
-                    )
-                }
-                persistImported(tokens)
-            } else if let params = qr.extractOTPParameters() {
+            if TokenIntake.hasScheme(qr, TokenIntake.migrationScheme) {
+                importMigration(qr)
+            } else if let params = TokenIntake.parameters(fromOTPAuth: qr) {
                 name = params.name
                 issuer = params.issuer ?? ""
                 secret = params.secret
