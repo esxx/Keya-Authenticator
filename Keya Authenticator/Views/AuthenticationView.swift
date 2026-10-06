@@ -31,7 +31,7 @@ struct AuthenticationView: View {
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
-            Image("AppIconImage").resizable().aspectRatio(contentMode: .fit)
+            Image("AppIconImage").resizable().scaledToFit()
                 .frame(width: 64, height: 64)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .padding(.bottom, 20)

@@ -54,6 +54,7 @@ excluded:
   - Pods
   - DerivedData
   - .build
+  - build
   - "**/*.generated.swift"
   - "**/Resources/"
   - "**/Preview Content/"

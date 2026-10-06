@@ -339,7 +339,7 @@ struct MainContentView: View {
     private var emptyStateIcon: some View {
         let base = Image("AppIconImage")
             .resizable()
-            .aspectRatio(contentMode: .fit)
+            .scaledToFit()
             .frame(width: 80, height: 80)
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             .grayscale(1.0)
