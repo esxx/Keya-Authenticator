@@ -127,11 +127,11 @@ struct AppLockSettingsView: View {
             }
         })
         .sheet(isPresented: $showingPINVerify) {
-            PINVerifySheet(authenticationManager: authenticationManager) { verified in
+            PINAuthSheet(authenticationManager: authenticationManager) {
                 showingPINVerify = false
-                if verified {
-                    settings.isAuthenticationEnabled = false
-                }
+                settings.isAuthenticationEnabled = false
+            } onCancel: {
+                showingPINVerify = false
             }
         }
     }

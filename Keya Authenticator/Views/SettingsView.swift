@@ -246,30 +246,30 @@ struct SettingsView: View {
                 }
             }
             .sheet(isPresented: $showingAppLockGate) {
-                PINVerifySheet(authenticationManager: authenticationManager) { verified in
+                PINAuthSheet(authenticationManager: authenticationManager) {
                     showingAppLockGate = false
-                    if verified {
-                        navigateToAppLock = true
-                    }
+                    navigateToAppLock = true
+                } onCancel: {
+                    showingAppLockGate = false
                 }
             }
             .sheet(isPresented: $showingTransferGate) {
-                PINVerifySheet(authenticationManager: authenticationManager) { verified in
+                PINAuthSheet(authenticationManager: authenticationManager) {
                     showingTransferGate = false
-                    if verified {
-                        navigateToTransfer = true
-                    }
+                    navigateToTransfer = true
+                } onCancel: {
+                    showingTransferGate = false
                 }
             }
             .sheet(isPresented: $showingTipJar) {
                 TipJarView()
             }
             .sheet(isPresented: $showingResetGate) {
-                PINVerifySheet(authenticationManager: authenticationManager) { verified in
+                PINAuthSheet(authenticationManager: authenticationManager) {
                     showingResetGate = false
-                    if verified {
-                        showingResetConfirmation = true
-                    }
+                    showingResetConfirmation = true
+                } onCancel: {
+                    showingResetGate = false
                 }
             }
         }
