@@ -38,6 +38,44 @@ final class MainContentViewModelTests: XCTestCase {
         }
     }
 
+    // MARK: - List sections
+
+    private func makeToken(name: String, favorite: Bool, group: String?) -> Token {
+        var token = makeToken(name: name)
+        token.isFavorite = favorite
+        token.groupName = group
+        return token
+    }
+
+    private func addSectionTokens() throws {
+        try tokenStore.add([
+            makeToken(name: "A", favorite: true, group: "Work"),
+            makeToken(name: "B", favorite: false, group: "Work"),
+            makeToken(name: "C", favorite: false, group: nil),
+            makeToken(name: "D", favorite: false, group: "Bank"),
+            makeToken(name: "E", favorite: true, group: nil),
+            makeToken(name: "F", favorite: false, group: ""),
+        ])
+    }
+
+    func testSectionsSplitFavoritesAndGroupsInStoreOrder() throws {
+        try addSectionTokens()
+
+        let sections = viewModel.tokenSections
+        XCTAssertEqual(sections.favorites.map(\.name), ["A", "E"])
+        XCTAssertEqual(sections.groups.map(\.title), ["Bank", "Work", nil], "Named groups sorted, ungrouped last")
+        XCTAssertEqual(sections.groups.map { $0.tokens.map(\.name) }, [["D"], ["B"], ["C", "F"]])
+    }
+
+    func testSectionsFollowTheSearch() throws {
+        try addSectionTokens()
+        viewModel.searchText = "WORK"
+
+        let sections = viewModel.tokenSections
+        XCTAssertEqual(sections.favorites.map(\.name), ["A"])
+        XCTAssertEqual(sections.groups.map { $0.tokens.map(\.name) }, [["B"]])
+    }
+
     // MARK: - Changes made right after a favorite toggle
 
     func testFavoriteToggleKeepsHOTPStepMadeRightAfter() async throws {

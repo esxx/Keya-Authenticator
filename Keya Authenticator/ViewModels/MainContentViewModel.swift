@@ -33,7 +33,7 @@ final class MainContentViewModel {
 
     // MARK: - Computed Properties
 
-    var filteredTokens: [Token] {
+    private var filteredTokens: [Token] {
         if searchText.isEmpty {
             return tokenStore.tokens
         }
@@ -45,28 +45,26 @@ final class MainContentViewModel {
         }
     }
 
-    var favoriteTokens: [Token] {
-        filteredTokens.filter(\.isFavorite)
-    }
-
-    var groupedOtherTokens: [TokenGroup] {
-        let others = filteredTokens.filter { !$0.isFavorite }
+    var tokenSections: (favorites: [Token], groups: [TokenGroup]) {
+        var favorites: [Token] = []
         var byName: [String: [Token]] = [:]
         var ungrouped: [Token] = []
-        for token in others {
-            if let g = token.groupName, !g.isEmpty {
+        for token in filteredTokens {
+            if token.isFavorite {
+                favorites.append(token)
+            } else if let g = token.groupName, !g.isEmpty {
                 byName[g, default: []].append(token)
             } else {
                 ungrouped.append(token)
             }
         }
-        var result: [TokenGroup] = byName.keys.sorted().map { name in
+        var groups: [TokenGroup] = byName.keys.sorted().map { name in
             TokenGroup(id: name, title: name, tokens: byName[name] ?? [])
         }
         if !ungrouped.isEmpty {
-            result.append(TokenGroup(id: "", title: nil, tokens: ungrouped))
+            groups.append(TokenGroup(id: "", title: nil, tokens: ungrouped))
         }
-        return result
+        return (favorites, groups)
     }
 
     // MARK: - Initialization

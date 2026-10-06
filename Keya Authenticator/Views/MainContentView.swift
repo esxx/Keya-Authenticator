@@ -211,8 +211,7 @@ struct MainContentView: View {
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
             } else {
-                let favs = viewModel.favoriteTokens
-                let groups = viewModel.groupedOtherTokens
+                let (favs, groups) = viewModel.tokenSections
 
                 if favs.isEmpty, groups.isEmpty {
                     Section {
