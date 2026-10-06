@@ -78,7 +78,7 @@ final class AppCoordinatorTests: XCTestCase {
         try KeychainManager.savePIN("123456")
         let tokenStore = TokenStore()
         let secret = Data("reset-test-secret-1".utf8)
-        try tokenStore.update([Token(name: "A", secret: secret), Token(name: "B", secret: secret + Data([1]))])
+        try tokenStore.add([Token(name: "A", secret: secret), Token(name: "B", secret: secret + Data([1]))])
 
         let coordinator = AppCoordinator(
             tokenStore: tokenStore,

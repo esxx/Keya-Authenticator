@@ -30,6 +30,25 @@ final class AddTokenViewModel {
     var pendingEncryptedData: Data?
     var showEncryptedImportSheet = false
     var importSkippedCount = 0
+    var importAlreadyInVaultCount = 0
+
+    var importSummary: String {
+        var parts: [String] = []
+        if importSkippedCount > 0 {
+            parts.append(String(
+                localized: "\(importSkippedCount) tokens could not be imported because the data was missing or invalid. The remaining tokens were imported successfully."
+            ))
+        }
+        if importAlreadyInVaultCount > 0 {
+            parts
+                .append(
+                    String(
+                        localized: "\(importAlreadyInVaultCount) tokens are already in your vault and were kept as they are."
+                    )
+                )
+        }
+        return parts.joined(separator: "\n\n")
+    }
 
     // MARK: - Shared error + dismiss signal
 
@@ -57,6 +76,12 @@ final class AddTokenViewModel {
     private var pendingSkippedCount = 0
 
     var pendingDuplicateAdd: PendingDuplicateAdd?
+
+    func acknowledgeImportSummary() {
+        importSkippedCount = 0
+        importAlreadyInVaultCount = 0
+        shouldDismiss = true
+    }
 
     func confirmPendingDuplicateAdd() {
         guard let pending = pendingDuplicateAdd else { return }
@@ -144,9 +169,7 @@ final class AddTokenViewModel {
 
     private func finishCreatingToken(_ token: Token) {
         do {
-            var current = tokenStore.tokens
-            current.append(token)
-            try tokenStore.update(current)
+            try tokenStore.add([token])
             resetForm()
             ClipboardManager.shared.provideHapticFeedback(.success)
             onTokenAdded?()
@@ -402,13 +425,12 @@ final class AddTokenViewModel {
 
     private func finishAddingEncryptedImport(_ tokens: [Token]) {
         do {
-            var current = tokenStore.tokens
-            current.append(contentsOf: tokens)
-            try tokenStore.update(current)
+            let result = try tokenStore.add(tokens)
             onTokenAdded?()
-            shouldDismiss = true
             importSkippedCount = pendingSkippedCount
+            importAlreadyInVaultCount = result.alreadyInVault
             pendingSkippedCount = 0
+            shouldDismiss = importSkippedCount == 0 && importAlreadyInVaultCount == 0
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -449,14 +471,13 @@ final class AddTokenViewModel {
     private func finishPersistingImported(_ tokens: [Token]) {
         isImporting = true
         do {
-            var current = tokenStore.tokens
-            current.append(contentsOf: tokens)
-            try tokenStore.update(current)
+            let result = try tokenStore.add(tokens)
             ClipboardManager.shared.provideHapticFeedback(.success)
             onTokenAdded?()
-            shouldDismiss = true
             importSkippedCount = pendingSkippedCount
+            importAlreadyInVaultCount = result.alreadyInVault
             pendingSkippedCount = 0
+            shouldDismiss = importSkippedCount == 0 && importAlreadyInVaultCount == 0
         } catch {
             ClipboardManager.shared.provideHapticFeedback(.error)
             errorMessage = error.localizedDescription

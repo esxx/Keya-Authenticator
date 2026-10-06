@@ -615,7 +615,7 @@ final class ExportImportFormatStressTests: XCTestCase {
                                 secret: s, algorithm: .sha256,
                                 digits: 8, type: .hotp, period: nil, counter: UInt64(i)))
         }
-        try tokenStore.update(tokens)
+        try tokenStore.add(tokens)
 
         let data = try manager.exportVault()
         let result = try manager.parseTokens(from: data)
@@ -640,7 +640,7 @@ final class ExportImportFormatStressTests: XCTestCase {
     func testEncryptionWithUnicodePassword() throws {
         let t = Token(name: "Test", issuer: "Corp", secret: secret,
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([t])
+        try tokenStore.add([t])
 
         let password = "p@ssw0rd🔐éàü"
         let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: password)
@@ -651,7 +651,7 @@ final class ExportImportFormatStressTests: XCTestCase {
     func testEncryptionWithVeryLongPassword() throws {
         let t = Token(name: "Test", issuer: "Corp", secret: secret,
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([t])
+        try tokenStore.add([t])
 
         let password = String(repeating: "a", count: 1000)
         let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: password)
@@ -662,7 +662,7 @@ final class ExportImportFormatStressTests: XCTestCase {
     func testEncryptionWithMinimum8CharPassword() throws {
         let t = Token(name: "Test", issuer: "Corp", secret: secret,
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([t])
+        try tokenStore.add([t])
 
         let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: "eightchr")
         let result = try manager.parseTokens(from: EncryptionService.decrypt(encrypted, password: "eightchr"))
@@ -672,7 +672,7 @@ final class ExportImportFormatStressTests: XCTestCase {
     func testEncryptionRejectsPasswordShorterThan8() throws {
         let t = Token(name: "Test", issuer: "Corp", secret: secret,
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([t])
+        try tokenStore.add([t])
 
         for short in ["", "x", "sixchr", "sevench"] {
             XCTAssertThrowsError(try EncryptionService.encrypt(manager.exportVault(), password: short)) { error in
@@ -685,7 +685,7 @@ final class ExportImportFormatStressTests: XCTestCase {
     func testEncryptedFileDetectedCorrectly() throws {
         let t = Token(name: "Test", issuer: nil, secret: secret,
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([t])
+        try tokenStore.add([t])
 
         let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: "password123")
         XCTAssertTrue(EncryptionService.isEncryptedExport(encrypted))
@@ -697,7 +697,7 @@ final class ExportImportFormatStressTests: XCTestCase {
     func testEncryptedParseWithoutPasswordThrows() throws {
         let t = Token(name: "Test", issuer: nil, secret: secret,
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([t])
+        try tokenStore.add([t])
 
         let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: "mypassword")
         XCTAssertThrowsError(try manager.parseTokens(from: encrypted)) { error in
@@ -711,7 +711,7 @@ final class ExportImportFormatStressTests: XCTestCase {
     func testCorruptCiphertextThrowsWrongPassword() throws {
         let t = Token(name: "Test", issuer: nil, secret: secret,
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([t])
+        try tokenStore.add([t])
 
         var encrypted = try EncryptionService.encrypt(manager.exportVault(), password: "passw0rd")
         let mid = encrypted.count / 2
@@ -725,7 +725,7 @@ final class ExportImportFormatStressTests: XCTestCase {
     func testTruncatedEncryptedDataThrows() throws {
         let t = Token(name: "Test", issuer: nil, secret: secret,
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([t])
+        try tokenStore.add([t])
 
         let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: "passw0rd")
         let truncated = encrypted.prefix(encrypted.count / 2)

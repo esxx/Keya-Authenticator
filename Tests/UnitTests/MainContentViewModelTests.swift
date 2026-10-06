@@ -43,7 +43,7 @@ final class MainContentViewModelTests: XCTestCase {
     func testFavoriteToggleKeepsHOTPStepMadeRightAfter() async throws {
         let favorite = makeToken(name: "Favorite")
         let counter = makeToken(name: "Counter", type: .hotp)
-        try tokenStore.update([favorite, counter])
+        try tokenStore.add([favorite, counter])
 
         viewModel.toggleFavorite(favorite)
         viewModel.incrementCounter(for: counter)
@@ -58,7 +58,7 @@ final class MainContentViewModelTests: XCTestCase {
     func testFavoriteToggleKeepsDeleteMadeRightAfter() async throws {
         let favorite = makeToken(name: "Favorite")
         let removed = makeToken(name: "Removed")
-        try tokenStore.update([favorite, removed])
+        try tokenStore.add([favorite, removed])
 
         viewModel.toggleFavorite(favorite)
         viewModel.deleteToken(removed)
@@ -71,7 +71,7 @@ final class MainContentViewModelTests: XCTestCase {
 
     func testTwoQuickFavoriteTogglesCancelOut() async throws {
         let token = makeToken(name: "Twice")
-        try tokenStore.update([token])
+        try tokenStore.add([token])
 
         viewModel.toggleFavorite(token)
         viewModel.toggleFavorite(token)

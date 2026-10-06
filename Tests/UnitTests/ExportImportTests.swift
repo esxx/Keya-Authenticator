@@ -40,7 +40,7 @@ final class ExportImportTests: XCTestCase {
         let original = Token(name: "alice@example.com", issuer: "Example",
                              secret: secret, algorithm: .sha1,
                              digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([original])
+        try tokenStore.add([original])
 
         let data = try manager.exportVault()
         let imported = try manager.parseTokens(from: data)
@@ -299,7 +299,7 @@ final class ExportImportTests: XCTestCase {
         let original = Token(name: "SHA256 Token", issuer: "Corp",
                              secret: secret, algorithm: .sha256,
                              digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([original])
+        try tokenStore.add([original])
 
         let data = try manager.exportVault()
         let result = try manager.parseTokens(from: data)
@@ -311,7 +311,7 @@ final class ExportImportTests: XCTestCase {
         let original = Token(name: "8-digit Token", issuer: "Corp",
                              secret: secret, algorithm: .sha1,
                              digits: 8, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([original])
+        try tokenStore.add([original])
 
         let data = try manager.exportVault()
         let result = try manager.parseTokens(from: data)
@@ -325,7 +325,7 @@ final class ExportImportTests: XCTestCase {
         let original = Token(name: "HOTP Token", issuer: "Corp",
                              secret: secret, algorithm: .sha1,
                              digits: 6, type: .hotp, period: nil, counter: 99)
-        try tokenStore.update([original])
+        try tokenStore.add([original])
 
         let data = try manager.exportVault()
         let result = try manager.parseTokens(from: data)
@@ -341,7 +341,7 @@ final class ExportImportTests: XCTestCase {
         let original = Token(name: "Encrypted Token", issuer: "Corp",
                              secret: secret, algorithm: .sha1,
                              digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([original])
+        try tokenStore.add([original])
 
         let encryptedData = try EncryptionService.encrypt(manager.exportVault(), password: "hunter2x")
         let result = try manager.parseTokens(from: EncryptionService.decrypt(encryptedData, password: "hunter2x"))
@@ -355,7 +355,7 @@ final class ExportImportTests: XCTestCase {
         let original = Token(name: "Encrypted Token", issuer: "Corp",
                              secret: secret, algorithm: .sha1,
                              digits: 6, type: .totp, period: 30, counter: nil)
-        try tokenStore.update([original])
+        try tokenStore.add([original])
 
         let encryptedData = try EncryptionService.encrypt(manager.exportVault(), password: "correct-password")
 
@@ -529,7 +529,7 @@ final class ExportImportTests: XCTestCase {
     @MainActor
     func testKeyaBackupKeepsLargestHOTPCounter() throws {
         let hotp = Token(name: "Counter", secret: secret, type: .hotp, period: nil, counter: UInt64.max)
-        try tokenStore.update([hotp])
+        try tokenStore.add([hotp])
 
         let result = try manager.parseTokens(from: manager.exportVault())
 

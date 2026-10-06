@@ -263,7 +263,7 @@ final class AddTokenViewModelTests: XCTestCase {
     private func addExistingToken(name: String = "Existing") -> Token {
         let token = Token(name: name, issuer: nil, secret: validSecret.base32DecodedData!,
                           algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
-        try? tokenStore.update([token])
+        _ = try? tokenStore.add([token])
         return token
     }
 
@@ -456,5 +456,33 @@ final class AddTokenViewModelTests: XCTestCase {
         viewModel.confirmPendingDuplicateAdd()
 
         XCTAssertEqual(viewModel.importSkippedCount, 3)
+    }
+
+    // MARK: - Import summary
+
+    func testImportWithSkippedEntriesWaitsForAcknowledgement() {
+        let token = Token(name: "Fresh", issuer: nil, secret: Data("fresh-secret-key".utf8),
+                          algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
+        viewModel.handleEncryptedImportResult(ExportImportManager.ImportResult(tokens: [token], skipped: 1))
+
+        XCTAssertEqual(viewModel.importSkippedCount, 1)
+        XCTAssertFalse(viewModel.shouldDismiss, "The sheet must stay until the summary is read")
+
+        viewModel.acknowledgeImportSummary()
+
+        XCTAssertTrue(viewModel.shouldDismiss)
+        XCTAssertEqual(viewModel.importSkippedCount, 0)
+    }
+
+    func testImportOfExistingIDIsReportedAndDoesNotOverwrite() {
+        let existing = addExistingToken(name: "Current")
+        var olderCopy = existing
+        olderCopy.name = "Backup copy"
+        viewModel.handleEncryptedImportResult(ExportImportManager.ImportResult(tokens: [olderCopy], skipped: 0))
+
+        XCTAssertEqual(viewModel.importAlreadyInVaultCount, 1)
+        XCTAssertFalse(viewModel.shouldDismiss)
+        XCTAssertEqual(tokenStore.tokens.map(\.name), ["Current"])
+        XCTAssertTrue(viewModel.importSummary.contains("already in your vault"))
     }
 }

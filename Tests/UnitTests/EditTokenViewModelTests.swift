@@ -1,6 +1,7 @@
 import XCTest
 @testable import Keya_Authenticator
 
+@MainActor
 final class EditTokenViewModelTests: XCTestCase {
 
     private var tokenStore: TokenStore!
@@ -37,7 +38,7 @@ final class EditTokenViewModelTests: XCTestCase {
 
     func testSaveWithoutContentConflictSucceedsImmediately() async throws {
         let token = makeToken(name: "GitHub")
-        try tokenStore.update([token])
+        try tokenStore.add([token])
         let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: token)
         viewModel.name = "GitHub Renamed"
 
@@ -53,7 +54,7 @@ final class EditTokenViewModelTests: XCTestCase {
     func testSaveIntoContentConflictDoesNotPersistImmediately() async throws {
         let colliding = makeToken(name: "Discord", digits: 8)
         let edited = makeToken(name: "GitHub", digits: 6)
-        try tokenStore.update([colliding, edited])
+        try tokenStore.add([colliding, edited])
 
         let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: edited)
         viewModel.digits = 8
@@ -70,7 +71,7 @@ final class EditTokenViewModelTests: XCTestCase {
     func testConfirmPendingDuplicateSavePersistsTheEdit() async throws {
         let colliding = makeToken(name: "Discord", digits: 8)
         let edited = makeToken(name: "GitHub", digits: 6)
-        try tokenStore.update([colliding, edited])
+        try tokenStore.add([colliding, edited])
 
         let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: edited)
         viewModel.digits = 8
@@ -88,7 +89,7 @@ final class EditTokenViewModelTests: XCTestCase {
     func testCancelPendingDuplicateSaveDiscardsTheEdit() async throws {
         let colliding = makeToken(name: "Discord", digits: 8)
         let edited = makeToken(name: "GitHub", digits: 6)
-        try tokenStore.update([colliding, edited])
+        try tokenStore.add([colliding, edited])
 
         let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: edited)
         viewModel.digits = 8
@@ -103,10 +104,9 @@ final class EditTokenViewModelTests: XCTestCase {
 
     // MARK: - Website
 
-    @MainActor
     func testWebsiteIsSavedNormalized() async throws {
         let token = makeToken(name: "GitHub")
-        try tokenStore.update([token])
+        try tokenStore.add([token])
         let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: token)
         viewModel.website = "https://GitHub.com/login"
 
@@ -116,10 +116,9 @@ final class EditTokenViewModelTests: XCTestCase {
         XCTAssertEqual(tokenStore.tokens.first?.website, "github.com")
     }
 
-    @MainActor
     func testInvalidWebsiteBlocksSave() async throws {
         let token = makeToken(name: "GitHub")
-        try tokenStore.update([token])
+        try tokenStore.add([token])
         let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: token)
         viewModel.website = "GitHub"
 

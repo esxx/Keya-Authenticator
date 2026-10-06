@@ -28,7 +28,6 @@ final class EditTokenViewModel {
 
     struct PendingDuplicateAdd {
         let existingName: String
-        let token: Token
     }
 
     var pendingDuplicateAdd: PendingDuplicateAdd?
@@ -61,27 +60,27 @@ final class EditTokenViewModel {
     func saveToken() async -> Bool {
         guard validateInput() else { return false }
 
-        let updatedToken = buildUpdatedToken()
+        var updatedToken = originalToken
+        applyForm(to: &updatedToken)
         let duplicates = tokenStore.existingDuplicates(of: [updatedToken])
         if let duplicate = duplicates.first {
-            pendingDuplicateAdd = PendingDuplicateAdd(existingName: duplicate.existing.name, token: updatedToken)
+            pendingDuplicateAdd = PendingDuplicateAdd(existingName: duplicate.existing.name)
             return false
         }
-        return persist(updatedToken)
+        return persist()
     }
 
     func confirmPendingDuplicateSave() async -> Bool {
-        guard let pending = pendingDuplicateAdd else { return false }
+        guard pendingDuplicateAdd != nil else { return false }
         pendingDuplicateAdd = nil
-        return persist(pending.token)
+        return persist()
     }
 
     func cancelPendingDuplicateSave() {
         pendingDuplicateAdd = nil
     }
 
-    private func buildUpdatedToken() -> Token {
-        var updatedToken = originalToken
+    private func applyForm(to updatedToken: inout Token) {
         updatedToken.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         updatedToken.issuer = issuer.isEmpty ? nil : issuer.trimmingCharacters(in: .whitespacesAndNewlines)
         updatedToken.algorithm = algorithm
@@ -96,25 +95,14 @@ final class EditTokenViewModel {
         } else {
             updatedToken.counter = UInt64(counter) ?? 0
         }
-
-        updatedToken.touch()
-        return updatedToken
     }
 
-    private func persist(_ updatedToken: Token) -> Bool {
+    private func persist() -> Bool {
         isSaving = true
         errorMessage = nil
 
         do {
-            var tokens = tokenStore.tokens
-            guard let idx = tokens.firstIndex(where: { $0.id == originalToken.id }) else {
-                errorMessage = String(localized: "Token not found")
-                isSaving = false
-                return false
-            }
-
-            tokens[idx] = updatedToken
-            try tokenStore.update(tokens)
+            try tokenStore.update(id: originalToken.id) { applyForm(to: &$0) }
 
             isSaving = false
             return true

@@ -27,7 +27,16 @@ final class LocalizationTests: XCTestCase {
         XCTAssertTrue(one.hasPrefix("1 jeton n'a pas pu"), one)
         XCTAssertTrue(many.hasPrefix("3 jetons n'ont pas pu"), many)
         XCTAssertEqual(localized("\(1) tokens could not be imported because the data was missing or invalid. The remaining tokens were imported successfully.", "en"),
-                       "1 token could not be imported because the data was missing or invalid. The remaining tokens were imported successfully.")
+                       "1 token could not be imported because the data was missing or invalid.\nThe remaining tokens were imported successfully.")
+    }
+
+    func testAlreadyInVaultUsesPluralForms() {
+        XCTAssertEqual(localized("\(1) tokens are already in your vault and were kept as they are.", "en"),
+                       "1 token is already in your vault and was kept as it is.")
+        XCTAssertEqual(localized("\(3) tokens are already in your vault and were kept as they are.", "fr"),
+                       "3 jetons sont déjà dans votre coffre et ont été conservés tels quels.")
+        XCTAssertEqual(localized("\(1) tokens are already in your vault and were kept as they are.", "pt-BR"),
+                       "1 token já está no seu cofre e foi mantido como estava.")
     }
 
     func testAsianLanguagesHaveNoEnglishPluralSuffix() {

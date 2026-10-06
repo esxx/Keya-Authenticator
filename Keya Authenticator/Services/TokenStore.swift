@@ -4,6 +4,37 @@ import LocalAuthentication
 import os
 import SwiftUI
 
+// MARK: - AutoFill identity store
+
+protocol AutoFillIdentityStore {
+    func isEnabled() async -> Bool
+    func replaceIdentities(_ identities: [ASOneTimeCodeCredentialIdentity]) async throws
+}
+
+struct SystemAutoFillIdentityStore: AutoFillIdentityStore {
+    func isEnabled() async -> Bool {
+        await ASCredentialIdentityStore.shared.state().isEnabled
+    }
+
+    func replaceIdentities(_ identities: [ASOneTimeCodeCredentialIdentity]) async throws {
+        try await ASCredentialIdentityStore.shared.replaceCredentialIdentities(identities)
+    }
+}
+
+// MARK: - Errors
+
+enum TokenStoreError: LocalizedError, Equatable {
+    case tokenNotFound
+    case idChanged
+
+    var errorDescription: String? {
+        switch self {
+        case .tokenNotFound: String(localized: "Token not found")
+        case .idChanged: String(localized: "Your token couldn't be saved. Please try again.")
+        }
+    }
+}
+
 @Observable
 final class TokenStore {
     // MARK: - Properties
@@ -13,6 +44,13 @@ final class TokenStore {
 
     private var sortedIDs: [UUID] = []
     private let sortOrderKey = "tokenSortOrder"
+
+    private let identityStore: AutoFillIdentityStore
+    private(set) var autoFillSync: Task<Void, Never>?
+
+    init(identityStore: AutoFillIdentityStore = SystemAutoFillIdentityStore()) {
+        self.identityStore = identityStore
+    }
 
     // MARK: - Load / Clear
 
@@ -105,54 +143,50 @@ final class TokenStore {
 
     // MARK: - Token Mutations
 
-    func update(_ newTokens: [Token]) throws {
-        let oldIDs = Set(tokens.map(\.id))
-
-        var seenIDs = Set<UUID>()
-        var deduped = newTokens.filter { seenIDs.insert($0.id).inserted }
-
-        let newIDs = Set(deduped.map(\.id))
-        var orphanDeleteError: Error?
-        for id in oldIDs.subtracting(newIDs) {
-            do {
-                try KeychainManager.deleteToken(id: id)
-            } catch {
-                if orphanDeleteError == nil {
-                    orphanDeleteError = error
-                }
-            }
-        }
-        for token in deduped {
-            try KeychainManager.saveToken(token)
-        }
-        applySort(to: &deduped)
-        tokens = deduped
-        syncAutoFillIdentities()
-        if let orphanDeleteError {
-            throw orphanDeleteError
-        }
+    struct AddResult {
+        let added: Int
+        let alreadyInVault: Int
     }
 
-    func delete(at indices: IndexSet) throws {
-        let sorted = indices.sorted(by: >)
-        var updated = tokens
-        var firstError: Error?
-        for index in sorted where index < updated.count {
+    @discardableResult
+    func add(_ newTokens: [Token]) throws -> AddResult {
+        var seenIDs = Set(tokens.map(\.id))
+        let toWrite = newTokens.filter { seenIDs.insert($0.id).inserted }
+        for token in toWrite {
             do {
-                try KeychainManager.deleteToken(id: updated[index].id)
-                updated.remove(at: index)
+                try KeychainManager.saveToken(token)
             } catch {
-                if firstError == nil {
-                    firstError = error
-                }
+                try? load()
+                throw error
             }
         }
+        var updated = tokens + toWrite
         applySort(to: &updated)
         tokens = updated
         syncAutoFillIdentities()
-        if let firstError {
-            throw firstError
+        return AddResult(added: toWrite.count, alreadyInVault: newTokens.count - toWrite.count)
+    }
+
+    func update(id: UUID, _ change: (inout Token) -> Void) throws {
+        guard let index = tokens.firstIndex(where: { $0.id == id }) else {
+            throw TokenStoreError.tokenNotFound
         }
+        var token = tokens[index]
+        change(&token)
+        guard token.id == id else { throw TokenStoreError.idChanged }
+        token.touch()
+        try KeychainManager.saveToken(token)
+        tokens[index] = token
+        syncAutoFillIdentities()
+    }
+
+    func delete(id: UUID) throws {
+        try KeychainManager.deleteToken(id: id)
+        var updated = tokens
+        updated.removeAll { $0.id == id }
+        applySort(to: &updated)
+        tokens = updated
+        syncAutoFillIdentities()
     }
 
     func deleteAll() throws {
@@ -176,20 +210,22 @@ final class TokenStore {
     // MARK: - AutoFill
 
     private func syncAutoFillIdentities() {
-        let identities = tokens.compactMap { token -> ASOneTimeCodeCredentialIdentity? in
-            guard token.type == .totp, let website = token.website else { return nil }
-            let label = token.issuer.flatMap { $0.isEmpty ? nil : $0 } ?? website
-            return ASOneTimeCodeCredentialIdentity(
-                serviceIdentifier: ASCredentialServiceIdentifier(identifier: website, type: .domain),
-                label: label,
-                recordIdentifier: token.id.uuidString
-            )
-        }
-        Task {
-            let store = ASCredentialIdentityStore.shared
-            guard await store.state().isEnabled else { return }
+        let previous = autoFillSync
+        autoFillSync = Task { [weak self] in
+            await previous?.value
+            guard let self else { return }
+            let identities = tokens.compactMap { token -> ASOneTimeCodeCredentialIdentity? in
+                guard token.type == .totp, let website = token.website else { return nil }
+                let label = token.issuer.flatMap { $0.isEmpty ? nil : $0 } ?? website
+                return ASOneTimeCodeCredentialIdentity(
+                    serviceIdentifier: ASCredentialServiceIdentifier(identifier: website, type: .domain),
+                    label: label,
+                    recordIdentifier: token.id.uuidString
+                )
+            }
+            guard await identityStore.isEnabled() else { return }
             do {
-                try await store.replaceCredentialIdentities(identities)
+                try await identityStore.replaceIdentities(identities)
             } catch {
                 Logger(subsystem: Constants.keychainService, category: "AutoFill")
                     .error("Updating AutoFill suggestions failed: \(error.localizedDescription, privacy: .public)")

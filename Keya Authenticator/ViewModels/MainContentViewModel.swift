@@ -28,7 +28,6 @@ final class MainContentViewModel {
 
     private var newTokenIDs: Set<UUID> = []
     private var snapshotIDsBeforeAdd: Set<UUID> = []
-    private var hotpIncrementInProgress = false
     private var reportedUnreadableCount = 0
     private var backupNudgeCheckPending = false
 
@@ -96,9 +95,8 @@ final class MainContentViewModel {
     }
 
     func deleteToken(_ token: Token) {
-        guard let index = tokenStore.tokens.firstIndex(where: { $0.id == token.id }) else { return }
         do {
-            try tokenStore.delete(at: IndexSet(integer: index))
+            try tokenStore.delete(id: token.id)
             ClipboardManager.shared.provideHapticFeedback(.medium)
         } catch {
             ClipboardManager.shared.provideHapticFeedback(.error)
@@ -107,15 +105,10 @@ final class MainContentViewModel {
     }
 
     func incrementCounter(for token: Token) {
-        guard !hotpIncrementInProgress,
-              token.type == .hotp,
-              let index = tokenStore.tokens.firstIndex(where: { $0.id == token.id }) else { return }
-        hotpIncrementInProgress = true
-        defer { hotpIncrementInProgress = false }
-        var updated = tokenStore.tokens
-        updated[index].incrementCounter()
+        guard token.type == .hotp else { return }
         do {
-            try tokenStore.update(updated)
+            try tokenStore.update(id: token.id) { $0.incrementCounter() }
+        } catch TokenStoreError.tokenNotFound {
         } catch {
             operationErrorMessage = error.localizedDescription
         }
@@ -125,12 +118,9 @@ final class MainContentViewModel {
         guard let current = tokenStore.tokens.first(where: { $0.id == token.id }) else { return }
         ClipboardManager.shared.provideHapticFeedback(current.isFavorite ? .medium : .success)
         Task { @MainActor in
-            guard let index = tokenStore.tokens.firstIndex(where: { $0.id == token.id }) else { return }
-            var updated = tokenStore.tokens
-            updated[index].isFavorite.toggle()
-            updated[index].touch()
             do {
-                try tokenStore.update(updated)
+                try tokenStore.update(id: token.id) { $0.isFavorite.toggle() }
+            } catch TokenStoreError.tokenNotFound {
             } catch {
                 operationErrorMessage = error.localizedDescription
             }

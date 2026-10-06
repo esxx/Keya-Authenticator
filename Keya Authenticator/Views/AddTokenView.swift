@@ -120,19 +120,16 @@ struct AddTokenView: View {
                 }
             }
             .alert("Some tokens skipped", isPresented: .init(
-                get: { viewModel.importSkippedCount > 0 },
+                get: { viewModel.importSkippedCount > 0 || viewModel.importAlreadyInVaultCount > 0 },
                 set: {
                     if !$0 {
-                        viewModel.importSkippedCount = 0
+                        viewModel.acknowledgeImportSummary()
                     }
                 }
             )) {
-                Button("OK", role: .cancel) { viewModel.importSkippedCount = 0 }
+                Button("OK", role: .cancel) { viewModel.acknowledgeImportSummary() }
             } message: {
-                let n = viewModel.importSkippedCount
-                Text(
-                    "\(n) tokens could not be imported because the data was missing or invalid. The remaining tokens were imported successfully."
-                )
+                Text(viewModel.importSummary)
             }
             .alert("Duplicate token", isPresented: Binding(
                 get: { viewModel.pendingDuplicateAdd != nil },

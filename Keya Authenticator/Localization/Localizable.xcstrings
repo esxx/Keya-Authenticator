@@ -106,7 +106,7 @@
         }
       }
     },
-    "%lld tokens could not be imported because the data was missing or invalid. The remaining tokens were imported successfully." : {
+    "%lld tokens are already in your vault and were kept as they are." : {
       "localizations" : {
         "en" : {
           "variations" : {
@@ -114,13 +114,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld token could not be imported because the data was missing or invalid. The remaining tokens were imported successfully."
+                  "value" : "%lld token is already in your vault and was kept as it is."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tokens could not be imported because the data was missing or invalid. The remaining tokens were imported successfully."
+                  "value" : "%lld tokens are already in your vault and were kept as they are."
                 }
               }
             }
@@ -132,13 +132,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld token no pudo importarse porque los datos faltaban o eran inválidos. Los tokens restantes se importaron correctamente."
+                  "value" : "%lld token ya está en tu bóveda y se conservó tal como estaba."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tokens no pudieron importarse porque los datos faltaban o eran inválidos. Los tokens restantes se importaron correctamente."
+                  "value" : "%lld tokens ya están en tu bóveda y se conservaron tal como estaban."
                 }
               }
             }
@@ -150,13 +150,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld jeton n'a pas pu être importé car les données étaient manquantes ou invalides. Les jetons restants ont été importés avec succès."
+                  "value" : "%lld jeton est déjà dans votre coffre et a été conservé tel quel."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld jetons n'ont pas pu être importés car les données étaient manquantes ou invalides. Les jetons restants ont été importés avec succès."
+                  "value" : "%lld jetons sont déjà dans votre coffre et ont été conservés tels quels."
                 }
               }
             }
@@ -168,7 +168,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "データが見つからないか無効なため、%lld個のトークンをインポートできませんでした。残りのトークンは正常にインポートされました。"
+                  "value" : "%lld個のトークンはすでに保管庫にあるため、そのまま保持されました。"
                 }
               }
             }
@@ -180,7 +180,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "데이터가 없거나 유효하지 않아 %lld개의 토큰을 가져오지 못했습니다. 나머지 토큰은 성공적으로 가져왔습니다."
+                  "value" : "%lld개의 토큰은 이미 보관함에 있어 그대로 유지되었습니다."
                 }
               }
             }
@@ -192,13 +192,113 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld token não pôde ser importado porque os dados estavam ausentes ou inválidos. Os tokens restantes foram importados com sucesso."
+                  "value" : "%lld token já está no seu cofre e foi mantido como estava."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tokens não puderam ser importados porque os dados estavam ausentes ou inválidos. Os tokens restantes foram importados com sucesso."
+                  "value" : "%lld tokens já estão no seu cofre e foram mantidos como estavam."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld tokens could not be imported because the data was missing or invalid. The remaining tokens were imported successfully." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld token could not be imported because the data was missing or invalid.\nThe remaining tokens were imported successfully."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tokens could not be imported because the data was missing or invalid.\nThe remaining tokens were imported successfully."
+                }
+              }
+            }
+          }
+        },
+        "es-419" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld token no pudo importarse porque los datos faltaban o eran inválidos.\nLos tokens restantes se importaron correctamente."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tokens no pudieron importarse porque los datos faltaban o eran inválidos.\nLos tokens restantes se importaron correctamente."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jeton n'a pas pu être importé car les données étaient manquantes ou invalides.\nLes jetons restants ont été importés avec succès."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jetons n'ont pas pu être importés car les données étaient manquantes ou invalides.\nLes jetons restants ont été importés avec succès."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "データが見つからないか無効なため、%lld個のトークンをインポートできませんでした。\n残りのトークンは正常にインポートされました。"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "데이터가 없거나 유효하지 않아 %lld개의 토큰을 가져오지 못했습니다.\n나머지 토큰은 성공적으로 가져왔습니다."
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld token não pôde ser importado porque os dados estavam ausentes ou inválidos.\nOs tokens restantes foram importados com sucesso."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tokens não puderam ser importados porque os dados estavam ausentes ou inválidos.\nOs tokens restantes foram importados com sucesso."
                 }
               }
             }

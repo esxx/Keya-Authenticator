@@ -282,7 +282,7 @@ final class DeepStressTests: XCTestCase {
         }
     }
 
-    func testUpdatePreservesInsertionOrderAcrossRepeatedRuns() throws {
+    func testAddPreservesInsertionOrderAcrossRepeatedRuns() throws {
         let names = (0 ..< 12).map { "Token\($0)" }
         for _ in 0 ..< 20 {
             let store = TokenStore()
@@ -293,9 +293,9 @@ final class DeepStressTests: XCTestCase {
                              digits: 6, type: .totp, period: 30)
             }
             UserDefaults.standard.removeObject(forKey: "tokenSortOrder")
-            try store.update(tokens)
+            try store.add(tokens)
             XCTAssertEqual(store.tokens.map(\.name), names,
-                           "update() must preserve the order it was given")
+                           "add() must preserve the order it was given")
             try? KeychainManager.deleteAllTokens()
         }
     }

@@ -39,7 +39,7 @@ final class TokenStoreTests: XCTestCase {
         let t1 = makeToken(name: "Alpha")
         let t2 = makeToken(name: "Beta")
         let t3 = makeToken(name: "Gamma")
-        try store.update([t1, t2, t3])
+        try store.add([t1, t2, t3])
 
         store.move(fromOffsets: IndexSet(integer: 1), toOffset: 0, in: store.tokens)
 
@@ -50,7 +50,7 @@ final class TokenStoreTests: XCTestCase {
         let t1 = makeToken(name: "First")
         let t2 = makeToken(name: "Second")
         let t3 = makeToken(name: "Third")
-        try store.update([t1, t2, t3])
+        try store.add([t1, t2, t3])
 
         store.move(fromOffsets: IndexSet(integer: 2), toOffset: 0, in: store.tokens)
         let savedOrder = store.tokens.map(\.name)
@@ -82,7 +82,7 @@ final class TokenStoreTests: XCTestCase {
     }
 
     func testLoadCountsUnreadableEntriesInsteadOfHidingThem() throws {
-        try store.update([makeToken(name: "Readable")])
+        try store.add([makeToken(name: "Readable")])
         let corruptQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: "ee.exx.KeyaAuthenticator",
@@ -100,20 +100,24 @@ final class TokenStoreTests: XCTestCase {
 
     // MARK: - Duplicate UUID regression (crash fix)
 
-    func testDuplicateUUIDInUpdateDoesNotCrash() throws {
+    func testDuplicateIDInOneBatchKeepsFirstEntry() throws {
         let sharedID = UUID()
         let t1 = makeToken(id: sharedID, name: "Original")
         let t2 = makeToken(id: sharedID, name: "Duplicate")
 
-        XCTAssertNoThrow(try store.update([t1, t2]),
-                         "update() must not crash when two tokens share a UUID")
+        let result = try store.add([t1, t2])
+
+        XCTAssertEqual(store.tokens.map(\.name), ["Original"])
+        XCTAssertEqual(try KeychainManager.loadAllTokens().map(\.name), ["Original"])
+        XCTAssertEqual(result.added, 1)
+        XCTAssertEqual(result.alreadyInVault, 1)
     }
 
     func testDuplicateUUIDMoveDoesNotCrash() throws {
         let t1 = makeToken(name: "Alpha")
         let t2 = makeToken(name: "Beta")
         let t3 = makeToken(name: "Gamma")
-        try store.update([t1, t2, t3])
+        try store.add([t1, t2, t3])
 
         XCTAssertNoThrow(
             store.move(fromOffsets: IndexSet(integer: 0), toOffset: 3, in: store.tokens),
@@ -124,7 +128,7 @@ final class TokenStoreTests: XCTestCase {
     func testDuplicateUUIDCollapseToOne() throws {
         let sharedID = UUID()
         let t = makeToken(id: sharedID, name: "Token")
-        XCTAssertNoThrow(try store.update([t, t]))
+        XCTAssertNoThrow(try store.add([t, t]))
         XCTAssertEqual(store.tokens.filter { $0.id == sharedID }.count, 1,
                        "Tokens with a shared UUID must collapse to exactly one")
     }
@@ -137,19 +141,17 @@ final class TokenStoreTests: XCTestCase {
                          secret: t.secret, algorithm: t.algorithm,
                          digits: t.digits, type: t.type, period: t.period, counter: nil)
 
-        try store.update([t, copy])
+        try store.add([t, copy])
 
         XCTAssertEqual(store.tokens.count, 2,
-                       "update() must never silently drop a same-content token; that decision belongs to the caller")
+                       "add() must never silently drop a same-content token; that decision belongs to the caller")
     }
 
     func testUpdatingExistingTokenBypassesContentDedup() throws {
         let original = makeToken(name: "Original")
-        try store.update([original])
+        try store.add([original])
 
-        var edited = original
-        edited.name = "Renamed"
-        try store.update([edited])
+        try store.update(id: original.id) { $0.name = "Renamed" }
 
         XCTAssertEqual(store.tokens.count, 1)
         XCTAssertEqual(store.tokens.first?.name, "Renamed")
@@ -160,31 +162,33 @@ final class TokenStoreTests: XCTestCase {
     func testDeleteRemovesCorrectToken() throws {
         let t1 = makeToken(name: "Keep")
         let t2 = makeToken(name: "Remove")
-        try store.update([t1, t2])
+        try store.add([t1, t2])
 
-        let removeIndex = store.tokens.firstIndex(where: { $0.name == "Remove" })!
-        try store.delete(at: IndexSet(integer: removeIndex))
+        try store.delete(id: t2.id)
 
-        XCTAssertEqual(store.tokens.count, 1)
-        XCTAssertEqual(store.tokens.first?.name, "Keep")
+        XCTAssertEqual(store.tokens.map(\.name), ["Keep"])
+        XCTAssertEqual(try KeychainManager.loadAllTokens().map(\.name), ["Keep"])
     }
 
     func testUpdateChangingOneTokenKeepsAllOthers() throws {
         let tokens = (0 ..< 5).map { makeToken(name: "T\($0)") }
-        try store.update(tokens)
+        try store.add(tokens)
+        let savedBefore = try KeychainManager.loadAllTokens()
 
-        var changed = store.tokens
-        changed[2].isFavorite = true
-        try store.update(changed)
+        try store.update(id: tokens[2].id) { $0.isFavorite = true }
 
         let reloaded = TokenStore()
         try reloaded.load()
         XCTAssertEqual(Set(reloaded.tokens.map(\.id)), Set(tokens.map(\.id)))
-        XCTAssertEqual(reloaded.tokens.filter(\.isFavorite).map(\.id), [changed[2].id])
+        XCTAssertEqual(reloaded.tokens.filter(\.isFavorite).map(\.id), [tokens[2].id])
+        for token in savedBefore where token.id != tokens[2].id {
+            XCTAssertEqual(reloaded.tokens.first { $0.id == token.id }, token,
+                           "Tokens that were not changed must stay exactly as saved")
+        }
     }
 
     func testDeleteAllEmptiesStore() throws {
-        try store.update([makeToken(name: "A"), makeToken(name: "B")])
+        try store.add([makeToken(name: "A"), makeToken(name: "B")])
         try store.deleteAll()
         XCTAssertTrue(store.tokens.isEmpty)
         XCTAssertTrue(try KeychainManager.loadAllTokens().isEmpty)
@@ -192,7 +196,7 @@ final class TokenStoreTests: XCTestCase {
 
     func testDeleteAllTokensPreservesReservedAccounts() throws {
         try KeychainManager.savePIN("123456")
-        try store.update([makeToken(name: "A")])
+        try store.add([makeToken(name: "A")])
 
         try KeychainManager.deleteAllTokens()
 
@@ -204,7 +208,7 @@ final class TokenStoreTests: XCTestCase {
     // MARK: - Clear (security wipe)
 
     func testClearZeroesSecretsAndEmptiesStore() throws {
-        try store.update([makeToken(name: "Sensitive")])
+        try store.add([makeToken(name: "Sensitive")])
         store.clear()
         XCTAssertTrue(store.tokens.isEmpty)
     }
@@ -228,20 +232,18 @@ final class TokenStoreTests: XCTestCase {
             updatedAt: Date()
         )
 
-        try store.update([older, newer])
+        try store.add([older, newer])
 
         XCTAssertEqual(store.tokens.count, 2,
-                       "update() must not pick a winner by updatedAt; conflict resolution is the caller's job")
+                       "add() must not pick a winner by updatedAt; conflict resolution is the caller's job")
     }
 
     func testUpdateDoesNotDropExistingTokenOnContentConflictWithNewImport() throws {
         let existing = makeToken(name: "MyService")
-        try store.update([existing])
+        try store.add([existing])
 
-        var updatedExisting = store.tokens.first!
-        updatedExisting.isFavorite = true
-        updatedExisting.touch()
-        try store.update([updatedExisting])
+        try store.update(id: existing.id) { $0.isFavorite = true }
+        let updatedExisting = store.tokens.first!
 
         let importedNewer = Token(
             id: UUID(),
@@ -252,10 +254,10 @@ final class TokenStoreTests: XCTestCase {
             isFavorite: false,
             updatedAt: Date(timeIntervalSinceNow: 9999)
         )
-        try store.update([updatedExisting, importedNewer])
+        try store.add([importedNewer])
 
         XCTAssertEqual(store.tokens.count, 2,
-                       "The existing token must never be silently deleted by an unrelated update() call")
+                       "The existing token must never be silently deleted by an unrelated add() call")
         XCTAssertTrue(store.tokens.contains { $0.id == updatedExisting.id },
                       "The pre-existing token must still be present")
         XCTAssertTrue(store.tokens.contains { $0.id == importedNewer.id },
@@ -264,21 +266,16 @@ final class TokenStoreTests: XCTestCase {
 
     func testDeleteThenReaddIsNotFavorite() throws {
         let original = makeToken(name: "MyService")
-        try store.update([original])
+        try store.add([original])
 
-        var updated = store.tokens
-        let idx = updated.firstIndex(where: { $0.id == original.id })!
-        updated[idx].isFavorite = true
-        updated[idx].touch()
-        try store.update(updated)
+        try store.update(id: original.id) { $0.isFavorite = true }
         XCTAssertTrue(store.tokens.first?.isFavorite == true)
 
-        let deleteIdx = store.tokens.firstIndex(where: { $0.id == original.id })!
-        try store.delete(at: IndexSet(integer: deleteIdx))
+        try store.delete(id: original.id)
         XCTAssertTrue(store.tokens.isEmpty)
 
         let readded = makeToken(name: "MyService")
-        try store.update([readded])
+        try store.add([readded])
 
         XCTAssertEqual(store.tokens.count, 1)
         XCTAssertFalse(store.tokens[0].isFavorite,
@@ -289,7 +286,7 @@ final class TokenStoreTests: XCTestCase {
 
     func testExistingDuplicatesDetectsContentCollisionWithDifferentID() throws {
         let existing = makeToken(name: "GitHub")
-        try store.update([existing])
+        try store.add([existing])
 
         let candidate = Token(id: UUID(), name: "GitHub (rescanned)", issuer: existing.issuer,
                               secret: existing.secret, algorithm: existing.algorithm,
@@ -305,7 +302,7 @@ final class TokenStoreTests: XCTestCase {
 
     func testExistingDuplicatesIgnoresSameID() throws {
         let existing = makeToken(name: "GitHub")
-        try store.update([existing])
+        try store.add([existing])
 
         var edited = existing
         edited.name = "GitHub Renamed"
@@ -317,7 +314,7 @@ final class TokenStoreTests: XCTestCase {
 
     func testExistingDuplicatesEmptyWhenNoCollision() throws {
         let existing = makeToken(name: "GitHub")
-        try store.update([existing])
+        try store.add([existing])
 
         let candidate = makeToken(name: "Discord")
 
@@ -327,7 +324,7 @@ final class TokenStoreTests: XCTestCase {
     func testExistingDuplicatesDetectsMultipleCollisionsInBatch() throws {
         let existingA = makeToken(name: "GitHub")
         let existingB = makeToken(name: "Discord")
-        try store.update([existingA, existingB])
+        try store.add([existingA, existingB])
 
         let candidateA = Token(id: UUID(), name: "GitHub 2", issuer: existingA.issuer,
                                secret: existingA.secret, algorithm: existingA.algorithm,
@@ -362,5 +359,81 @@ final class TokenStoreTests: XCTestCase {
         let secondLoad = try KeychainManager.loadAllTokens()
         XCTAssertEqual(secondLoad.count, 2,
                        "Reading twice must not have deleted anything from Keychain on the first read")
+    }
+
+    // MARK: - Intents by id
+
+    private func makeHOTP(id: UUID = UUID(), counter: UInt64) -> Token {
+        Token(id: id, name: "Counter", issuer: "Issuer", secret: secret, type: .hotp, period: nil, counter: counter)
+    }
+
+    func testAddDoesNotOverwriteExistingID() throws {
+        let current = makeHOTP(counter: 7)
+        try store.add([current])
+
+        let olderBackupCopy = makeHOTP(id: current.id, counter: 2)
+        let result = try store.add([olderBackupCopy])
+
+        XCTAssertEqual(result.added, 0)
+        XCTAssertEqual(result.alreadyInVault, 1)
+        XCTAssertEqual(store.tokens.first?.counter, 7)
+        XCTAssertEqual(try KeychainManager.loadAllTokens().first?.counter, 7,
+                       "A used HOTP code must not come back from an older backup")
+    }
+
+    func testAddWhenEverythingIsAlreadyPresentChangesNothing() throws {
+        let tokens = (0 ..< 3).map { makeToken(name: "P\($0)") }
+        try store.add(tokens)
+        let before = try KeychainManager.loadAllTokens()
+
+        let result = try store.add(tokens)
+
+        XCTAssertEqual(result.added, 0)
+        XCTAssertEqual(result.alreadyInVault, 3)
+        XCTAssertEqual(store.tokens.count, 3)
+        XCTAssertEqual(try KeychainManager.loadAllTokens().map(\.updatedAt).sorted(), before.map(\.updatedAt).sorted())
+    }
+
+    func testUpdateRejectsIDChange() throws {
+        let original = makeToken(name: "Original")
+        try store.add([original])
+        let other = makeToken(name: "Other")
+
+        XCTAssertThrowsError(try store.update(id: original.id) { $0 = other }) { error in
+            XCTAssertEqual(error as? TokenStoreError, .idChanged)
+        }
+        XCTAssertEqual(store.tokens.map(\.id), [original.id])
+        XCTAssertEqual(try KeychainManager.loadAllTokens().map(\.id), [original.id],
+                       "No item may be written under another id")
+    }
+
+    func testUpdateMissingIDThrowsTokenNotFound() throws {
+        try store.add([makeToken(name: "Present")])
+        let before = try KeychainManager.loadAllTokens()
+
+        XCTAssertThrowsError(try store.update(id: UUID()) { $0.name = "Ghost" }) { error in
+            XCTAssertEqual(error as? TokenStoreError, .tokenNotFound)
+        }
+        XCTAssertEqual(try KeychainManager.loadAllTokens().map(\.name), before.map(\.name))
+    }
+
+    func testUpdateSetsUpdatedAt() throws {
+        let original = Token(name: "Dated", secret: secret, updatedAt: Date(timeIntervalSinceNow: -3600))
+        try store.add([original])
+
+        try store.update(id: original.id) { $0.isFavorite = true }
+
+        let saved = try XCTUnwrap(KeychainManager.loadAllTokens().first)
+        XCTAssertGreaterThan(saved.updatedAt, original.updatedAt)
+    }
+
+    func testDeleteByIDRemovesExactlyOne() throws {
+        let tokens = (0 ..< 4).map { makeToken(name: "D\($0)") }
+        try store.add(tokens)
+
+        try store.delete(id: tokens[1].id)
+
+        XCTAssertEqual(Set(store.tokens.map(\.id)), Set(tokens.map(\.id)).subtracting([tokens[1].id]))
+        XCTAssertEqual(Set(try KeychainManager.loadAllTokens().map(\.id)), Set(store.tokens.map(\.id)))
     }
 }
