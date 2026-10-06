@@ -477,4 +477,63 @@ final class ExportImportTests: XCTestCase {
         let data = #"{"services": []}"#.data(using: .utf8)!
         XCTAssertThrowsError(try KeyaPlaintextParser().parse(from: data))
     }
+
+    // MARK: - Keya backup entries
+
+    private func keyaEntry(digits: Int = 6, period: Int? = 30, type: String = "TOTP") -> [String: Any] {
+        var entry: [String: Any] = [
+            "id": UUID().uuidString, "name": "user", "secret": "JBSWY3DPEHPK3PXP", "algorithm": "SHA1",
+            "digits": digits, "type": type, "isFavorite": false,
+            "createdAt": "2026-01-01T00:00:00Z", "updatedAt": "2026-01-01T00:00:00Z",
+        ]
+        if let period {
+            entry["period"] = period
+        }
+        if type == "HOTP" {
+            entry["counter"] = 5
+        }
+        return entry
+    }
+
+    private func keyaBackup(_ entries: [[String: Any]]) throws -> Data {
+        try JSONSerialization.data(withJSONObject: [
+            "version": 1, "timestamp": "2026-01-01T00:00:00Z", "tokens": entries,
+        ])
+    }
+
+    @MainActor
+    func testKeyaBackupSkipsUnsupportedEntries() throws {
+        let data = try keyaBackup([
+            keyaEntry(),
+            keyaEntry(digits: 7),
+            keyaEntry(period: 10),
+            keyaEntry(period: nil, type: "HOTP"),
+        ])
+
+        let result = try manager.parseTokens(from: data)
+
+        XCTAssertEqual(result.tokens.count, 2)
+        XCTAssertEqual(result.skipped, 2)
+        XCTAssertEqual(Set(result.tokens.map(\.type)), [.totp, .hotp])
+    }
+
+    @MainActor
+    func testKeyaBackupWithOnlyUnsupportedEntriesIsRejected() throws {
+        let data = try keyaBackup([keyaEntry(digits: 5), keyaEntry(period: 400)])
+
+        XCTAssertThrowsError(try manager.parseTokens(from: data)) { error in
+            XCTAssertEqual(error as? ExportImportError, .invalidFileFormat)
+        }
+    }
+
+    @MainActor
+    func testKeyaBackupKeepsLargestHOTPCounter() throws {
+        let hotp = Token(name: "Counter", secret: secret, type: .hotp, period: nil, counter: UInt64.max)
+        try tokenStore.update([hotp])
+
+        let result = try manager.parseTokens(from: manager.exportVault())
+
+        XCTAssertEqual(result.tokens.first?.counter, UInt64.max)
+        XCTAssertEqual(result.skipped, 0)
+    }
 }

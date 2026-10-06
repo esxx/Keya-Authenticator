@@ -30,15 +30,41 @@ struct KeyaPlaintextParser: TokenImportParser {
     func parse(from data: Data) throws -> ExportImportManager.ImportResult {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        struct ExportData: Codable {
-            let version: Int
-            let timestamp: Date
-            let tokens: [Token]
-        }
-        guard let ed = try? decoder.decode(ExportData.self, from: data), !ed.tokens.isEmpty else {
+        guard let file = try? decoder.decode(KeyaBackupFile.self, from: data), !file.tokens.isEmpty else {
             throw ExportImportError.unsupportedFormat
         }
-        return ExportImportManager.ImportResult(tokens: ed.tokens, skipped: 0)
+        let tokens = file.tokens.compactMap(\.supportedToken)
+        guard !tokens.isEmpty else { throw ExportImportError.invalidFileFormat }
+        return ExportImportManager.ImportResult(tokens: tokens, skipped: file.tokens.count - tokens.count)
+    }
+}
+
+private struct KeyaBackupFile: Decodable {
+    let version: Int
+    let timestamp: Date
+    let tokens: [Entry]
+
+    struct Entry: Decodable {
+        let supportedToken: Token?
+
+        private enum RawKeys: String, CodingKey {
+            case type, digits, period
+        }
+
+        init(from decoder: Decoder) throws {
+            guard let raw = try? decoder.container(keyedBy: RawKeys.self),
+                  let type = try? raw.decode(TokenType.self, forKey: .type),
+                  let digits = try? raw.decode(Int.self, forKey: .digits),
+                  Token.isSupported(
+                      digits: digits,
+                      period: type == .totp ? (try? raw.decodeIfPresent(Int.self, forKey: .period)) ?? 30 : nil
+                  )
+            else {
+                supportedToken = nil
+                return
+            }
+            supportedToken = try? Token(from: decoder)
+        }
     }
 }
 
