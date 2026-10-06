@@ -844,6 +844,7 @@ final class EncryptionServiceStressTests: XCTestCase {
 
 // MARK: - Token Codable stress tests
 
+@MainActor
 final class TokenCodableStressTests: XCTestCase {
 
     private func encode(_ token: Token) throws -> Data {
