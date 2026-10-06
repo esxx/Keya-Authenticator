@@ -1,5 +1,6 @@
 import AudioToolbox
 import AVFoundation
+import Combine
 import SwiftUI
 
 struct QRScannerView: View {
@@ -10,7 +11,7 @@ struct QRScannerView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var errorMessage: String?
-    @State private var cameraManager = CameraManager()
+    @StateObject private var cameraManager = CameraManager()
     @State private var isOnScreen = false
     @State private var isUncovered = true
 
@@ -159,11 +160,19 @@ struct ScannerOverlayView: UIViewRepresentable {
 
 // MARK: - Camera Manager
 
-final class CameraManager: NSObject {
+final class CameraManager: NSObject, ObservableObject {
     private let session = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "com.es.keya.camera")
     private let metadataDelegate = MetadataDelegate()
+    private let metadataOutput = AVCaptureMetadataOutput()
     private var isConfigured = false
+
+    override init() {
+        super.init()
+        metadataDelegate.session = session
+        metadataDelegate.sessionQueue = sessionQueue
+        metadataOutput.setMetadataObjectsDelegate(metadataDelegate, queue: .main)
+    }
 
     var onCodeScanned: ((String) -> Void)? {
         didSet { metadataDelegate.onCodeScanned = onCodeScanned }
@@ -306,29 +315,18 @@ final class CameraManager: NSObject {
                     return
                 }
                 session.addInput(input)
-                let output = AVCaptureMetadataOutput()
+                let output = metadataOutput
                 guard session.canAddOutput(output) else {
                     session.commitConfiguration()
                     DispatchQueue.main.async { self.onError?(String(localized: "Could not configure scanner")) }
                     return
                 }
                 session.addOutput(output)
-
-                let weakSession = session
-                let weakSessionQueue = sessionQueue
-
-                DispatchQueue.main.async {
-                    self.metadataDelegate.session = weakSession
-                    self.metadataDelegate.sessionQueue = weakSessionQueue
-                    output.setMetadataObjectsDelegate(self.metadataDelegate, queue: .main)
-                    output.metadataObjectTypes = [.qr]
-                    self.session.commitConfiguration()
-                    self.isConfigured = true
-                    weakSessionQueue.async {
-                        CameraManager.configureForCloseRangeScanning(device)
-                        weakSession.startRunning()
-                    }
-                }
+                output.metadataObjectTypes = [.qr]
+                session.commitConfiguration()
+                isConfigured = true
+                CameraManager.configureForCloseRangeScanning(device)
+                session.startRunning()
             } catch {
                 session.commitConfiguration()
                 DispatchQueue.main
