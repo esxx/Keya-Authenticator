@@ -24,7 +24,9 @@ struct PINSetupSheet: View {
                             .font(.caption)
                             .foregroundColor(.red)
                     }
-                    if !newPIN.isEmpty, newPIN.count != 6 || !newPIN.allSatisfy(\.isNumber) {
+                    if !newPIN.isEmpty,
+                       newPIN.count != AuthenticationManager.pinLength || !newPIN.allSatisfy(\.isNumber)
+                    {
                         Text("PIN must be 6 digits")
                             .font(.caption)
                             .foregroundColor(.orange)
@@ -65,7 +67,7 @@ struct PINSetupSheet: View {
     // MARK: - Helpers
 
     private var isSaveDisabled: Bool {
-        let newPINInvalid = newPIN.count != 6 || !newPIN.allSatisfy(\.isNumber)
+        let newPINInvalid = newPIN.count != AuthenticationManager.pinLength || !newPIN.allSatisfy(\.isNumber)
         return newPIN.isEmpty || confirmPIN.isEmpty || newPIN != confirmPIN || newPINInvalid
     }
 

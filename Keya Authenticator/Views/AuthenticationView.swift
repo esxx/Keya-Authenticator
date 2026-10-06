@@ -5,13 +5,11 @@ struct AuthenticationView: View {
     let onUnlock: () -> Void
 
     @State private var pinFocused = false
-    @State private var shakeOffset: CGFloat = 0
+    @State private var shakeTrigger = 0
     @State private var contentOpacity: Double
     @State private var showBiometricChangedAlert = false
     @State private var biometricPromptPending = false
     @Environment(\.scenePhase) private var scenePhase
-
-    private let pinLength = 6
 
     init(authenticationManager: AuthenticationManager, settings: AppSettings, onUnlock: @escaping () -> Void) {
         let viewModel = AuthenticationViewModel(authenticationManager: authenticationManager, settings: settings)
@@ -48,37 +46,15 @@ struct AuthenticationView: View {
             )
             .accessibilityAddTraits(.isHeader)
 
-            HStack(spacing: 16) {
-                ForEach(0 ..< pinLength, id: \.self) { i in
-                    Circle()
-                        .fill(i < viewModel.pinText.count ? Color.primary : Color.clear)
-                        .frame(width: 14, height: 14)
-                        .overlay(Circle().stroke(
-                            i < viewModel.pinText.count ? Color.primary : Color(.separator),
-                            lineWidth: 1.5
-                        ))
-                        .accessibilityLabel(i < viewModel.pinText.count ?
-                            String(localized: "Digit \(i + 1) entered") :
-                            String(localized: "Digit \(i + 1) empty"))
-                }
-            }
-            .offset(x: shakeOffset).padding(.bottom, 12)
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(String(localized: "PIN entry dots"))
-            .accessibilityValue(String(localized: "\(viewModel.pinText.count) of \(pinLength) digits entered"))
-
-            if let err = viewModel.errorMessage {
-                Text(err).font(.caption).foregroundColor(.red).transition(.opacity).padding(.bottom, 4)
-                    .accessibilityLabel(String(localized: "Error"))
-                    .accessibilityValue(err)
-            }
+            PINEntryView(
+                pin: $viewModel.pinText,
+                isFocused: $pinFocused,
+                errorMessage: viewModel.errorMessage,
+                shakeTrigger: shakeTrigger,
+                onComplete: { viewModel.authenticateWithPIN() }
+            )
 
             Spacer()
-
-            SecurePINField(text: $viewModel.pinText, isFocused: $pinFocused)
-                .opacity(0.001)
-                .frame(width: 1, height: 1)
-                .accessibilityHidden(true)
 
             if viewModel.settings.useBiometricAuthentication,
                viewModel.settings.biometricActivated,
@@ -118,21 +94,9 @@ struct AuthenticationView: View {
             biometricPromptPending = false
             authenticateWithBiometrics()
         }
-        .onChange(of: viewModel.pinText) { _, newValue in
-            let filtered = String(newValue.filter(\.isNumber).prefix(pinLength))
-            if filtered != newValue {
-                viewModel.pinText = filtered
-                return
-            }
-            if filtered.count == pinLength {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                    viewModel.authenticateWithPIN()
-                }
-            }
-        }
         .onChange(of: viewModel.errorMessage) { _, err in
             if let error = err, !error.isEmpty {
-                shakeDots()
+                shakeTrigger += 1
             }
         }
         .accessibilityElement(children: .contain)
@@ -160,12 +124,5 @@ struct AuthenticationView: View {
                 }
             }
         }
-    }
-
-    private func shakeDots() {
-        withAnimation(.default) { shakeOffset = 10 }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { withAnimation(.default) { shakeOffset = -10 } }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { withAnimation(.default) { shakeOffset = 6 } }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { withAnimation(.default) { shakeOffset = 0 } }
     }
 }

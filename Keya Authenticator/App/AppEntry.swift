@@ -113,11 +113,9 @@ struct PINSetupView: View {
     @State private var pinText: String = ""
     @State private var pinFocused = false
     @State private var errorMessage: String? = nil
-    @State private var shakeOffset: CGFloat = 0
+    @State private var shakeTrigger = 0
 
     enum Step { case enter, confirm }
-
-    private let pinLength = 6
 
     var body: some View {
         VStack(spacing: 0) {
@@ -133,26 +131,16 @@ struct PINSetupView: View {
             Text(step == .enter ? String(localized: "Create a 6-digit PIN") : String(localized: "Confirm"))
                 .font(.subheadline).foregroundColor(.secondary).padding(.bottom, 32)
 
-            HStack(spacing: 16) {
-                ForEach(0 ..< pinLength, id: \.self) { i in
-                    Circle()
-                        .fill(i < pinText.count ? Color.primary : Color.clear)
-                        .frame(width: 14, height: 14)
-                        .overlay(Circle().stroke(i < pinText.count ? Color.primary : Color(.separator), lineWidth: 1.5))
-                }
-            }
-            .offset(x: shakeOffset).padding(.bottom, 12)
-
-            if let err = errorMessage {
-                Text(err).font(.caption).foregroundColor(.red).transition(.opacity).padding(.bottom, 4)
-            }
+            PINEntryView(
+                pin: $pinText,
+                isFocused: $pinFocused,
+                errorMessage: errorMessage,
+                shakeTrigger: shakeTrigger,
+                onComplete: advance
+            )
 
             Spacer()
-
-            SecurePINField(text: $pinText, isFocused: $pinFocused)
-                .opacity(0.001)
-                .frame(width: 1, height: 1)
-                .padding(.bottom, 48)
+            Spacer().frame(height: 48)
         }
         .contentShape(Rectangle())
         .onTapGesture { pinFocused = true }
@@ -162,16 +150,6 @@ struct PINSetupView: View {
         .onChange(of: step) { _, _ in
             pinText = ""
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { pinFocused = true }
-        }
-        .onChange(of: pinText) { _, newValue in
-            let filtered = String(newValue.filter(\.isNumber).prefix(pinLength))
-            if filtered != newValue {
-                pinText = filtered
-                return
-            }
-            if filtered.count == pinLength {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { advance() }
-            }
         }
     }
 
@@ -190,26 +168,19 @@ struct PINSetupView: View {
                     onComplete()
                 } catch {
                     errorMessage = String(localized: "Couldn't save your PIN. Please try again.")
-                    shake()
+                    shakeTrigger += 1
                     pinText = ""
                     firstPIN = ""
                     withAnimation { step = .enter }
                 }
             } else {
                 errorMessage = String(localized: "PINs don't match")
-                shake()
+                shakeTrigger += 1
                 pinText = ""
                 firstPIN = ""
                 withAnimation { step = .enter }
             }
         }
-    }
-
-    private func shake() {
-        withAnimation(.default) { shakeOffset = 10 }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { withAnimation(.default) { shakeOffset = -10 } }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { withAnimation(.default) { shakeOffset = 6 } }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { withAnimation(.default) { shakeOffset = 0 } }
     }
 }
 

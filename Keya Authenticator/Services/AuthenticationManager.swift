@@ -4,6 +4,8 @@ import SwiftUI
 
 @Observable
 final class AuthenticationManager {
+    static let pinLength = 6
+
     // MARK: - Biometric Info
 
     var isBiometricAvailable: Bool {
@@ -161,7 +163,7 @@ final class AuthenticationManager {
 
     func setPIN(_ pin: String, confirmPin: String, allowOverwrite: Bool = false) throws {
         guard pin == confirmPin else { throw AuthenticationError.invalidPIN }
-        guard pin.count == 6, pin.allSatisfy(\.isNumber) else { throw AuthenticationError.invalidPIN }
+        guard pin.count == Self.pinLength, pin.allSatisfy(\.isNumber) else { throw AuthenticationError.invalidPIN }
         try KeychainManager.savePIN(pin, allowOverwrite: allowOverwrite)
         saveCurrentBiometricBaselineIfNeeded()
     }
