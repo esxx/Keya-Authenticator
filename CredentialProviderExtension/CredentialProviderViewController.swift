@@ -31,11 +31,13 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     override func provideCredentialWithoutUserInteraction(
         for credentialRequest: any ASCredentialRequest
     ) {
-        guard credentialRequest is ASOneTimeCodeCredentialRequest else {
+        guard credentialRequest is ASOneTimeCodeCredentialRequest,
+              LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+        else {
             extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
             return
         }
-        evaluate { [weak self] granted in
+        evaluate(policy: .deviceOwnerAuthenticationWithBiometrics) { [weak self] granted in
             guard let self, granted else { return }
             guard let tokens = self.loadTokens() else {
                 self.extensionContext.cancelRequest(withError: ASExtensionError(.failed))
@@ -100,13 +102,16 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         }
     }
 
-    private func evaluate(completion: @escaping (_ granted: Bool) -> Void) {
+    private func evaluate(
+        policy: LAPolicy = .deviceOwnerAuthentication,
+        completion: @escaping (_ granted: Bool) -> Void
+    ) {
         let context = LAContext()
         let reason = String(
             localized: "Authenticate to access your 2FA codes.",
             comment: "Biometric / passcode prompt shown by the AutoFill extension"
         )
-        context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason) { [weak self] granted, _ in
+        context.evaluatePolicy(policy, localizedReason: reason) { [weak self] granted, _ in
             DispatchQueue.main.async {
                 if granted {
                     completion(true)
