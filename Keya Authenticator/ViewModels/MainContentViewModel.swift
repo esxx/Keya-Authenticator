@@ -122,12 +122,13 @@ final class MainContentViewModel {
     }
 
     func toggleFavorite(_ token: Token) {
-        guard let index = tokenStore.tokens.firstIndex(where: { $0.id == token.id }) else { return }
-        var updated = tokenStore.tokens
-        updated[index].isFavorite.toggle()
-        updated[index].touch()
-        ClipboardManager.shared.provideHapticFeedback(updated[index].isFavorite ? .success : .medium)
+        guard let current = tokenStore.tokens.first(where: { $0.id == token.id }) else { return }
+        ClipboardManager.shared.provideHapticFeedback(current.isFavorite ? .medium : .success)
         Task { @MainActor in
+            guard let index = tokenStore.tokens.firstIndex(where: { $0.id == token.id }) else { return }
+            var updated = tokenStore.tokens
+            updated[index].isFavorite.toggle()
+            updated[index].touch()
             do {
                 try tokenStore.update(updated)
             } catch {
