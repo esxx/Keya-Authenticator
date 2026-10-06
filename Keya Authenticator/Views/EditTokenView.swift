@@ -151,14 +151,6 @@ struct EditTokenView: View {
                 } header: {
                     Text("Secret key").textCase(.uppercase)
                 }
-
-                if let err = viewModel.errorMessage {
-                    Section {
-                        Text(err).foregroundColor(.red).font(.caption)
-                            .listRowBackground(Constants.Colors.background)
-                            .listRowSeparator(.visible)
-                    }
-                }
             }
             .scrollContentBackground(.hidden)
             .background(Constants.Colors.background)
@@ -199,6 +191,18 @@ struct EditTokenView: View {
                 } else {
                     Text("This token's secret is already in your vault. Save it anyway?")
                 }
+            }
+            .alert("Something Went Wrong", isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: {
+                    if !$0 {
+                        viewModel.errorMessage = nil
+                    }
+                }
+            )) {
+                Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            } message: {
+                Text(viewModel.errorMessage ?? "")
             }
         }
     }
