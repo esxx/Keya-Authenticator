@@ -62,22 +62,12 @@ struct TokenRowView: View {
             : String(src.prefix(2)).uppercased()
     }
 
-    @ViewBuilder
     private var avatarView: some View {
-        if let assetName = serviceInfo?.assetName,
-           let uiImage = UIImage(named: assetName)
-        {
-            Image(uiImage: uiImage)
-                .resizable()
-                .scaledToFill()
-                .background(Constants.Colors.background)
-        } else {
-            Text(monogram)
-                .font(.system(size: 12, weight: .semibold, design: .rounded))
-                .foregroundColor(avatarColors.fg)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(avatarColors.bg)
-        }
+        Text(monogram)
+            .font(.system(size: 12, weight: .semibold, design: .rounded))
+            .foregroundColor(avatarColors.fg)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(avatarColors.bg)
     }
 
     private var avatarSize: CGFloat {

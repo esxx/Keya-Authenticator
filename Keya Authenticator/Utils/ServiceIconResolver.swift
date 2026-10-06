@@ -3,7 +3,6 @@ import SwiftUI
 // MARK: - ServiceInfo
 
 struct ServiceInfo {
-    let assetName: String?
     let brandColor: Color
     let foregroundColor: Color
 }
@@ -270,16 +269,11 @@ enum ServiceIconResolver {
     // MARK: - Catalog
 
     private static let catalog: [String: ServiceInfo] = {
-        func entry(_ assetName: String? = nil, hex: UInt32, light: Bool = true) -> ServiceInfo {
-            let bg = Color(hex: hex)
-            let fg: Color = light ? Color(hex: hex).lightened(by: 0.55) : Color(hex: hex).darkened(by: 0.55)
-            return ServiceInfo(assetName: assetName, brandColor: bg, foregroundColor: fg)
+        func w(hex: UInt32) -> ServiceInfo {
+            ServiceInfo(brandColor: Color(hex: hex), foregroundColor: .white.opacity(0.9))
         }
-        func w(_ assetName: String? = nil, hex: UInt32) -> ServiceInfo {
-            ServiceInfo(assetName: assetName, brandColor: Color(hex: hex), foregroundColor: .white.opacity(0.9))
-        }
-        func b(_ assetName: String? = nil, hex: UInt32) -> ServiceInfo {
-            ServiceInfo(assetName: assetName, brandColor: Color(hex: hex), foregroundColor: Color(hex: 0x1A1A1A))
+        func b(hex: UInt32) -> ServiceInfo {
+            ServiceInfo(brandColor: Color(hex: hex), foregroundColor: Color(hex: 0x1A1A1A))
         }
 
         return [
@@ -451,22 +445,5 @@ private extension Color {
         let g = Double((hex >> 8) & 0xFF) / 255
         let b = Double(hex & 0xFF) / 255
         self.init(red: r, green: g, blue: b)
-    }
-
-    func lightened(by amount: Double) -> Color {
-        opacity(1).blended(with: .white, ratio: amount)
-    }
-
-    func darkened(by amount: Double) -> Color {
-        opacity(1).blended(with: .black, ratio: amount)
-    }
-
-    func blended(with other: Color, ratio: Double) -> Color {
-        guard let c1 = UIColor(self).cgColor.components,
-              let c2 = UIColor(other).cgColor.components else { return self }
-        let r = c1[0] * (1 - ratio) + c2[0] * ratio
-        let g = c1[1] * (1 - ratio) + c2[1] * ratio
-        let b = c1[2] * (1 - ratio) + c2[2] * ratio
-        return Color(red: Double(r), green: Double(g), blue: Double(b))
     }
 }
