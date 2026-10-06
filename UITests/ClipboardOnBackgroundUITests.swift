@@ -14,7 +14,9 @@ final class ClipboardOnBackgroundUITests: KeyaUITestCase {
         sleep(2)
         app.activate()
 
-        app.buttons["Add"].tap()
+        let add = app.buttons["Add"]
+        waitUntilSettled(add)
+        add.tap()
         dismissSystemAlertIfPresent()
         let manual = button(containing: "Enter the secret key manually")
         XCTAssertTrue(manual.waitForExistence(timeout: 5), app.debugDescription)

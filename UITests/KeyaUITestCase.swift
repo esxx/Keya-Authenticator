@@ -102,6 +102,21 @@ class KeyaUITestCase: XCTestCase {
         app.typeText(pin)
     }
 
+    func waitUntilSettled(_ element: XCUIElement, timeout: TimeInterval = 5) {
+        XCTAssertTrue(element.waitForExistence(timeout: timeout), app.debugDescription)
+        let deadline = Date().addingTimeInterval(timeout)
+        var previous = element.frame
+        while Date() < deadline {
+            Thread.sleep(forTimeInterval: 0.25)
+            let current = element.frame
+            if current == previous, element.isHittable {
+                return
+            }
+            previous = current
+        }
+        XCTFail("\(element) did not settle\n\(app.debugDescription)")
+    }
+
     func dismissSystemAlertIfPresent() {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let alert = springboard.alerts.firstMatch
