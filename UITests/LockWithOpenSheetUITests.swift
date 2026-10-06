@@ -26,6 +26,6 @@ final class LockWithOpenSheetUITests: KeyaUITestCase {
         let addButton = app.buttons["Add"]
         let mainScreenUsable = addButton.exists && addButton.isHittable
         XCTAssertTrue(uriLabel.exists || mainScreenUsable,
-                      "After unlock a sheet covers the screen without its content\n\(app.debugDescription)")
+                      "After unlock the sheet must show its content\n\(app.debugDescription)")
     }
 }

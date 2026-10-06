@@ -14,7 +14,7 @@ final class InputHintsUITests: KeyaUITestCase {
         XCTAssertTrue(period.waitForExistence(timeout: 5), app.debugDescription)
         period.tap()
         period.typeText("60")
-        XCTAssertEqual(period.value as? String, "60", "Typing into the period field must not append to a forced 30")
+        XCTAssertEqual(period.value as? String, "60", "The period field must show the typed value")
     }
 
     func testChangePINShowsHintForTooManyDigits() throws {

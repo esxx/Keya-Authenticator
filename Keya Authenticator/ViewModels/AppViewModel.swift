@@ -150,6 +150,11 @@ final class AppCoordinator {
     // MARK: - Reset Everything
 
     func resetEverything() throws {
+        #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-UITestFailReset") {
+                throw TokenError.keychainError(String(localized: "Your tokens couldn't be deleted. Please try again."))
+            }
+        #endif
         try authenticationManager.performReset(tokenStore: tokenStore, settings: settings)
         withAnimation { appState = .pinSetup }
     }
