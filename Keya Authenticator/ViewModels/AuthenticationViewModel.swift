@@ -173,20 +173,4 @@ final class AuthenticationViewModel {
             startLockoutCountdown()
         }
     }
-
-    // MARK: - PIN Input
-
-    func appendToPIN(_ digit: String) {
-        guard pinText.count < 6 else { return }
-        pinText += digit
-    }
-
-    func removeLastPINDigit() {
-        guard !pinText.isEmpty else { return }
-        pinText.removeLast()
-    }
-
-    func clearPIN() {
-        pinText = ""
-    }
 }

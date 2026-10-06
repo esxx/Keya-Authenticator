@@ -2776,41 +2776,6 @@
         }
       }
     },
-    "Current PIN" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PIN actual"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Code PIN actuel"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "現在のPIN"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "현재 PIN"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PIN atual"
-          }
-        }
-      }
-    },
     "Dark" : {
       "localizations" : {
         "es-419" : {
@@ -4677,40 +4642,6 @@
         }
       }
     },
-    "Keya Authenticator QR code %lld" : {
-      "localizations" : {
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Código QR de Keya Authenticator %lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Code QR Keya Authenticator %lld"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keya Authenticator QRコード %lld"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keya Authenticator QR 코드 %lld"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Código QR do Keya Authenticator %lld"
-          }
-        }
-      }
-    },
     "Keya suggests this code in AutoFill on this website." : {
       "localizations" : {
         "es-419" : {
@@ -6130,46 +6061,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "QR code"
-          }
-        }
-      }
-    },
-    "QR code - %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "QR code - %@"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "QR code - %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "QR code - %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "QRコード - %@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "QR 코드 - %@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "QR code - %@"
           }
         }
       }

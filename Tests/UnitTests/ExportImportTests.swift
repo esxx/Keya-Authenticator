@@ -343,8 +343,8 @@ final class ExportImportTests: XCTestCase {
                              digits: 6, type: .totp, period: 30, counter: nil)
         try tokenStore.update([original])
 
-        let encryptedData = try manager.exportVaultEncrypted(password: "hunter2x")
-        let result = try manager.parseEncryptedTokens(from: encryptedData, password: "hunter2x")
+        let encryptedData = try EncryptionService.encrypt(manager.exportVault(), password: "hunter2x")
+        let result = try manager.parseTokens(from: EncryptionService.decrypt(encryptedData, password: "hunter2x"))
 
         XCTAssertEqual(result.tokens.count, 1)
         XCTAssertEqual(result.tokens[0].name, original.name)
@@ -357,10 +357,10 @@ final class ExportImportTests: XCTestCase {
                              digits: 6, type: .totp, period: 30, counter: nil)
         try tokenStore.update([original])
 
-        let encryptedData = try manager.exportVaultEncrypted(password: "correct-password")
+        let encryptedData = try EncryptionService.encrypt(manager.exportVault(), password: "correct-password")
 
         XCTAssertThrowsError(
-            try manager.parseEncryptedTokens(from: encryptedData, password: "wrong-password")
+            try manager.parseTokens(from: EncryptionService.decrypt(encryptedData, password: "wrong-password"))
         ) { error in
             guard let exportError = error as? ExportImportError else {
                 return XCTFail("Expected ExportImportError, got \(error)")
@@ -370,7 +370,7 @@ final class ExportImportTests: XCTestCase {
     }
 
     func testEncryptedEmptyVaultThrows() throws {
-        XCTAssertThrowsError(try manager.exportVaultEncrypted(password: "any")) { error in
+        XCTAssertThrowsError(try EncryptionService.encrypt(manager.exportVault(), password: "any")) { error in
             guard let exportError = error as? ExportImportError else {
                 return XCTFail("Expected ExportImportError, got \(error)")
             }

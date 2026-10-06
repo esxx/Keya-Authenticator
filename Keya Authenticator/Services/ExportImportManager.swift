@@ -212,33 +212,11 @@ private struct ExportData: Codable {
     let tokens: [Token]
 }
 
-// MARK: - Encrypted Export / Import
-
-extension ExportImportManager {
-    func exportVaultEncrypted(password: String) throws -> Data {
-        let plaintext = try exportVault()
-        return try EncryptionService.encrypt(plaintext, password: password)
-    }
-
-    func parseEncryptedTokens(from data: Data, password: String) throws -> ImportResult {
-        let plaintext = try EncryptionService.decrypt(data, password: password)
-        return try parseTokens(from: plaintext)
-    }
-}
-
 // MARK: - ExportFormat Implementation
 
 extension ExportImportManager {
     enum ExportFormat: Hashable {
         case plaintext
-
-        var fileExtension: String {
-            "json"
-        }
-
-        var mimeType: String {
-            "application/json"
-        }
 
         var contentType: UTType {
             .json

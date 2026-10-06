@@ -643,8 +643,8 @@ final class ExportImportFormatStressTests: XCTestCase {
         try tokenStore.update([t])
 
         let password = "p@ssw0rd🔐éàü"
-        let encrypted = try manager.exportVaultEncrypted(password: password)
-        let result = try manager.parseEncryptedTokens(from: encrypted, password: password)
+        let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: password)
+        let result = try manager.parseTokens(from: EncryptionService.decrypt(encrypted, password: password))
         XCTAssertEqual(result.tokens.count, 1)
     }
 
@@ -654,8 +654,8 @@ final class ExportImportFormatStressTests: XCTestCase {
         try tokenStore.update([t])
 
         let password = String(repeating: "a", count: 1000)
-        let encrypted = try manager.exportVaultEncrypted(password: password)
-        let result = try manager.parseEncryptedTokens(from: encrypted, password: password)
+        let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: password)
+        let result = try manager.parseTokens(from: EncryptionService.decrypt(encrypted, password: password))
         XCTAssertEqual(result.tokens.count, 1)
     }
 
@@ -664,8 +664,8 @@ final class ExportImportFormatStressTests: XCTestCase {
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
         try tokenStore.update([t])
 
-        let encrypted = try manager.exportVaultEncrypted(password: "eightchr")
-        let result = try manager.parseEncryptedTokens(from: encrypted, password: "eightchr")
+        let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: "eightchr")
+        let result = try manager.parseTokens(from: EncryptionService.decrypt(encrypted, password: "eightchr"))
         XCTAssertEqual(result.tokens.count, 1)
     }
 
@@ -675,7 +675,7 @@ final class ExportImportFormatStressTests: XCTestCase {
         try tokenStore.update([t])
 
         for short in ["", "x", "sixchr", "sevench"] {
-            XCTAssertThrowsError(try manager.exportVaultEncrypted(password: short)) { error in
+            XCTAssertThrowsError(try EncryptionService.encrypt(manager.exportVault(), password: short)) { error in
                 XCTAssertEqual(error as? ExportImportError, .passwordTooShort,
                                "Password of length \(short.count) must be rejected")
             }
@@ -687,7 +687,7 @@ final class ExportImportFormatStressTests: XCTestCase {
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
         try tokenStore.update([t])
 
-        let encrypted = try manager.exportVaultEncrypted(password: "password123")
+        let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: "password123")
         XCTAssertTrue(EncryptionService.isEncryptedExport(encrypted))
 
         let plaintext = try manager.exportVault()
@@ -699,7 +699,7 @@ final class ExportImportFormatStressTests: XCTestCase {
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
         try tokenStore.update([t])
 
-        let encrypted = try manager.exportVaultEncrypted(password: "mypassword")
+        let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: "mypassword")
         XCTAssertThrowsError(try manager.parseTokens(from: encrypted)) { error in
             guard let e = error as? ExportImportError,
                   e == .encryptedFileRequiresPassword else {
@@ -713,12 +713,12 @@ final class ExportImportFormatStressTests: XCTestCase {
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
         try tokenStore.update([t])
 
-        var encrypted = try manager.exportVaultEncrypted(password: "passw0rd")
+        var encrypted = try EncryptionService.encrypt(manager.exportVault(), password: "passw0rd")
         let mid = encrypted.count / 2
         encrypted[mid] ^= 0xFF
 
         XCTAssertThrowsError(
-            try manager.parseEncryptedTokens(from: encrypted, password: "passw0rd")
+            try manager.parseTokens(from: EncryptionService.decrypt(encrypted, password: "passw0rd"))
         )
     }
 
@@ -727,10 +727,10 @@ final class ExportImportFormatStressTests: XCTestCase {
                       algorithm: .sha1, digits: 6, type: .totp, period: 30, counter: nil)
         try tokenStore.update([t])
 
-        let encrypted = try manager.exportVaultEncrypted(password: "passw0rd")
+        let encrypted = try EncryptionService.encrypt(manager.exportVault(), password: "passw0rd")
         let truncated = encrypted.prefix(encrypted.count / 2)
         XCTAssertThrowsError(
-            try manager.parseEncryptedTokens(from: Data(truncated), password: "passw0rd")
+            try manager.parseTokens(from: EncryptionService.decrypt(Data(truncated), password: "passw0rd"))
         )
     }
 }

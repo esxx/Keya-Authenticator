@@ -1,4 +1,3 @@
-import AVFoundation
 import Foundation
 import PhotosUI
 import SwiftUI
@@ -429,24 +428,6 @@ final class AddTokenViewModel {
         groupName = nil
         isFavorite = false
         errorMessage = nil
-    }
-
-    // MARK: - Camera Permission
-
-    func checkCameraPermission() async -> Bool {
-        let status = AVCaptureDevice.authorizationStatus(for: .video)
-        switch status {
-        case .authorized: return true
-        case .notDetermined: return await AVCaptureDevice.requestAccess(for: .video)
-        case .denied, .restricted: fallthrough
-        @unknown default: return false
-        }
-    }
-
-    // MARK: - Cleanup
-
-    func cleanup() {
-        resetForm()
     }
 
     // MARK: - Private helpers

@@ -18,7 +18,6 @@ enum Constants {
     static let privacyPolicyURL = URL(string: "https://esxx.github.io/Keya-Authenticator/privacy.html")
     static let termsOfServiceURL = URL(string: "https://esxx.github.io/Keya-Authenticator/terms.html")
     static let faqURL = URL(string: "https://esxx.github.io/Keya-Authenticator/faq.html")
-    static let sourceCodeURL = URL(string: "https://github.com/esxx/Keya-Authenticator")
 
     // MARK: - Colors
 

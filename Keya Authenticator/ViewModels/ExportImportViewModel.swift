@@ -79,11 +79,4 @@ final class ExportImportViewModel {
         df.dateFormat = "yyyy-MM-dd"
         return "keya-authenticator-backup-encrypted-\(df.string(from: Date())).json"
     }
-
-    // MARK: - Cleanup
-
-    func cleanup() {
-        exportData = nil
-        exportError = nil
-    }
 }

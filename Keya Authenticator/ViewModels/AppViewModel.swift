@@ -147,10 +147,6 @@ final class AppCoordinator {
         mainContentViewModel.openAddSheet(prefillURI: url.absoluteString)
     }
 
-    func requestReset() {
-        withAnimation { appState = .pinSetup }
-    }
-
     // MARK: - Reset Everything
 
     func resetEverything() throws {

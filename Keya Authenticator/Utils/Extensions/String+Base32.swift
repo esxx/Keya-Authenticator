@@ -29,8 +29,4 @@ extension String {
         }
         return Data(bytes)
     }
-
-    var isValidBase32: Bool {
-        base32DecodedData != nil
-    }
 }
