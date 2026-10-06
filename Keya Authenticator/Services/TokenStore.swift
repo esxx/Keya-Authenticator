@@ -1,5 +1,7 @@
+import AuthenticationServices
 import Foundation
 import LocalAuthentication
+import os
 import SwiftUI
 
 @Observable
@@ -22,6 +24,7 @@ final class TokenStore {
         if loaded != tokens {
             tokens = loaded
         }
+        syncAutoFillIdentities()
     }
 
     // MARK: - Sort order
@@ -124,6 +127,7 @@ final class TokenStore {
         }
         applySort(to: &deduped)
         tokens = deduped
+        syncAutoFillIdentities()
         if let orphanDeleteError {
             throw orphanDeleteError
         }
@@ -145,6 +149,7 @@ final class TokenStore {
         }
         applySort(to: &updated)
         tokens = updated
+        syncAutoFillIdentities()
         if let firstError {
             throw firstError
         }
@@ -162,8 +167,33 @@ final class TokenStore {
         unreadableTokenCount = 0
         sortedIDs = []
         UserDefaults.standard.removeObject(forKey: sortOrderKey)
+        syncAutoFillIdentities()
         for i in 0 ..< snapshot.count where !snapshot[i].secret.isEmpty {
             snapshot[i].zeroSecret()
+        }
+    }
+
+    // MARK: - AutoFill
+
+    private func syncAutoFillIdentities() {
+        let identities = tokens.compactMap { token -> ASOneTimeCodeCredentialIdentity? in
+            guard token.type == .totp, let website = token.website else { return nil }
+            let label = token.issuer.flatMap { $0.isEmpty ? nil : $0 } ?? website
+            return ASOneTimeCodeCredentialIdentity(
+                serviceIdentifier: ASCredentialServiceIdentifier(identifier: website, type: .domain),
+                label: label,
+                recordIdentifier: token.id.uuidString
+            )
+        }
+        Task {
+            let store = ASCredentialIdentityStore.shared
+            guard await store.state().isEnabled else { return }
+            do {
+                try await store.replaceCredentialIdentities(identities)
+            } catch {
+                Logger(subsystem: Constants.keychainService, category: "AutoFill")
+                    .error("Updating AutoFill suggestions failed: \(error.localizedDescription, privacy: .public)")
+            }
         }
     }
 }

@@ -23,6 +23,7 @@ struct Token: Identifiable, Codable, Equatable {
     var notes: String?
     var isFavorite: Bool
     var groupName: String?
+    var website: String?
 
     var createdAt: Date
     var updatedAt: Date
@@ -54,6 +55,7 @@ struct Token: Identifiable, Codable, Equatable {
         notes: String? = nil,
         isFavorite: Bool = false,
         groupName: String? = nil,
+        website: String? = nil,
         createdAt: Date = Date(),
         updatedAt: Date = Date()
     ) {
@@ -68,6 +70,7 @@ struct Token: Identifiable, Codable, Equatable {
         self.notes = notes
         self.isFavorite = isFavorite
         self.groupName = groupName
+        self.website = website
 
         switch type {
         case .totp:
@@ -105,6 +108,18 @@ struct Token: Identifiable, Codable, Equatable {
         return name
     }
 
+    static func websiteDomain(from input: String) -> String? {
+        var text = input.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if !text.contains("://") {
+            text = "https://" + text
+        }
+        guard let host = URL(string: text)?.host(), host.contains("."),
+              !host.hasPrefix("."), !host.hasSuffix("."),
+              host.allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "." || $0 == "-") })
+        else { return nil }
+        return host
+    }
+
     var contentKey: String {
         let secretHex = secret.map { String(format: "%02x", $0) }.joined()
         return "\(secretHex)|\(algorithm.rawValue)|\(digits)|\(period ?? 0)"
@@ -123,7 +138,7 @@ struct Token: Identifiable, Codable, Equatable {
     enum CodingKeys: String, CodingKey {
         case id, name, issuer, secret, algorithm, digits, type
         case period, counter
-        case notes, isFavorite, groupName
+        case notes, isFavorite, groupName, website
         case createdAt, updatedAt
     }
 
@@ -154,6 +169,7 @@ struct Token: Identifiable, Codable, Equatable {
         notes = try c.decodeIfPresent(String.self, forKey: .notes)
         isFavorite = try c.decodeIfPresent(Bool.self, forKey: .isFavorite) ?? false
         groupName = try c.decodeIfPresent(String.self, forKey: .groupName)
+        website = try c.decodeIfPresent(String.self, forKey: .website)
         createdAt = try c.decode(Date.self, forKey: .createdAt)
         updatedAt = try c.decode(Date.self, forKey: .updatedAt)
     }
@@ -172,6 +188,7 @@ struct Token: Identifiable, Codable, Equatable {
         try c.encodeIfPresent(notes, forKey: .notes)
         try c.encode(isFavorite, forKey: .isFavorite)
         try c.encodeIfPresent(groupName, forKey: .groupName)
+        try c.encodeIfPresent(website, forKey: .website)
         try c.encode(createdAt, forKey: .createdAt)
         try c.encode(updatedAt, forKey: .updatedAt)
     }

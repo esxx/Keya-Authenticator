@@ -3491,6 +3491,40 @@
         }
       }
     },
+    "Enter a website like example.com" : {
+      "localizations" : {
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduce un sitio web como example.com"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisissez un site web comme example.com"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "example.com のようなウェブサイトを入力してください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "example.com 같은 웹사이트를 입력하세요"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Digite um site como example.com"
+          }
+        }
+      }
+    },
     "Enter PIN to unlock" : {
       "localizations" : {
         "es-419" : {
@@ -3632,6 +3666,9 @@
           }
         }
       }
+    },
+    "example.com" : {
+
     },
     "Export" : {
       "localizations" : {
@@ -4670,6 +4707,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Código QR do Keya Authenticator %lld"
+          }
+        }
+      }
+    },
+    "Keya suggests this code in AutoFill on this website." : {
+      "localizations" : {
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keya sugiere este código en Autorrelleno en este sitio web."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keya propose ce code dans le remplissage automatique sur ce site web."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このウェブサイトでは、Keyaが自動入力でこのコードを提案します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 웹사이트에서 Keya가 자동 완성으로 이 코드를 제안합니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Keya sugere este código no Preenchimento Automático neste site."
           }
         }
       }
@@ -8267,6 +8338,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Somos open-source — saiba mais"
+          }
+        }
+      }
+    },
+    "Website" : {
+      "localizations" : {
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitio web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Site web"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウェブサイト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹사이트"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Site"
           }
         }
       }

@@ -30,6 +30,15 @@ struct EditTokenView: View {
                     }
                     .listRowBackground(Constants.Colors.background)
                     .listRowSeparator(.visible)
+                    LabeledContent("Website") {
+                        TextField("example.com", text: $viewModel.website)
+                            .multilineTextAlignment(.trailing)
+                            .keyboardType(.URL)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    }
+                    .listRowBackground(Constants.Colors.background)
+                    .listRowSeparator(.visible)
                     Toggle(isOn: $viewModel.isFavorite) {
                         Label("Favorite", systemImage: viewModel.isFavorite ? "star.fill" : "star")
                             .foregroundColor(viewModel.isFavorite ? .yellow : .primary)
@@ -38,6 +47,8 @@ struct EditTokenView: View {
                     .listRowSeparator(.visible)
                 } header: {
                     Text("Account").textCase(.uppercase)
+                } footer: {
+                    Text("Keya suggests this code in AutoFill on this website.")
                 }
 
                 Section {

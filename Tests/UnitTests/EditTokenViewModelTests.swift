@@ -100,4 +100,31 @@ final class EditTokenViewModelTests: XCTestCase {
         XCTAssertEqual(tokenStore.tokens.first(where: { $0.id == edited.id })?.digits, 6,
                        "Cancelling must leave the stored token unchanged")
     }
+
+    // MARK: - Website
+
+    func testWebsiteIsSavedNormalized() async throws {
+        let token = makeToken(name: "GitHub")
+        try tokenStore.update([token])
+        let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: token)
+        viewModel.website = "https://GitHub.com/login"
+
+        let success = await viewModel.saveToken()
+
+        XCTAssertTrue(success)
+        XCTAssertEqual(tokenStore.tokens.first?.website, "github.com")
+    }
+
+    func testInvalidWebsiteBlocksSave() async throws {
+        let token = makeToken(name: "GitHub")
+        try tokenStore.update([token])
+        let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: token)
+        viewModel.website = "GitHub"
+
+        let success = await viewModel.saveToken()
+
+        XCTAssertFalse(success)
+        XCTAssertNotNil(viewModel.errorMessage)
+        XCTAssertNil(tokenStore.tokens.first?.website)
+    }
 }

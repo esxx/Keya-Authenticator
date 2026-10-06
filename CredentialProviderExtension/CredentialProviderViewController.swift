@@ -31,9 +31,24 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     override func provideCredentialWithoutUserInteraction(
         for credentialRequest: any ASCredentialRequest
     ) {
-        extensionContext.cancelRequest(
-            withError: ASExtensionError(.userInteractionRequired)
-        )
+        guard credentialRequest is ASOneTimeCodeCredentialRequest else {
+            extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
+            return
+        }
+        evaluate { [weak self] granted in
+            guard let self, granted else { return }
+            guard let tokens = self.loadTokens() else {
+                self.extensionContext.cancelRequest(withError: ASExtensionError(.failed))
+                return
+            }
+            let recordID = credentialRequest.credentialIdentity.recordIdentifier
+            guard let token = tokens.first(where: { $0.id.uuidString == recordID }),
+                  let code = try? token.generateCode() else {
+                self.extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
+                return
+            }
+            self.complete(with: code)
+        }
     }
 
     override func prepareInterfaceToProvideCredential(
@@ -71,8 +86,9 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
             }
             self.allTokens = tokens
 
-            let serviceID = request.credentialIdentity.serviceIdentifier
-            let candidates = self.matching(self.allTokens, for: [serviceID])
+            let identity = request.credentialIdentity
+            let recorded = self.allTokens.filter { $0.id.uuidString == identity.recordIdentifier }
+            let candidates = recorded.isEmpty ? self.matching(self.allTokens, for: [identity.serviceIdentifier]) : recorded
 
             if candidates.count == 1, let token = candidates.first,
                let code = try? token.generateCode() {
@@ -153,12 +169,16 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         _ tokens: [Token],
         for identifiers: [ASCredentialServiceIdentifier]
     ) -> [Token] {
-        let keywords = identifiers.compactMap { id -> String? in
-            let host = id.type == .URL ? URL(string: id.identifier)?.host : id.identifier
-            return host.map { BrandKeyword.extract(fromHost: $0) }
+        let hosts = identifiers.compactMap { id -> String? in
+            (id.type == .URL ? URL(string: id.identifier)?.host : id.identifier)?.lowercased()
         }
+        let keywords = hosts.map { BrandKeyword.extract(fromHost: $0) }
         return tokens.filter { token in
-            keywords.contains { BrandKeyword.matches(issuer: token.issuer, name: token.name, keyword: $0) }
+            if let website = token.website,
+               hosts.contains(where: { $0 == website || $0.hasSuffix("." + website) }) {
+                return true
+            }
+            return keywords.contains { BrandKeyword.matches(issuer: token.issuer, name: token.name, keyword: $0) }
         }
     }
 

@@ -19,6 +19,7 @@ final class EditTokenViewModel {
     var notes: String
     var isFavorite: Bool
     var groupName: String
+    var website: String
 
     var errorMessage: String?
     var isSaving = false
@@ -52,6 +53,7 @@ final class EditTokenViewModel {
         notes = token.notes ?? ""
         isFavorite = token.isFavorite
         groupName = token.groupName ?? ""
+        website = token.website ?? ""
     }
 
     // MARK: - Save Token
@@ -87,6 +89,7 @@ final class EditTokenViewModel {
         updatedToken.notes = notes.isEmpty ? nil : notes
         updatedToken.isFavorite = isFavorite
         updatedToken.groupName = groupName.isEmpty ? nil : groupName.trimmingCharacters(in: .whitespacesAndNewlines)
+        updatedToken.website = Token.websiteDomain(from: website)
 
         if originalToken.type == .totp {
             updatedToken.period = Int(period) ?? 30
@@ -132,6 +135,12 @@ final class EditTokenViewModel {
 
         guard digits == 6 || digits == 8 else {
             errorMessage = String(localized: "Digits must be 6 or 8")
+            return false
+        }
+
+        let trimmedWebsite = website.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedWebsite.isEmpty || Token.websiteDomain(from: trimmedWebsite) != nil else {
+            errorMessage = String(localized: "Enter a website like example.com")
             return false
         }
 
