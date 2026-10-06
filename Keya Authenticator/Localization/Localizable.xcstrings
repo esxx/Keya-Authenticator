@@ -4430,6 +4430,206 @@
         }
       }
     },
+    "Incorrect PIN. One more wrong PIN locks entry for %lld minutes." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Incorrect PIN. One more wrong PIN locks entry for %lld minute."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Incorrect PIN. One more wrong PIN locks entry for %lld minutes."
+                }
+              }
+            }
+          }
+        },
+        "es-419" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PIN incorrecto. Un PIN incorrecto más bloqueará el acceso durante %lld minuto."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PIN incorrecto. Un PIN incorrecto más bloqueará el acceso durante %lld minutos."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Code PIN incorrect. Encore un code PIN erroné bloquera l'accès pendant %lld minute."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Code PIN incorrect. Encore un code PIN erroné bloquera l'accès pendant %lld minutes."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PINが正しくありません。あと1回間違えると%lld分間入力できなくなります。"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PIN이 올바르지 않습니다. 한 번 더 틀리면 %lld분 동안 입력이 잠깁니다."
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PIN incorreto. Mais um PIN errado bloqueará o acesso por %lld minuto."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PIN incorreto. Mais um PIN errado bloqueará o acesso por %lld minutos."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Incorrect PIN. One more wrong PIN locks entry for %lld seconds." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Incorrect PIN. One more wrong PIN locks entry for %lld second."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Incorrect PIN. One more wrong PIN locks entry for %lld seconds."
+                }
+              }
+            }
+          }
+        },
+        "es-419" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PIN incorrecto. Un PIN incorrecto más bloqueará el acceso durante %lld segundo."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PIN incorrecto. Un PIN incorrecto más bloqueará el acceso durante %lld segundos."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Code PIN incorrect. Encore un code PIN erroné bloquera l'accès pendant %lld seconde."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Code PIN incorrect. Encore un code PIN erroné bloquera l'accès pendant %lld secondes."
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PINが正しくありません。あと1回間違えると%lld秒間入力できなくなります。"
+                }
+              }
+            }
+          }
+        },
+        "ko" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PIN이 올바르지 않습니다. 한 번 더 틀리면 %lld초 동안 입력이 잠깁니다."
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PIN incorreto. Mais um PIN errado bloqueará o acesso por %lld segundo."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "PIN incorreto. Mais um PIN errado bloqueará o acesso por %lld segundos."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Initial counter" : {
       "localizations" : {
         "es-419" : {

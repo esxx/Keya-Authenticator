@@ -1,15 +1,22 @@
 import SwiftUI
 
 struct PINAuthSheet: View {
-    let authenticationManager: AuthenticationManager
     let onSuccess: () -> Void
     let onCancel: () -> Void
 
+    @State private var attempt: PINAttempt
     @State private var pinText = ""
-    @State private var pinError: String? = nil
-    @State private var lockoutSecondsRemaining: Int? = nil
-    @State private var shakeTrigger = 0
     @State private var pinFocused = false
+
+    init(
+        authenticationManager: AuthenticationManager,
+        onSuccess: @escaping () -> Void,
+        onCancel: @escaping () -> Void
+    ) {
+        _attempt = State(initialValue: PINAttempt(authenticationManager: authenticationManager))
+        self.onSuccess = onSuccess
+        self.onCancel = onCancel
+    }
 
     var body: some View {
         NavigationStack {
@@ -38,8 +45,8 @@ struct PINAuthSheet: View {
                 PINEntryView(
                     pin: $pinText,
                     isFocused: $pinFocused,
-                    errorMessage: pinError,
-                    shakeTrigger: shakeTrigger,
+                    errorMessage: attempt.message,
+                    shakeTrigger: attempt.failureCount,
                     onComplete: verify
                 )
 
@@ -59,45 +66,16 @@ struct PINAuthSheet: View {
             .onTapGesture { pinFocused = true }
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { pinFocused = true }
-                checkLockout()
-            }
-            .task(id: lockoutSecondsRemaining) {
-                guard let seconds = lockoutSecondsRemaining, seconds > 0 else { return }
-                try? await Task.sleep(for: .seconds(1))
-                let remaining = seconds - 1
-                if remaining > 0 {
-                    lockoutSecondsRemaining = remaining
-                    pinError = AuthenticationManager.lockoutMessage(seconds: remaining)
-                } else {
-                    lockoutSecondsRemaining = nil
-                    pinError = nil
-                }
+                attempt.showLockoutIfActive()
             }
         }
-    }
-
-    private func checkLockout() {
-        guard let seconds = authenticationManager.pinLockoutSecondsRemaining(), seconds > 0 else { return }
-        lockoutSecondsRemaining = seconds
-        pinError = AuthenticationManager.lockoutMessage(seconds: seconds)
     }
 
     private func verify() {
-        pinError = nil
-        do {
-            try authenticationManager.authenticateWithPIN(pinText)
-            onSuccess()
-        } catch let error as AuthenticationManager.AuthenticationError {
-            pinError = error.localizedDescription
+        guard attempt.submit(pinText) != nil else {
             pinText = ""
-            shakeTrigger += 1
-            if let seconds = authenticationManager.pinLockoutSecondsRemaining(), seconds > 0 {
-                lockoutSecondsRemaining = seconds
-            }
-        } catch {
-            pinError = String(localized: "PIN verification failed. Please try again.")
-            pinText = ""
-            shakeTrigger += 1
+            return
         }
+        onSuccess()
     }
 }

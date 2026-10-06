@@ -5,7 +5,6 @@ struct AuthenticationView: View {
     let onUnlock: () -> Void
 
     @State private var pinFocused = false
-    @State private var shakeTrigger = 0
     @State private var contentOpacity: Double
     @State private var showBiometricChangedAlert = false
     @State private var biometricPromptPending = false
@@ -50,7 +49,7 @@ struct AuthenticationView: View {
                 pin: $viewModel.pinText,
                 isFocused: $pinFocused,
                 errorMessage: viewModel.errorMessage,
-                shakeTrigger: shakeTrigger,
+                shakeTrigger: viewModel.pinAttempt.failureCount,
                 onComplete: { viewModel.authenticateWithPIN() }
             )
 
@@ -77,7 +76,7 @@ struct AuthenticationView: View {
         .contentShape(Rectangle())
         .onTapGesture { pinFocused = true }
         .onAppear {
-            viewModel.checkLockoutOnAppear()
+            viewModel.pinAttempt.showLockoutIfActive()
             if willAutoTriggerBiometric {
                 contentOpacity = 0
                 if scenePhase == .active {
@@ -93,11 +92,6 @@ struct AuthenticationView: View {
             guard phase == .active, biometricPromptPending else { return }
             biometricPromptPending = false
             authenticateWithBiometrics()
-        }
-        .onChange(of: viewModel.errorMessage) { _, err in
-            if let error = err, !error.isEmpty {
-                shakeTrigger += 1
-            }
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(String(localized: "PIN unlock screen"))

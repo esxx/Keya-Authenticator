@@ -8,29 +8,32 @@ final class AuthenticationViewModel {
 
     let authenticationManager: AuthenticationManager
     let settings: AppSettings
+    let pinAttempt: PINAttempt
 
     // MARK: - Published Properties
 
     var pinText = ""
-    var errorMessage: String?
-    var isAuthenticating = false
     var biometricAvailable = false
     var biometricIcon = "faceid"
     var biometricDisplayName = "Face ID"
-    var pinLockoutSecondsRemaining: Int?
+
+    var errorMessage: String? {
+        pinAttempt.message ?? otherMessage
+    }
+
+    private var otherMessage: String?
 
     // MARK: - Callbacks
 
     var onUnlock: (() -> Void)?
     var biometricChangedDetected = false
 
-    private var lockoutTimer: Timer?
-
     // MARK: - Initialization
 
     init(authenticationManager: AuthenticationManager, settings: AppSettings) {
         self.authenticationManager = authenticationManager
         self.settings = settings
+        pinAttempt = PINAttempt(authenticationManager: authenticationManager)
         updateBiometricStatus()
     }
 
@@ -46,58 +49,40 @@ final class AuthenticationViewModel {
 
     func authenticateWithPIN() {
         guard !pinText.isEmpty else {
-            errorMessage = String(localized: "Please enter your PIN")
+            otherMessage = String(localized: "Please enter your PIN")
             return
         }
+        otherMessage = nil
 
-        isAuthenticating = true
-        errorMessage = nil
-
-        pinLockoutSecondsRemaining = authenticationManager.pinLockoutSecondsRemaining()
-        if let seconds = pinLockoutSecondsRemaining, seconds > 0 {
-            errorMessage = AuthenticationManager.lockoutMessage(seconds: seconds)
-            isAuthenticating = false
-            pinText = ""
-            startLockoutCountdown()
+        let result = pinAttempt.submit(pinText)
+        pinText = ""
+        guard let result else {
+            ClipboardManager.shared.provideHapticFeedback(.error)
             return
         }
-
-        do {
-            let result = try authenticationManager.authenticateWithPIN(pinText)
-            pinText = ""
-            ClipboardManager.shared.provideHapticFeedback(.success)
-            if result == .successBiometricChanged {
-                settings.useBiometricAuthentication = false
-                settings.biometricActivated = false
-                authenticationManager.clearBiometricFingerprint()
-                biometricChangedDetected = true
-                isAuthenticating = false
-                return
-            }
-            onUnlock?()
-        } catch let error as AuthenticationManager.AuthenticationError {
-            errorMessage = error.localizedDescription
-            pinText = ""
-            ClipboardManager.shared.provideHapticFeedback(.error)
-        } catch {
-            errorMessage = String(localized: "Authentication failed")
-            pinText = ""
-            ClipboardManager.shared.provideHapticFeedback(.error)
+        ClipboardManager.shared.provideHapticFeedback(.success)
+        if result == .successBiometricChanged {
+            settings.useBiometricAuthentication = false
+            settings.biometricActivated = false
+            authenticationManager.clearBiometricFingerprint()
+            biometricChangedDetected = true
+            return
         }
-
-        isAuthenticating = false
+        onUnlock?()
     }
 
     // MARK: - Biometric Authentication
 
     func authenticateWithBiometrics() async {
         guard biometricAvailable else {
-            errorMessage = String(localized: "Biometric Unavailable")
+            otherMessage = String(localized: "Biometric Unavailable")
             return
         }
 
-        isAuthenticating = true
-        errorMessage = nil
+        otherMessage = nil
+        if pinAttempt.lockoutSecondsRemaining == nil {
+            pinAttempt.clearMessage()
+        }
 
         do {
             try await authenticationManager.authenticateWithBiometrics()
@@ -106,71 +91,13 @@ final class AuthenticationViewModel {
             }
         } catch let error as AuthenticationManager.AuthenticationError {
             await MainActor.run {
-                errorMessage = error.localizedDescription
+                otherMessage = error.localizedDescription
                 updateBiometricStatus()
             }
         } catch {
             await MainActor.run {
-                errorMessage = String(localized: "Authentication failed")
+                otherMessage = String(localized: "Authentication failed")
             }
-        }
-
-        await MainActor.run {
-            isAuthenticating = false
-        }
-    }
-
-    // MARK: - Lockout
-
-    func checkLockoutOnAppear() {
-        guard let seconds = authenticationManager.pinLockoutSecondsRemaining(), seconds > 0 else { return }
-        pinLockoutSecondsRemaining = seconds
-        errorMessage = AuthenticationManager.lockoutMessage(seconds: seconds)
-        startLockoutCountdown()
-    }
-
-    // MARK: - Lockout Timer
-
-    private func startLockoutCountdown() {
-        lockoutTimer?.invalidate()
-        lockoutTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
-            guard let self else {
-                timer.invalidate()
-                return
-            }
-            guard let seconds = pinLockoutSecondsRemaining, seconds > 0 else {
-                stopLockoutTimer()
-                return
-            }
-            let remaining = seconds - 1
-            if remaining > 0 {
-                pinLockoutSecondsRemaining = remaining
-                errorMessage = AuthenticationManager.lockoutMessage(seconds: remaining)
-            } else {
-                pinLockoutSecondsRemaining = nil
-                errorMessage = nil
-            }
-        }
-    }
-
-    private func stopLockoutTimer() {
-        lockoutTimer?.invalidate()
-        lockoutTimer = nil
-    }
-
-    // MARK: - Reset
-
-    func reset() {
-        stopLockoutTimer()
-        pinText = ""
-        errorMessage = nil
-        isAuthenticating = false
-        updateBiometricStatus()
-        let seconds = authenticationManager.pinLockoutSecondsRemaining()
-        pinLockoutSecondsRemaining = seconds
-        if let s = seconds, s > 0 {
-            errorMessage = AuthenticationManager.lockoutMessage(seconds: s)
-            startLockoutCountdown()
         }
     }
 }

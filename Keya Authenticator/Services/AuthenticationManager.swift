@@ -154,6 +154,17 @@ final class AuthenticationManager {
         }
     }
 
+    func lockoutAfterNextFailure() -> TimeInterval? {
+        guard let state = try? KeychainManager.loadLockoutState(account: KeychainManager.pinLockoutAccount) else {
+            return nil
+        }
+        switch state.failedAttempts + 1 {
+        case Self.softLockoutThreshold: return Self.softLockoutDuration
+        case Self.hardLockoutThreshold: return Self.hardLockoutDuration
+        default: return nil
+        }
+    }
+
     func pinLockoutSecondsRemaining() -> Int? {
         guard let state = try? KeychainManager.loadLockoutState(account: KeychainManager.pinLockoutAccount),
               let lockedUntil = state.lockoutUntil,
