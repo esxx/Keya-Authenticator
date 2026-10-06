@@ -41,7 +41,7 @@ final class BiometricChangeUnlockTests: XCTestCase {
         viewModel.authenticateWithPIN()
 
         XCTAssertTrue(viewModel.biometricChangedDetected)
-        XCTAssertFalse(settings.useBiometricAuthentication, "Biometrics must be off even if the lock screen disappears")
+        XCTAssertFalse(settings.useBiometricAuthentication, "Biometric unlock must be off after a biometric change")
         XCTAssertFalse(settings.biometricActivated)
         XCTAssertNil(KeychainManager.loadBiometricFingerprint(), "The stale baseline must go, or the alert repeats on every unlock")
         XCTAssertFalse(unlocked, "Unlock waits until the user has seen the explanation")

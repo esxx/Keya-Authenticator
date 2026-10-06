@@ -112,7 +112,7 @@ final class AppCoordinatorTests: XCTestCase {
         try coordinator.resetEverything()
 
         XCTAssertEqual(SecItemCopyMatching(sentinelQuery as CFDictionary, nil), errSecSuccess,
-                       "Reset must not delete the install sentinel, or the next launch looks like a fresh install")
+                       "Reset must keep the install sentinel")
     }
 
     // MARK: - Pending URL on no-auth path

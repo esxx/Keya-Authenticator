@@ -1154,20 +1154,20 @@ final class MigrationURISecurityTests: XCTestCase {
     func testOuterFieldIntMaxLengthReturnsNil() {
         let bytes: [UInt8] = [0x0A] + Self.intMaxLengthVarint
         XCTAssertNil(migrationURI(bytes).parseMigrationURI(),
-                     "Length of Int.max fits in Int but must not overflow pos + length")
+                     "Length of Int.max must be rejected")
     }
 
     func testInnerFieldIntMaxLengthReturnsNil() {
         let inner: [UInt8] = [0x0A] + Self.intMaxLengthVarint
         let bytes: [UInt8] = [0x0A, UInt8(inner.count)] + inner
         XCTAssertNil(migrationURI(bytes).parseMigrationURI(),
-                     "Inner length of Int.max must not overflow pos + length")
+                     "Inner length of Int.max must be rejected")
     }
 
     func testSkippedFieldIntMaxLengthReturnsNil() {
         let bytes: [UInt8] = [0x1A] + Self.intMaxLengthVarint
         XCTAssertNil(migrationURI(bytes).parseMigrationURI(),
-                     "Skipped length-delimited field of Int.max must not overflow pos + length")
+                     "Skipped field length of Int.max must be rejected")
     }
 
     func testLengthOneBytePastEndReturnsNil() {

@@ -11,7 +11,7 @@ final class BackupReminderExportUITests: KeyaUITestCase {
         reminder.buttons["Export"].tap()
 
         XCTAssertTrue(app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 5),
-                      "Export from the reminder must ask for the PIN, like Settings does\n\(app.debugDescription)")
+                      "Export from the reminder must ask for the PIN\n\(app.debugDescription)")
         XCTAssertFalse(app.navigationBars["Export (Backup)"].exists)
 
         enterPIN()

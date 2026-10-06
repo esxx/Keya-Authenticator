@@ -103,6 +103,7 @@ final class EditTokenViewModelTests: XCTestCase {
 
     // MARK: - Website
 
+    @MainActor
     func testWebsiteIsSavedNormalized() async throws {
         let token = makeToken(name: "GitHub")
         try tokenStore.update([token])
@@ -115,6 +116,7 @@ final class EditTokenViewModelTests: XCTestCase {
         XCTAssertEqual(tokenStore.tokens.first?.website, "github.com")
     }
 
+    @MainActor
     func testInvalidWebsiteBlocksSave() async throws {
         let token = makeToken(name: "GitHub")
         try tokenStore.update([token])

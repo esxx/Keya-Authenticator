@@ -1,6 +1,7 @@
 import XCTest
 @testable import Keya_Authenticator
 
+@MainActor
 final class TokenWebsiteTests: XCTestCase {
 
     private let validSecret = "JBSWY3DPEHPK3PXP".base32DecodedData!

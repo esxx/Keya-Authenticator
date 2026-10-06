@@ -64,14 +64,14 @@ struct MainContentView: View {
                         addTokenViewModel = nil
                     }
                 }
-                .sheet(isPresented: $viewModel.showingAddSheet, onDismiss: { viewModel.addSheetDismissed() }) {
+                .sheet(isPresented: $viewModel.showingAddSheet, onDismiss: { viewModel.addSheetDismissed() }, content: {
                     if let addTokenViewModel {
                         AddTokenView(
                             viewModel: addTokenViewModel,
                             onTokenAdded: { viewModel.trackNewTokens() }
                         )
                     }
-                }
+                })
                 .onChange(of: viewModel.selectedTokenForEdit) { _, token in
                     editTokenViewModel = token.map {
                         EditTokenViewModel(tokenStore: viewModel.tokenStore, settings: viewModel.settings, token: $0)
