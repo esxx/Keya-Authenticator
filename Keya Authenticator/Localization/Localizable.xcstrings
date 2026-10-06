@@ -1382,12 +1382,12 @@
     "•••• ••••" : {
 
     },
-    "© %@ Eldar SHAIDULLIN — Keya Authenticator %@ (%@) — GPL v3" : {
+    "© %@ Keya Authenticator, %@ (%@), GPL v3" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "© %1$@ Eldar SHAIDULLIN — Keya Authenticator %2$@ (%3$@) — GPL v3"
+            "value" : "© %1$@ Keya Authenticator, %2$@ (%3$@), GPL v3"
           }
         }
       }

@@ -191,7 +191,7 @@ struct SettingsView: View {
 
                 Section {} footer: {
                     Text(
-                        "© \(String(Calendar.current.component(.year, from: Date()))) Eldar SHAIDULLIN — Keya Authenticator \(Constants.appVersion) (\(Constants.appBuild)) — GPL v3"
+                        "© \(String(Calendar.current.component(.year, from: Date()))) Keya Authenticator, \(Constants.appVersion) (\(Constants.appBuild)), GPL v3"
                     )
                     .font(.caption)
                     .foregroundColor(.secondary)
