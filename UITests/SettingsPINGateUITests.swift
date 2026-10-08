@@ -22,17 +22,19 @@ final class SettingsPINGateUITests: KeyaUITestCase {
         XCTAssertFalse(app.alerts["Delete all data?"].exists)
 
         app.typeText(pin)
-        let confirm = app.alerts["Delete all data?"]
-        XCTAssertTrue(confirm.waitForExistence(timeout: 5), app.debugDescription)
-        confirm.buttons["Cancel"].tap()
-        XCTAssertTrue(button(containing: "Delete all data").waitForExistence(timeout: 3), app.debugDescription)
+        let sheet = app.sheets.firstMatch
+        XCTAssertTrue(sheet.waitForExistence(timeout: 5), "The right PIN leads straight to the confirmation\n\(app.debugDescription)")
+        XCTAssertTrue(sheet.buttons["Cancel"].exists, app.debugDescription)
+        sheet.buttons["Cancel"].tap()
+        XCTAssertTrue(button(containing: "Delete all data").waitForExistence(timeout: 5), "Cancel returns to Settings")
+        XCTAssertTrue(app.navigationBars["Settings"].exists, app.debugDescription)
     }
 
-    func testCancelClosesGateWithoutAction() throws {
+    func testBackLeavesGateWithoutAction() throws {
         try reachMainScreen()
         openResetGate()
 
-        app.buttons["Cancel"].firstMatch.tap()
+        backButton(to: "Settings").tap()
 
         XCTAssertFalse(app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 2), app.debugDescription)
         XCTAssertFalse(app.alerts["Delete all data?"].exists)

@@ -10,6 +10,7 @@ struct EditTokenView: View {
     @State private var secretRevealed = false
     @State private var secretCopied = false
     @State private var showRevealSheet = false
+    @State private var showingDiscardConfirmation = false
 
     var body: some View {
         NavigationStack {
@@ -161,8 +162,20 @@ struct EditTokenView: View {
             }
             .navigationTitle("Edit token")
             .navigationBarTitleDisplayMode(.inline)
+            .interactiveDismissDisabled(viewModel.hasChanges)
+            .background(SwipeDismissAttempt {
+                if viewModel.hasChanges {
+                    showingDiscardConfirmation = true
+                }
+            })
+            .destructiveActionSheet(
+                isPresented: $showingDiscardConfirmation,
+                actionTitle: String(localized: "Discard changes")
+            ) { dismiss() }
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { save() }.fontWeight(.medium).disabled(viewModel.name.isEmpty || viewModel.isSaving)
                 }

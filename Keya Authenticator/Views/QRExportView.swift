@@ -101,8 +101,8 @@ struct QRExportView: View {
             .navigationBarTitleDisplayMode(.inline)
             .confirmingSecretShare($imagePendingShare)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                ToolbarItem(placement: .cancellationAction) {
+                    CloseButton { dismiss() }
                 }
             }
         }

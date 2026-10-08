@@ -42,25 +42,22 @@ struct PINSetupSheet: View {
                             .font(.caption)
                     }
                 }
-
-                Section {
-                    Button(action: savePIN) {
-                        Text("Save")
-                    }
-                    .disabled(isSaveDisabled)
-                    .foregroundColor(isSaveDisabled ? .gray : .blue)
-
-                    Button("Cancel", role: .cancel) {
-                        onComplete(false, false)
-                        dismiss()
-                    }
-                    .foregroundColor(.red)
-                }
             }
             .scrollContentBackground(.hidden)
             .background(Constants.Colors.background)
             .navigationTitle(mode == .changeExisting ? "Change PIN" : "Set PIN")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel", role: .cancel) {
+                        onComplete(false, false)
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save", action: savePIN).disabled(isSaveDisabled)
+                }
+            }
         }
     }
 

@@ -113,6 +113,11 @@ struct MainContentView: View {
                     if let exportImportViewModel {
                         NavigationStack {
                             TokenTransferView(viewModel: exportImportViewModel)
+                                .toolbar {
+                                    ToolbarItem(placement: .cancellationAction) {
+                                        CloseButton { viewModel.showExportSheet = false }
+                                    }
+                                }
                         }
                     }
                 }
@@ -145,28 +150,21 @@ struct MainContentView: View {
                     }
                 }
                 .onAppear { viewModel.loadTokens() }
-                .alert("Delete token?", isPresented: Binding(
-                    get: { viewModel.tokenPendingDelete != nil },
-                    set: {
-                        if !$0 {
-                            viewModel.tokenPendingDelete = nil
+                .destructiveActionSheet(
+                    isPresented: Binding(
+                        get: { viewModel.tokenPendingDelete != nil },
+                        set: {
+                            if !$0 {
+                                viewModel.tokenPendingDelete = nil
+                            }
                         }
-                    }
-                )) {
-                    Button("Cancel", role: .cancel) { viewModel.tokenPendingDelete = nil }
-                    Button("Delete", role: .destructive) {
-                        if let token = viewModel.tokenPendingDelete {
-                            viewModel.deleteToken(token)
-                        }
-                        viewModel.tokenPendingDelete = nil
-                    }
-                } message: {
+                    ),
+                    title: String(localized: "Delete token?"),
+                    message: deleteTokenMessage,
+                    actionTitle: String(localized: "Delete")
+                ) {
                     if let token = viewModel.tokenPendingDelete {
-                        let label = [token.issuer, token.name].compactMap { $0 }.filter { !$0.isEmpty }
-                            .joined(separator: " – ")
-                        Text("This will permanently delete \(label). This cannot be undone.")
-                    } else {
-                        Text("This will permanently delete this token. This cannot be undone.")
+                        viewModel.deleteToken(token)
                     }
                 }
                 .alert("Something Went Wrong", isPresented: Binding(
@@ -198,6 +196,14 @@ struct MainContentView: View {
             }
         }
         .animation(.spring(duration: 0.3), value: viewModel.showCopyToast)
+    }
+
+    private var deleteTokenMessage: String {
+        guard let token = viewModel.tokenPendingDelete else {
+            return String(localized: "This will permanently delete this token. This cannot be undone.")
+        }
+        let label = [token.issuer, token.name].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " – ")
+        return String(localized: "This will permanently delete \(label). This cannot be undone.")
     }
 
     // MARK: - Token list

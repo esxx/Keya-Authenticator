@@ -18,23 +18,16 @@ struct TipJarView: View {
     ]
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if tipStore.thankYouVisible {
-                    thankYouView
-                } else {
-                    tipListView
-                }
-            }
-            .background(Constants.Colors.background)
-            .navigationTitle("Support development")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
-                }
+        Group {
+            if tipStore.thankYouVisible {
+                thankYouView
+            } else {
+                tipListView
             }
         }
+        .background(Constants.Colors.background)
+        .navigationTitle("Support development")
+        .navigationBarTitleDisplayMode(.inline)
         .task { await tipStore.load() }
     }
 

@@ -14,10 +14,10 @@ final class DeleteAllDataUITests: KeyaUITestCase {
         if app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 3) {
             enterPIN()
         }
-
-        let confirm = app.alerts["Delete all data?"]
-        XCTAssertTrue(confirm.waitForExistence(timeout: 5))
-        confirm.buttons["Delete"].tap()
+        let sheet = app.sheets.firstMatch
+        XCTAssertTrue(sheet.waitForExistence(timeout: 5), "Deletion is confirmed with an action sheet\n\(app.debugDescription)")
+        XCTAssertTrue(sheet.buttons["Cancel"].exists, "The action sheet has a visible Cancel\n\(app.debugDescription)")
+        sheet.buttons["Delete"].tap()
 
         XCTAssertTrue(app.staticTexts["Create a 6-digit PIN"].waitForExistence(timeout: 5),
                       "After a successful reset the app must open PIN setup")
@@ -40,17 +40,17 @@ final class DeleteAllDataUITests: KeyaUITestCase {
         if app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 3) {
             enterPIN()
         }
-
-        let confirm = app.alerts["Delete all data?"]
-        XCTAssertTrue(confirm.waitForExistence(timeout: 5))
-        confirm.buttons["Delete"].tap()
+        let sheet = app.sheets.firstMatch
+        XCTAssertTrue(sheet.waitForExistence(timeout: 5), "Deletion is confirmed with an action sheet\n\(app.debugDescription)")
+        XCTAssertTrue(sheet.buttons["Cancel"].exists, "The action sheet has a visible Cancel\n\(app.debugDescription)")
+        sheet.buttons["Delete"].tap()
 
         let failure = app.alerts["Something Went Wrong"]
         XCTAssertTrue(failure.waitForExistence(timeout: 5), "A failed reset must be reported\n\(app.debugDescription)")
         failure.buttons["OK"].tap()
 
         XCTAssertFalse(app.staticTexts["Create a 6-digit PIN"].exists)
-        app.buttons["Done"].firstMatch.tap()
+        app.navigationBars["Settings"].buttons["Close"].tap()
         XCTAssertTrue(element(labelContaining: "UITestKeep").waitForExistence(timeout: 5),
                       "Tokens must stay after a failed reset\n\(app.debugDescription)")
     }

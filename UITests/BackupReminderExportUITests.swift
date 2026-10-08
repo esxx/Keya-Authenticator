@@ -15,7 +15,11 @@ final class BackupReminderExportUITests: KeyaUITestCase {
         XCTAssertFalse(app.navigationBars["Export (Backup)"].exists)
 
         enterPIN()
-        XCTAssertTrue(app.navigationBars["Export (Backup)"].waitForExistence(timeout: 5),
-                      "Export should open after the PIN\n\(app.debugDescription)")
+        let bar = app.navigationBars["Export (Backup)"]
+        XCTAssertTrue(bar.waitForExistence(timeout: 5), "Export should open after the PIN\n\(app.debugDescription)")
+        let close = bar.buttons["Close"]
+        XCTAssertTrue(close.exists, "Export must have a way to close it\n\(app.debugDescription)")
+        close.tap()
+        XCTAssertTrue(app.buttons["Add"].waitForExistence(timeout: 5), app.debugDescription)
     }
 }

@@ -5,8 +5,7 @@ import SwiftUI
 
 struct ManualTokenEntryView: View {
     @Bindable var viewModel: AddTokenViewModel
-
-    @Environment(\.dismiss) private var dismiss
+    var onDismissAttempt: () -> Void = {}
 
     @State private var showingScanner = false
     @State private var showingGalleryPicker = false
@@ -23,7 +22,7 @@ struct ManualTokenEntryView: View {
     // MARK: - Body
 
     var body: some View {
-        NavigationStack { coreContent }
+        coreContent
     }
 
     // MARK: - Core content (shared between embedded and standalone)
@@ -35,9 +34,14 @@ struct ManualTokenEntryView: View {
         .background(Constants.Colors.background)
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .background(SwipeDismissAttempt(onAttempt: onDismissAttempt))
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
+            ToolbarItem(placement: .confirmationAction) {
+                if viewModel.isAddingToken {
+                    ProgressView()
+                } else {
+                    Button("Add") { viewModel.createToken() }.disabled(!canAdd)
+                }
             }
         }
         .sheet(isPresented: $showingScanner) {
@@ -55,11 +59,6 @@ struct ManualTokenEntryView: View {
             guard let item = newItem else { return }
             Task { await viewModel.loadGalleryPhotoIntoForm(item)
                 selectedPhoto = nil
-            }
-        }
-        .onChange(of: viewModel.shouldDismiss) { _, shouldDismiss in
-            if shouldDismiss {
-                dismiss()
             }
         }
     }
@@ -132,20 +131,6 @@ struct ManualTokenEntryView: View {
                 Text(err).font(.caption).foregroundColor(.red)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-
-            Button { viewModel.createToken() } label: {
-                if viewModel.isAddingToken {
-                    ProgressView().tint(.white).frame(maxWidth: .infinity).padding(.vertical, 14)
-                } else {
-                    Text("Add").font(.body.weight(.medium))
-                        .frame(maxWidth: .infinity).padding(.vertical, 14)
-                }
-            }
-            .background(canAdd ? Color.blue : Color.gray.opacity(0.3))
-            .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .disabled(!canAdd || viewModel.isAddingToken)
-            .padding(.top, 8)
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 20)
@@ -244,10 +229,12 @@ struct ManualTokenEntryView: View {
 }
 
 #Preview {
-    ManualTokenEntryView(
-        viewModel: AddTokenViewModel(
-            tokenStore: TokenStore(),
-            settings: AppSettings()
+    NavigationStack {
+        ManualTokenEntryView(
+            viewModel: AddTokenViewModel(
+                tokenStore: TokenStore(),
+                settings: AppSettings()
+            )
         )
-    )
+    }
 }

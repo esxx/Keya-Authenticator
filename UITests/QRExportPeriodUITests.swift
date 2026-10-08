@@ -20,5 +20,12 @@ final class QRExportPeriodUITests: KeyaUITestCase {
         XCTAssertTrue(note.waitForExistence(timeout: 10),
                       "The 60-second token must be reported as not included\n\(app.debugDescription)")
         XCTAssertTrue(button(containing: "Share QR code").exists, "The 30-second token must still be exported")
+
+        let bar = app.navigationBars["Export as QR code"]
+        XCTAssertFalse(bar.buttons["Done"].exists, app.debugDescription)
+        let close = bar.buttons["Close"]
+        XCTAssertTrue(close.exists, app.debugDescription)
+        close.tap()
+        XCTAssertTrue(button(containing: "Export as QR code").waitForExistence(timeout: 5), app.debugDescription)
     }
 }

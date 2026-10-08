@@ -128,4 +128,41 @@ final class EditTokenViewModelTests: XCTestCase {
         XCTAssertNotNil(viewModel.errorMessage)
         XCTAssertNil(tokenStore.tokens.first?.website)
     }
+
+    // MARK: - Unsaved changes
+
+    func testNoChangesRightAfterOpening() {
+        let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: makeToken(name: "GitHub"))
+
+        XCTAssertFalse(viewModel.hasChanges)
+    }
+
+    func testEditingAnyFieldIsAChange() {
+        let token = makeToken(name: "GitHub")
+        let edits: [(EditTokenViewModel) -> Void] = [
+            { $0.name = "GitLab" },
+            { $0.issuer = "Other" },
+            { $0.algorithm = .sha256 },
+            { $0.digits = 8 },
+            { $0.period = "60" },
+            { $0.counter = "5" },
+            { $0.notes = "note" },
+            { $0.isFavorite = true },
+            { $0.groupName = "Work" },
+            { $0.website = "example.com" },
+        ]
+        for (index, edit) in edits.enumerated() {
+            let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: token)
+            edit(viewModel)
+            XCTAssertTrue(viewModel.hasChanges, "Edit \(index) must count as a change")
+        }
+    }
+
+    func testRevertingAnEditIsNoChange() {
+        let viewModel = EditTokenViewModel(tokenStore: tokenStore, settings: settings, token: makeToken(name: "GitHub"))
+        viewModel.name = "GitLab"
+        viewModel.name = "GitHub"
+
+        XCTAssertFalse(viewModel.hasChanges)
+    }
 }

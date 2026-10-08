@@ -89,6 +89,17 @@ class KeyaUITestCase: XCTestCase {
         XCTAssertTrue(targetButton.exists && targetButton.isHittable, app.debugDescription)
     }
 
+    func waitForDisappearance(_ element: XCUIElement, timeout: TimeInterval = 5) -> Bool {
+        let gone = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: element)
+        return XCTWaiter().wait(for: [gone], timeout: timeout) == .completed
+    }
+
+    func backButton(to title: String) -> XCUIElement {
+        app.navigationBars.buttons.matching(
+            NSPredicate(format: "identifier == 'BackButton' OR label == 'Back' OR label == %@", title)
+        ).firstMatch
+    }
+
     func element(labelContaining text: String) -> XCUIElement {
         app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
     }

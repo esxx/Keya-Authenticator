@@ -36,6 +36,34 @@ final class EditTokenViewModel {
 
     let originalToken: Token
 
+    // MARK: - Unsaved changes
+
+    private struct Fields: Equatable {
+        var name: String
+        var issuer: String
+        var algorithm: Algorithm
+        var digits: Int
+        var period: String
+        var counter: String
+        var notes: String
+        var isFavorite: Bool
+        var groupName: String
+        var website: String
+    }
+
+    private let initialFields: Fields
+
+    private var currentFields: Fields {
+        Fields(
+            name: name, issuer: issuer, algorithm: algorithm, digits: digits, period: period, counter: counter,
+            notes: notes, isFavorite: isFavorite, groupName: groupName, website: website
+        )
+    }
+
+    var hasChanges: Bool {
+        currentFields != initialFields
+    }
+
     // MARK: - Initialization
 
     init(tokenStore: TokenStore, settings: AppSettings, token: Token) {
@@ -43,16 +71,29 @@ final class EditTokenViewModel {
         self.settings = settings
         originalToken = token
 
-        name = token.name
-        issuer = token.issuer ?? ""
-        algorithm = token.algorithm
-        digits = token.digits
-        period = String(token.period ?? 30)
-        counter = String(token.counter ?? 0)
-        notes = token.notes ?? ""
-        isFavorite = token.isFavorite
-        groupName = token.groupName ?? ""
-        website = token.website ?? ""
+        let fields = Fields(
+            name: token.name,
+            issuer: token.issuer ?? "",
+            algorithm: token.algorithm,
+            digits: token.digits,
+            period: String(token.period ?? 30),
+            counter: String(token.counter ?? 0),
+            notes: token.notes ?? "",
+            isFavorite: token.isFavorite,
+            groupName: token.groupName ?? "",
+            website: token.website ?? ""
+        )
+        initialFields = fields
+        name = fields.name
+        issuer = fields.issuer
+        algorithm = fields.algorithm
+        digits = fields.digits
+        period = fields.period
+        counter = fields.counter
+        notes = fields.notes
+        isFavorite = fields.isFavorite
+        groupName = fields.groupName
+        website = fields.website
     }
 
     // MARK: - Save Token

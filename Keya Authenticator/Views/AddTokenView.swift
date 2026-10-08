@@ -13,6 +13,7 @@ struct AddTokenView: View {
     @State private var showGallery = false
     @State private var showFiles = false
     @State private var selectedPhoto: PhotosPickerItem? = nil
+    @State private var showingDiscardConfirmation = false
 
     var body: some View {
         NavigationStack {
@@ -80,13 +81,27 @@ struct AddTokenView: View {
             .animation(.easeInOut(duration: 0.2), value: viewModel.errorMessage)
             .navigationTitle("Add tokens")
             .navigationBarTitleDisplayMode(.inline)
+            .interactiveDismissDisabled(viewModel.hasManualInput)
+            .background(SwipeDismissAttempt {
+                if viewModel.hasManualInput {
+                    showingDiscardConfirmation = true
+                }
+            })
+            .destructiveActionSheet(
+                isPresented: $showingDiscardConfirmation,
+                actionTitle: String(localized: "Discard changes")
+            ) { dismiss() }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    CloseButton { dismiss() }
                 }
             }
-            .sheet(isPresented: $showManual) {
-                ManualTokenEntryView(viewModel: viewModel)
+            .navigationDestination(isPresented: $showManual) {
+                ManualTokenEntryView(viewModel: viewModel) {
+                    if viewModel.hasManualInput {
+                        showingDiscardConfirmation = true
+                    }
+                }
             }
             .photosPicker(isPresented: $showGallery, selection: $selectedPhoto, matching: .images)
             .onChange(of: selectedPhoto) { _, newItem in

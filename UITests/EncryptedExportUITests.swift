@@ -23,8 +23,10 @@ final class EncryptedExportUITests: KeyaUITestCase {
         confirm.tap()
         confirm.typeText("testpass1")
 
-        let export = app.buttons.matching(NSPredicate(format: "label == 'Export'")).firstMatch
-        XCTAssertTrue(export.waitForExistence(timeout: 3), app.debugDescription)
+        let bar = app.navigationBars["Export as encrypted JSON"]
+        XCTAssertTrue(bar.buttons["Cancel"].exists, "Cancel belongs in the toolbar\n\(app.debugDescription)")
+        let export = bar.buttons["Export"]
+        XCTAssertTrue(export.waitForExistence(timeout: 3), "Export belongs in the toolbar\n\(app.debugDescription)")
         export.tap()
 
         let saveDialog = app.buttons["Move"].waitForExistence(timeout: 20) || app.buttons["Save"].exists

@@ -14,8 +14,6 @@ struct AppLockSettingsView: View {
     @State private var biometricErrorMessage: String?
     @State private var showingBiometricError = false
 
-    @Environment(\.dismiss) private var dismiss
-
     enum PINSetupMode { case setNew, changeExisting }
 
     struct PINSetupPresentation: Identifiable {
@@ -81,11 +79,6 @@ struct AppLockSettingsView: View {
         .background(Constants.Colors.background)
         .navigationTitle("App lock")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Done") { dismiss() }
-            }
-        }
         .alert("Couldn't Save Settings", isPresented: saveErrorBinding) {
             Button("OK", role: .cancel) {}
         } message: {

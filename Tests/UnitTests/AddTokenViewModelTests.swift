@@ -485,4 +485,38 @@ final class AddTokenViewModelTests: XCTestCase {
         XCTAssertEqual(tokenStore.tokens.map(\.name), ["Current"])
         XCTAssertTrue(viewModel.importSummary.contains("already in your vault"))
     }
+
+    // MARK: - Unsaved manual input
+
+    func testEmptyFormHasNoManualInput() {
+        XCTAssertFalse(viewModel.hasManualInput)
+    }
+
+    func testAnyFormFieldIsManualInput() {
+        let edits: [(AddTokenViewModel) -> Void] = [
+            { $0.name = "alice" },
+            { $0.issuer = "GitHub" },
+            { $0.secret = "JBSWY3DPEHPK3PXP" },
+            { $0.algorithm = .sha256 },
+            { $0.digits = 8 },
+            { $0.period = 60 },
+            { $0.counter = 3 },
+            { $0.tokenType = .hotp },
+            { $0.groupName = "Work" },
+            { $0.isFavorite = true },
+        ]
+        for (index, edit) in edits.enumerated() {
+            viewModel.resetForm()
+            edit(viewModel)
+            XCTAssertTrue(viewModel.hasManualInput, "Field \(index) must count as input")
+        }
+    }
+
+    func testResetFormClearsManualInput() {
+        viewModel.name = "alice"
+        viewModel.secret = "JBSWY3DPEHPK3PXP"
+        viewModel.resetForm()
+
+        XCTAssertFalse(viewModel.hasManualInput)
+    }
 }

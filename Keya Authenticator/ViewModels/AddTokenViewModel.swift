@@ -24,6 +24,11 @@ final class AddTokenViewModel {
     var isFavorite = false
     var isAddingToken = false
 
+    var hasManualInput: Bool {
+        !name.isEmpty || !issuer.isEmpty || !secret.isEmpty || algorithm != .sha1 || digits != 6 || period != 30
+            || counter != 0 || tokenType != .totp || groupName != nil || isFavorite
+    }
+
     // MARK: - Import state (file / gallery / encrypted)
 
     var isImporting = false

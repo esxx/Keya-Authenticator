@@ -230,8 +230,8 @@ struct MigrationQRExportView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Constants.Colors.background, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                ToolbarItem(placement: .cancellationAction) {
+                    CloseButton { dismiss() }
                 }
             }
             .task { await generateMigrationQRs() }
@@ -450,32 +450,23 @@ struct EncryptedExportPasswordSheet: View {
                     )
                     .font(.caption2)
                 }
-
-                Section {
-                    Button {
-                        doExport()
-                    } label: {
-                        if isExporting {
-                            HStack { ProgressView().scaleEffect(0.8)
-                                Text("Encrypting…")
-                            }
-                        } else {
-                            Text("Export")
-                        }
-                    }
-                    .disabled(!canExport)
-                    .foregroundColor(canExport ? .blue : .gray)
-                    .listRowBackground(Constants.Colors.background)
-
-                    Button("Cancel", role: .cancel) { dismiss() }
-                        .foregroundColor(.red)
-                        .listRowBackground(Constants.Colors.background)
-                }
             }
             .scrollContentBackground(.hidden)
             .background(Constants.Colors.background)
             .navigationTitle("Export as encrypted JSON")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel", role: .cancel) { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    if isExporting {
+                        ProgressView().accessibilityLabel("Encrypting…")
+                    } else {
+                        Button("Export") { doExport() }.disabled(!canExport)
+                    }
+                }
+            }
         }
     }
 
@@ -526,35 +517,26 @@ struct EncryptedImportPasswordSheet: View {
                     Text("The backup is encrypted with AES-256-GCM. Enter the password used when it was exported.")
                         .font(.caption2)
                 }
-
-                Section {
-                    Button {
-                        doImport()
-                    } label: {
-                        if isDecrypting {
-                            HStack { ProgressView().scaleEffect(0.8)
-                                Text("Decrypting…")
-                            }
-                        } else {
-                            Text("Import")
-                        }
-                    }
-                    .disabled(password.isEmpty || isDecrypting)
-                    .foregroundColor(password.isEmpty || isDecrypting ? .gray : .blue)
-                    .listRowBackground(Constants.Colors.background)
-
-                    Button("Cancel", role: .cancel) {
-                        onComplete(nil)
-                        dismiss()
-                    }
-                    .foregroundColor(.red)
-                    .listRowBackground(Constants.Colors.background)
-                }
             }
             .scrollContentBackground(.hidden)
             .background(Constants.Colors.background)
             .navigationTitle("Encrypted JSON import")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel", role: .cancel) {
+                        onComplete(nil)
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    if isDecrypting {
+                        ProgressView().accessibilityLabel("Decrypting…")
+                    } else {
+                        Button("Import") { doImport() }.disabled(password.isEmpty)
+                    }
+                }
+            }
         }
     }
 

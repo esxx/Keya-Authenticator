@@ -7,16 +7,11 @@ struct SettingsView: View {
     @Bindable var settings: AppSettings
     var onResetRequested: (() throws -> Void)?
 
-    @State private var showingResetConfirmation = false
-    @State private var resetErrorMessage: String?
-    @State private var showingResetGate = false
-    @State private var showingTipJar = false
     @Environment(\.dismiss) private var dismiss
 
-    @State private var navigateToAppLock = false
-    @State private var navigateToTransfer = false
-    @State private var showingAppLockGate = false
-    @State private var showingTransferGate = false
+    @State private var showingResetPIN = false
+    @State private var showingResetConfirmation = false
+    @State private var resetErrorMessage: String?
     @State private var exportImportViewModel: ExportImportViewModel
 
     init(
@@ -42,25 +37,17 @@ struct SettingsView: View {
                 // MARK: - Security
 
                 Section {
-                    Button {
-                        if pinGatingEnabled {
-                            showingAppLockGate = true
-                        } else {
-                            navigateToAppLock = true
+                    NavigationLink {
+                        PINGate(authenticationManager: authenticationManager, isRequired: pinGatingEnabled) {
+                            AppLockSettingsView(authenticationManager: authenticationManager, settings: settings)
                         }
                     } label: {
-                        HStack {
-                            settingsRow(
-                                icon: "lock.fill",
-                                iconBg: .blue,
-                                title: "App lock",
-                                detail: settings.isAuthenticationEnabled ? "On" : "Off"
-                            )
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(Color(.tertiaryLabel))
-                        }
+                        settingsRow(
+                            icon: "lock.fill",
+                            iconBg: .blue,
+                            title: "App lock",
+                            detail: settings.isAuthenticationEnabled ? "On" : "Off"
+                        )
                     }
                     .foregroundColor(.primary)
                     .listRowBackground(Constants.Colors.background)
@@ -77,20 +64,12 @@ struct SettingsView: View {
                 // MARK: - Data
 
                 Section {
-                    Button {
-                        if pinGatingEnabled {
-                            showingTransferGate = true
-                        } else {
-                            navigateToTransfer = true
+                    NavigationLink {
+                        PINGate(authenticationManager: authenticationManager, isRequired: pinGatingEnabled) {
+                            TokenTransferView(viewModel: exportImportViewModel)
                         }
                     } label: {
-                        HStack {
-                            settingsRow(icon: "square.and.arrow.up", iconBg: .green, title: "Export (Backup)")
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(Color(.tertiaryLabel))
-                        }
+                        settingsRow(icon: "square.and.arrow.up", iconBg: .green, title: "Export (Backup)")
                     }
                     .foregroundColor(.primary)
                     .listRowBackground(Constants.Colors.background)
@@ -122,7 +101,9 @@ struct SettingsView: View {
                 // MARK: - Support
 
                 Section {
-                    Button { showingTipJar = true } label: {
+                    NavigationLink {
+                        TipJarView()
+                    } label: {
                         settingsRow(icon: "heart.fill", iconBg: .white, iconColor: .red, title: "Support development")
                             .foregroundStyle(.white)
                     }
@@ -173,7 +154,7 @@ struct SettingsView: View {
                 Section {
                     Button(role: .destructive) {
                         if pinGatingEnabled {
-                            showingResetGate = true
+                            showingResetPIN = true
                         } else {
                             showingResetConfirmation = true
                         }
@@ -206,22 +187,32 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .preferredColorScheme(settings.appTheme.colorScheme)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                ToolbarItem(placement: .cancellationAction) {
+                    CloseButton { dismiss() }
                 }
             }
-            .alert("Delete all data?", isPresented: $showingResetConfirmation) {
-                Button("Cancel", role: .cancel) {}
-                Button("Delete", role: .destructive) {
-                    do {
-                        try onResetRequested?()
-                        dismiss()
-                    } catch {
-                        resetErrorMessage = error.localizedDescription
-                    }
+            .navigationDestination(isPresented: $showingResetPIN) {
+                PINPrompt(authenticationManager: authenticationManager) { showingResetConfirmation = true }
+            }
+            .destructiveActionSheet(
+                isPresented: $showingResetConfirmation,
+                title: String(localized: "Delete all data?"),
+                message: String(
+                    localized: "This will permanently delete all your tokens and settings. This cannot be undone."
+                ),
+                actionTitle: String(localized: "Delete")
+            ) {
+                do {
+                    try onResetRequested?()
+                    dismiss()
+                } catch {
+                    resetErrorMessage = error.localizedDescription
                 }
-            } message: {
-                Text("This will permanently delete all your tokens and settings. This cannot be undone.")
+            }
+            .onChange(of: showingResetConfirmation) { _, isShowing in
+                if !isShowing {
+                    showingResetPIN = false
+                }
             }
             .alert("Something Went Wrong", isPresented: Binding(
                 get: { resetErrorMessage != nil },
@@ -234,43 +225,6 @@ struct SettingsView: View {
                 Button("OK", role: .cancel) { resetErrorMessage = nil }
             } message: {
                 Text(resetErrorMessage ?? "")
-            }
-            .sheet(isPresented: $navigateToAppLock) {
-                NavigationStack {
-                    AppLockSettingsView(authenticationManager: authenticationManager, settings: settings)
-                }
-            }
-            .sheet(isPresented: $navigateToTransfer) {
-                NavigationStack {
-                    TokenTransferView(viewModel: exportImportViewModel)
-                }
-            }
-            .sheet(isPresented: $showingAppLockGate) {
-                PINAuthSheet(authenticationManager: authenticationManager) {
-                    showingAppLockGate = false
-                    navigateToAppLock = true
-                } onCancel: {
-                    showingAppLockGate = false
-                }
-            }
-            .sheet(isPresented: $showingTransferGate) {
-                PINAuthSheet(authenticationManager: authenticationManager) {
-                    showingTransferGate = false
-                    navigateToTransfer = true
-                } onCancel: {
-                    showingTransferGate = false
-                }
-            }
-            .sheet(isPresented: $showingTipJar) {
-                TipJarView()
-            }
-            .sheet(isPresented: $showingResetGate) {
-                PINAuthSheet(authenticationManager: authenticationManager) {
-                    showingResetGate = false
-                    showingResetConfirmation = true
-                } onCancel: {
-                    showingResetGate = false
-                }
             }
         }
     }
