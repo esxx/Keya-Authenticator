@@ -25,8 +25,6 @@ struct MainContentView: View {
                 .background(Constants.Colors.background)
                 .navigationTitle("app.name")
                 .navigationBarTitleDisplayMode(.large)
-                .toolbarBackground(Constants.Colors.background, for: .navigationBar)
-                .toolbarBackground(Constants.Colors.background, for: .bottomBar)
                 .searchable(text: $viewModel.searchText, prompt: "Search tokens")
                 .toolbar {
                     ToolbarItemGroup(placement: .topBarTrailing) {

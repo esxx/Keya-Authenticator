@@ -256,11 +256,11 @@ struct TokenRowView: View {
 
                     if totpProgress(at: t) > 0.80, let next = nextCode(at: t) {
                         HStack(spacing: 7) {
-                            Text("Next", comment: "Label for the upcoming OTP code")
-                                .font(.footnote.weight(.medium))
+                            Text("next", comment: "Label for the upcoming OTP code")
+                                .font(.subheadline)
                                 .foregroundStyle(.secondary)
                             Text(formatCode(next))
-                                .font(.system(.footnote, design: .monospaced))
+                                .font(.system(.subheadline, design: .monospaced))
                                 .foregroundStyle(.secondary)
                                 .contentTransition(.numericText())
                         }

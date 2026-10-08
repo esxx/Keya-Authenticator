@@ -4846,19 +4846,19 @@
         }
       }
     },
-    "Next" : {
+    "next" : {
       "comment" : "Label for the upcoming OTP code",
       "localizations" : {
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Siguiente"
+            "value" : "siguiente"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suivant"
+            "value" : "suivant"
           }
         },
         "ja" : {
@@ -4876,7 +4876,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Próximo"
+            "value" : "próximo"
           }
         }
       }

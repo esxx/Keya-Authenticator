@@ -228,7 +228,6 @@ struct MigrationQRExportView: View {
             .background(Constants.Colors.background)
             .navigationTitle("Export as QR code")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Constants.Colors.background, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     CloseButton { dismiss() }
