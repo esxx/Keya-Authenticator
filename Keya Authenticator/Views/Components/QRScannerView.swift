@@ -1,4 +1,3 @@
-import AudioToolbox
 import AVFoundation
 import Combine
 import SwiftUI
@@ -8,6 +7,7 @@ struct QRScannerView: View {
     var isActive: Bool = true
 
     @State private var errorMessage: String?
+    @State private var cameraAccessDenied = false
     @StateObject private var cameraManager = CameraManager()
     @State private var isOnScreen = false
     @State private var isUncovered = true
@@ -39,7 +39,25 @@ struct QRScannerView: View {
                 Spacer().frame(minHeight: 100)
 
                 VStack(spacing: 12) {
-                    if let errorMessage {
+                    if cameraAccessDenied {
+                        VStack(spacing: 12) {
+                            Text("Camera access is required to scan QR codes. Enable it in Settings.")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
+                            Button("Open Settings") {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url)
+                                }
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 14)
+                        .background(Color.black.opacity(0.6))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .padding(.horizontal, 24)
+                    } else if let errorMessage {
                         HStack(spacing: 8) {
                             Image(systemName: "exclamationmark.circle.fill")
                                 .foregroundColor(.white)
@@ -72,6 +90,7 @@ struct QRScannerView: View {
             isOnScreen = true
             cameraManager.onCodeScanned = { code in handleScannedCode(code) }
             cameraManager.onError = { error in errorMessage = error }
+            cameraManager.onAccessDenied = { cameraAccessDenied = true }
             cameraManager.start()
         }
         .onDisappear {
@@ -100,17 +119,17 @@ struct QRScannerView: View {
     }
 
     private func handleScannedCode(_ code: String) {
-        AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
-
         if TokenIntake.hasScheme(code, TokenIntake.otpAuthScheme) || TokenIntake.hasScheme(
             code,
             TokenIntake.migrationScheme
         )
             || code.isValidOTPSecret
         {
+            ClipboardManager.shared.provideHapticFeedback(.success)
             onResult(.success(code))
             cameraManager.resumeScanning()
         } else {
+            ClipboardManager.shared.provideHapticFeedback(.error)
             errorMessage = String(localized: "Invalid QR code")
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 errorMessage = nil
@@ -154,6 +173,7 @@ final class CameraManager: NSObject, ObservableObject {
     }
 
     var onError: ((String) -> Void)?
+    var onAccessDenied: (() -> Void)?
     var captureSession: AVCaptureSession {
         session
     }
@@ -168,19 +188,13 @@ final class CameraManager: NSObject, ObservableObject {
                     self?.configureAndStart()
                 } else {
                     DispatchQueue.main.async {
-                        self?
-                            .onError?(
-                                String(localized: "Camera access is required to scan QR codes. Enable it in Settings.")
-                            )
+                        self?.onAccessDenied?()
                     }
                 }
             }
         case .denied, .restricted:
             DispatchQueue.main.async { [weak self] in
-                self?
-                    .onError?(
-                        String(localized: "Camera access denied. Enable it in Settings > Privacy & Security > Camera.")
-                    )
+                self?.onAccessDenied?()
             }
         @unknown default: break
         }

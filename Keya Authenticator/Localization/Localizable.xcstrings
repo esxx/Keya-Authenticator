@@ -1656,40 +1656,6 @@
         }
       }
     },
-    "Camera access denied. Enable it in Settings > Privacy & Security > Camera." : {
-      "localizations" : {
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acceso a la cámara denegado. Actívalo en Ajustes > Privacidad y seguridad > Cámara."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Accès à la caméra refusé. Activez-le dans Réglages > Confidentialité et sécurité > Appareil photo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "カメラへのアクセスが拒否されました。設定 > プライバシーとセキュリティ > カメラで許可してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "카메라 접근이 거부되었습니다. 설정 > 개인정보 보호 및 보안 > 카메라에서 허용하세요."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acesso à câmera negado. Ative-o em Configurações > Privacidade e Segurança > Câmera."
-          }
-        }
-      }
-    },
     "Camera access is required to scan QR codes. Enable it in Settings." : {
       "localizations" : {
         "es-419" : {
