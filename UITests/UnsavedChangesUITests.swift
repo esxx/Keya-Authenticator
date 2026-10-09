@@ -159,6 +159,9 @@ final class UnsavedChangesUITests: KeyaUITestCase {
         XCTAssertTrue(row.waitForExistence(timeout: 5), app.debugDescription)
         row.swipeLeft()
         button(containing: "Delete").tap()
+        XCTAssertTrue(app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 5),
+                      "Deleting a token asks for the PIN first\n\(app.debugDescription)")
+        enterPIN()
 
         let sheet = app.sheets.firstMatch
         XCTAssertTrue(sheet.waitForExistence(timeout: 5), "Deletion is confirmed with an action sheet\n\(app.debugDescription)")
@@ -168,6 +171,8 @@ final class UnsavedChangesUITests: KeyaUITestCase {
 
         row.swipeLeft()
         button(containing: "Delete").tap()
+        XCTAssertTrue(app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 5), app.debugDescription)
+        enterPIN()
         XCTAssertTrue(app.sheets.firstMatch.waitForExistence(timeout: 5), app.debugDescription)
         app.sheets.buttons["Delete"].tap()
         XCTAssertTrue(waitForDisappearance(row), app.debugDescription)

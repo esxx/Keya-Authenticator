@@ -10,6 +10,8 @@ struct MainContentView: View {
 
     @State private var showingPINAuthForExport = false
     @State private var tokenPendingPINAuth: Token? = nil
+    @State private var tokenAwaitingDeletePIN: Token?
+    @State private var tokenVerifiedForDelete: Token?
 
     // MARK: - Sheet view models
 
@@ -147,6 +149,17 @@ struct MainContentView: View {
                         tokenPendingPINAuth = nil
                     }
                 }
+                .sheet(item: $tokenAwaitingDeletePIN, onDismiss: {
+                    viewModel.tokenPendingDelete = tokenVerifiedForDelete
+                    tokenVerifiedForDelete = nil
+                }, content: { token in
+                    PINAuthSheet(authenticationManager: viewModel.authenticationManager) {
+                        tokenVerifiedForDelete = token
+                        tokenAwaitingDeletePIN = nil
+                    } onCancel: {
+                        tokenAwaitingDeletePIN = nil
+                    }
+                })
                 .onAppear { viewModel.loadTokens() }
                 .destructiveActionSheet(
                     isPresented: Binding(
@@ -298,8 +311,8 @@ struct MainContentView: View {
         .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 1, trailing: 16))
         .listRowBackground(Color.clear)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            Button(role: .destructive) { viewModel.tokenPendingDelete = token }
-                label: { Label("Delete", systemImage: "trash") }
+            Button { requestDelete(token) }
+                label: { Label("Delete", systemImage: "trash") }.tint(.red)
             Button { requestPINForExport(token) }
                 label: { Label("QR code", systemImage: "qrcode") }.tint(.purple)
             Button { viewModel.selectedTokenForEdit = token }
@@ -358,6 +371,14 @@ struct MainContentView: View {
     private func requestPINForExport(_ token: Token) {
         tokenPendingPINAuth = token
         showingPINAuthForExport = true
+    }
+
+    private func requestDelete(_ token: Token) {
+        if viewModel.settings.isAuthenticationEnabled, KeychainManager.isPINSet() {
+            tokenAwaitingDeletePIN = token
+        } else {
+            viewModel.tokenPendingDelete = token
+        }
     }
 }
 
