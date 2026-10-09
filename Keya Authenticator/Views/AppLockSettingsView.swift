@@ -66,7 +66,7 @@ struct AppLockSettingsView: View {
                     )
                     .listRowBackground(Constants.Colors.rowBackground)
                 } header: {
-                    Text("Biometric Authentication").textCase(.uppercase)
+                    Text("Biometric authentication").textCase(.uppercase)
                 }
             }
         }
@@ -74,12 +74,12 @@ struct AppLockSettingsView: View {
         .background(Constants.Colors.background)
         .navigationTitle("App lock")
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Couldn't Save Settings", isPresented: saveErrorBinding) {
+        .alert("Couldn't save settings", isPresented: saveErrorBinding) {
             Button("OK", role: .cancel) {}
         } message: {
             Text(settings.securitySettingsSaveError ?? "")
         }
-        .alert("Biometric Unavailable", isPresented: $showingBiometricError) {
+        .alert("Biometric unavailable", isPresented: $showingBiometricError) {
             Button("Open Settings") {
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url)

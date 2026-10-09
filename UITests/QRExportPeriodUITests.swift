@@ -6,8 +6,8 @@ final class QRExportPeriodUITests: KeyaUITestCase {
         addToken(issuer: "Standard", account: "std@example.com", secret: "JBSWY3DPEHPK3PXPJBSWY3DP")
         addToken(issuer: "Slow", account: "slow@example.com", secret: "JBSWY3DPEHPK3PXPJBSWY3DQ", period: "60")
 
-        openSettings(scrollingTo: "Export (Backup)")
-        button(containing: "Export (Backup)").tap()
+        openSettings(scrollingTo: "Export (backup)")
+        button(containing: "Export (backup)").tap()
         if app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 3) {
             enterPIN()
         }
@@ -23,7 +23,7 @@ final class QRExportPeriodUITests: KeyaUITestCase {
 
         let bar = app.navigationBars["Export as QR code"]
         XCTAssertFalse(bar.buttons["Close"].exists, "The QR export is a step inside Export\n\(app.debugDescription)")
-        backButton(to: "Export (Backup)").tap()
+        backButton(to: "Export (backup)").tap()
         XCTAssertTrue(button(containing: "Export as QR code").waitForExistence(timeout: 5), app.debugDescription)
     }
 }

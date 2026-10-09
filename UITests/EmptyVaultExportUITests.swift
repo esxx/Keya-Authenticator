@@ -3,8 +3,8 @@ import XCTest
 final class EmptyVaultExportUITests: KeyaUITestCase {
     func testExportOptionsAreDisabledWithExplanationWhenVaultIsEmpty() throws {
         try reachMainScreen()
-        openSettings(scrollingTo: "Export (Backup)")
-        button(containing: "Export (Backup)").tap()
+        openSettings(scrollingTo: "Export (backup)")
+        button(containing: "Export (backup)").tap()
         XCTAssertTrue(app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 5), app.debugDescription)
         enterPIN()
 

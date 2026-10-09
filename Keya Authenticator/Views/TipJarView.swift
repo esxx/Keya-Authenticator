@@ -111,7 +111,7 @@ struct TipJarView: View {
             Image(systemName: "heart.fill")
                 .font(.system(size: 64))
                 .foregroundStyle(.pink)
-            Text("Thank You!")
+            Text("Thank you!")
                 .font(.title.bold())
             Text("Your support keeps Keya Authenticator independent and ad-free. It genuinely makes a difference.")
                 .multilineTextAlignment(.center)

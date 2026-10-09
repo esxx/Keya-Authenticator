@@ -22,7 +22,7 @@ final class DeleteAllDataUITests: KeyaUITestCase {
         XCTAssertTrue(app.staticTexts["Create a 6-digit PIN"].waitForExistence(timeout: 5),
                       "After a successful reset the app must open PIN setup")
         XCTAssertFalse(button(containing: "Delete all data").exists, "Settings must be closed after reset")
-        XCTAssertFalse(app.alerts["Something Went Wrong"].exists)
+        XCTAssertFalse(app.alerts["Something went wrong"].exists)
     }
 
     func testFailedResetShowsErrorAndKeepsTokens() throws {
@@ -45,7 +45,7 @@ final class DeleteAllDataUITests: KeyaUITestCase {
         XCTAssertTrue(sheet.buttons["Cancel"].exists, "The action sheet has a visible Cancel\n\(app.debugDescription)")
         sheet.buttons["Delete"].tap()
 
-        let failure = app.alerts["Something Went Wrong"]
+        let failure = app.alerts["Something went wrong"]
         XCTAssertTrue(failure.waitForExistence(timeout: 5), "A failed reset must be reported\n\(app.debugDescription)")
         failure.buttons["OK"].tap()
 

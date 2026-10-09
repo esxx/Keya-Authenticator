@@ -66,7 +66,7 @@ class KeyaUITestCase: XCTestCase {
 
         let duplicate = app.alerts["Duplicate token"]
         if duplicate.waitForExistence(timeout: 2) {
-            duplicate.buttons["Add Anyway"].tap()
+            duplicate.buttons["Add anyway"].tap()
         }
 
         let backupNudge = app.alerts["Back up your tokens"]

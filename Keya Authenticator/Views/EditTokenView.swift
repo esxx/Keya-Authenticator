@@ -178,7 +178,7 @@ struct EditTokenView: View {
                 }
             )) {
                 Button("Cancel", role: .cancel) { viewModel.cancelPendingDuplicateSave() }
-                Button("Save Anyway") { confirmDuplicateSave() }
+                Button("Save anyway") { confirmDuplicateSave() }
             } message: {
                 if let name = viewModel.pendingDuplicateAdd?.existingName {
                     Text("This matches the secret already saved as \(name). Save it anyway?")
@@ -186,7 +186,7 @@ struct EditTokenView: View {
                     Text("This token's secret is already in your vault. Save it anyway?")
                 }
             }
-            .alert("Something Went Wrong", isPresented: Binding(
+            .alert("Something went wrong", isPresented: Binding(
                 get: { viewModel.errorMessage != nil },
                 set: {
                     if !$0 {

@@ -19,8 +19,8 @@ final class SettingsNavigationUITests: KeyaUITestCase {
 
     func testExportIsPushedWithPINInPlace() throws {
         try reachMainScreen()
-        openSettings(scrollingTo: "Export (Backup)")
-        button(containing: "Export (Backup)").tap()
+        openSettings(scrollingTo: "Export (backup)")
+        button(containing: "Export (backup)").tap()
 
         XCTAssertTrue(app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 5), app.debugDescription)
         XCTAssertTrue(backButton(to: "Settings").exists, "The PIN is asked on the pushed screen\n\(app.debugDescription)")
@@ -28,7 +28,7 @@ final class SettingsNavigationUITests: KeyaUITestCase {
 
         XCTAssertTrue(button(containing: "Export as encrypted JSON").waitForExistence(timeout: 5), app.debugDescription)
         backButton(to: "Settings").tap()
-        XCTAssertTrue(button(containing: "Export (Backup)").waitForExistence(timeout: 5), app.debugDescription)
+        XCTAssertTrue(button(containing: "Export (backup)").waitForExistence(timeout: 5), app.debugDescription)
     }
 
     func testSupportDevelopmentIsPushed() throws {

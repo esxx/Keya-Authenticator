@@ -39,7 +39,7 @@ final class TokenWebsiteUITests: KeyaUITestCase {
         websiteField.typeText("not a site")
         app.buttons["Done"].tap()
 
-        let alert = app.alerts["Something Went Wrong"]
+        let alert = app.alerts["Something went wrong"]
         XCTAssertTrue(alert.waitForExistence(timeout: 3), "The error must be visible without scrolling\n\(app.debugDescription)")
         XCTAssertTrue(alert.staticTexts["Enter a website like example.com"].exists, app.debugDescription)
         alert.buttons["OK"].tap()

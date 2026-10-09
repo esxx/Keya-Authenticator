@@ -67,7 +67,7 @@ struct SettingsView: View {
                             TokenTransferView(viewModel: exportImportViewModel)
                         }
                     } label: {
-                        settingsRow(icon: "square.and.arrow.up", iconBg: .green, title: "Export (Backup)")
+                        settingsRow(icon: "square.and.arrow.up", iconBg: .green, title: "Export (backup)")
                     }
                     .foregroundColor(.primary)
                     .listRowBackground(Constants.Colors.rowBackground)
@@ -120,14 +120,14 @@ struct SettingsView: View {
                     }
                     if let url = Constants.privacyPolicyURL {
                         Link(destination: url) {
-                            settingsRow(icon: "hand.raised.fill", iconBg: .indigo, title: "Privacy Policy")
+                            settingsRow(icon: "hand.raised.fill", iconBg: .indigo, title: "Privacy policy")
                         }
                         .foregroundColor(.primary)
                         .listRowBackground(Constants.Colors.rowBackground)
                     }
                     if let url = Constants.termsOfServiceURL {
                         Link(destination: url) {
-                            settingsRow(icon: "doc.text.fill", iconBg: .gray, title: "Terms of Service")
+                            settingsRow(icon: "doc.text.fill", iconBg: .gray, title: "Terms of service")
                         }
                         .foregroundColor(.primary)
                         .listRowBackground(Constants.Colors.rowBackground)
@@ -204,7 +204,7 @@ struct SettingsView: View {
                     showingResetPIN = false
                 }
             }
-            .alert("Something Went Wrong", isPresented: Binding(
+            .alert("Something went wrong", isPresented: Binding(
                 get: { resetErrorMessage != nil },
                 set: {
                     if !$0 {

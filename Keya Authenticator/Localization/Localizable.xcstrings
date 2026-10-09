@@ -723,7 +723,7 @@
         }
       }
     },
-    "Add Anyway" : {
+    "Add anyway" : {
       "localizations" : {
         "es-419" : {
           "stringUnit" : {
@@ -1332,14 +1332,8 @@
         }
       }
     },
-    "Biometric Authentication" : {
+    "Biometric authentication" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Biometric authentication"
-          }
-        },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1548,14 +1542,8 @@
         }
       }
     },
-    "Biometric Unavailable" : {
+    "Biometric unavailable" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Biometric unavailable"
-          }
-        },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2196,7 +2184,7 @@
         }
       }
     },
-    "Couldn't Save Settings" : {
+    "Couldn't save settings" : {
       "localizations" : {
         "es-419" : {
           "stringUnit" : {
@@ -3191,7 +3179,7 @@
         }
       }
     },
-    "Export (Backup)" : {
+    "Export (backup)" : {
       "localizations" : {
         "es-419" : {
           "stringUnit" : {
@@ -5979,14 +5967,8 @@
         }
       }
     },
-    "Privacy Policy" : {
+    "Privacy policy" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Privacy policy"
-          }
-        },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
@@ -6275,7 +6257,7 @@
         }
       }
     },
-    "Save Anyway" : {
+    "Save anyway" : {
       "localizations" : {
         "es-419" : {
           "stringUnit" : {
@@ -6887,7 +6869,7 @@
         }
       }
     },
-    "Something Went Wrong" : {
+    "Something went wrong" : {
       "localizations" : {
         "es-419" : {
           "stringUnit" : {
@@ -7125,14 +7107,8 @@
         }
       }
     },
-    "Terms of Service" : {
+    "Terms of service" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terms of service"
-          }
-        },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
@@ -7165,7 +7141,7 @@
         }
       }
     },
-    "Thank You!" : {
+    "Thank you!" : {
       "localizations" : {
         "es-419" : {
           "stringUnit" : {

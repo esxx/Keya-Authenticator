@@ -160,7 +160,7 @@ struct AddTokenView: View {
                 }
             )) {
                 Button("Cancel", role: .cancel) { viewModel.cancelPendingDuplicateAdd() }
-                Button("Add Anyway") { viewModel.confirmPendingDuplicateAdd() }
+                Button("Add anyway") { viewModel.confirmPendingDuplicateAdd() }
             } message: {
                 if let names = viewModel.pendingDuplicateAdd?.existingNames, !names.isEmpty {
                     Text("This matches the secret already saved as \(names.joined(separator: ", ")). Add it anyway?")

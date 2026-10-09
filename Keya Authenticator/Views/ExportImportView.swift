@@ -35,7 +35,7 @@ struct TokenTransferView: View {
         }
         .scrollContentBackground(.hidden)
         .background(Constants.Colors.background)
-        .navigationTitle("Export (Backup)")
+        .navigationTitle("Export (backup)")
         .navigationBarTitleDisplayMode(.inline)
         .fileExporter(
             isPresented: $viewModel.showExportPicker,

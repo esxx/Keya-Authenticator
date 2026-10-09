@@ -5,8 +5,8 @@ final class EncryptedExportUITests: KeyaUITestCase {
         try reachMainScreen()
         addToken(issuer: "EncTest", account: "enc@example.com", secret: "JBSWY3DPEHPK3PXPJBSWY3DP")
 
-        openSettings(scrollingTo: "Export (Backup)")
-        button(containing: "Export (Backup)").tap()
+        openSettings(scrollingTo: "Export (backup)")
+        button(containing: "Export (backup)").tap()
         if app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 3) {
             enterPIN()
         }
@@ -24,7 +24,7 @@ final class EncryptedExportUITests: KeyaUITestCase {
         confirm.typeText("testpass1")
 
         let bar = app.navigationBars["Export as encrypted JSON"]
-        XCTAssertTrue(backButton(to: "Export (Backup)").exists, "The password step is inside Export\n\(app.debugDescription)")
+        XCTAssertTrue(backButton(to: "Export (backup)").exists, "The password step is inside Export\n\(app.debugDescription)")
         let export = bar.buttons["Export"]
         XCTAssertTrue(export.waitForExistence(timeout: 3), "Export belongs in the toolbar\n\(app.debugDescription)")
         export.tap()

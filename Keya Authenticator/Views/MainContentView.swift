@@ -178,7 +178,7 @@ struct MainContentView: View {
                         viewModel.deleteToken(token)
                     }
                 }
-                .alert("Something Went Wrong", isPresented: Binding(
+                .alert("Something went wrong", isPresented: Binding(
                     get: { viewModel.operationErrorMessage != nil },
                     set: {
                         if !$0 {

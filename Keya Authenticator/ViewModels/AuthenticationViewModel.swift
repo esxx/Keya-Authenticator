@@ -75,7 +75,7 @@ final class AuthenticationViewModel {
 
     func authenticateWithBiometrics() async {
         guard biometricAvailable else {
-            otherMessage = String(localized: "Biometric Unavailable")
+            otherMessage = String(localized: "Biometric unavailable")
             return
         }
 
