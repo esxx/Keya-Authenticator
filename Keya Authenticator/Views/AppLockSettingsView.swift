@@ -26,16 +26,14 @@ struct AppLockSettingsView: View {
 
             Section {
                 Toggle("PIN", isOn: pinToggleBinding)
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
 
                 if settings.isAuthenticationEnabled, KeychainManager.isPINSet() {
                     Button("Change PIN") {
                         pinSetupPresentation = PINSetupPresentation(mode: .changeExisting)
                     }
                     .foregroundColor(.blue)
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                 }
             } header: {
                 Text("App lock").textCase(.uppercase)
@@ -52,8 +50,7 @@ struct AppLockSettingsView: View {
                         Text("30 seconds").tag(30)
                         Text("1 minute").tag(60)
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                 } header: {
                     Text("Auto-lock").textCase(.uppercase)
                 }
@@ -67,8 +64,7 @@ struct AppLockSettingsView: View {
                         authenticationManager.biometricDisplayName,
                         isOn: biometricToggleBinding
                     )
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                 } header: {
                     Text("Biometric Authentication").textCase(.uppercase)
                 }

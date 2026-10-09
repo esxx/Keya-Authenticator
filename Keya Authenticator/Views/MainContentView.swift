@@ -279,7 +279,7 @@ struct MainContentView: View {
                 }
             }
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
     }
 
     private func sectionLabel(_ title: LocalizedStringKey) -> some View {
@@ -307,9 +307,7 @@ struct MainContentView: View {
             onCopy: { viewModel.copyCodeToClipboard(from: token) },
             isNew: viewModel.isTokenNew(token)
         )
-        .listRowSeparator(.hidden)
-        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 1, trailing: 16))
-        .listRowBackground(Color.clear)
+        .listRowBackground(Constants.Colors.rowBackground)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button { requestDelete(token) }
                 label: { Label("Delete", systemImage: "trash") }.tint(.red)

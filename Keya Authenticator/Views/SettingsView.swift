@@ -50,14 +50,12 @@ struct SettingsView: View {
                         )
                     }
                     .foregroundColor(.primary)
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
 
                     Toggle(isOn: $settings.hideCodesByDefault) {
                         settingsRow(icon: "eye.slash.fill", iconBg: .gray, title: "Hide tokens")
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
 
                 } header: { Text("Security").textCase(.uppercase) }
 
@@ -72,8 +70,7 @@ struct SettingsView: View {
                         settingsRow(icon: "square.and.arrow.up", iconBg: .green, title: "Export (Backup)")
                     }
                     .foregroundColor(.primary)
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                 } header: {
                     Text("Data").textCase(.uppercase)
                 } footer: {
@@ -94,8 +91,7 @@ struct SettingsView: View {
                     } label: {
                         settingsRow(icon: "paintbrush.fill", iconBg: .pink, title: "Theme")
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                 } header: { Text("Preferences").textCase(.uppercase) }
 
                 // MARK: - Support
@@ -120,32 +116,28 @@ struct SettingsView: View {
                             settingsRow(icon: "info.circle.fill", iconBg: .blue, title: "About")
                         }
                         .foregroundColor(.primary)
-                        .listRowBackground(Constants.Colors.background)
-                        .listRowSeparator(.visible)
+                        .listRowBackground(Constants.Colors.rowBackground)
                     }
                     if let url = Constants.privacyPolicyURL {
                         Link(destination: url) {
                             settingsRow(icon: "hand.raised.fill", iconBg: .indigo, title: "Privacy Policy")
                         }
                         .foregroundColor(.primary)
-                        .listRowBackground(Constants.Colors.background)
-                        .listRowSeparator(.visible)
+                        .listRowBackground(Constants.Colors.rowBackground)
                     }
                     if let url = Constants.termsOfServiceURL {
                         Link(destination: url) {
                             settingsRow(icon: "doc.text.fill", iconBg: .gray, title: "Terms of Service")
                         }
                         .foregroundColor(.primary)
-                        .listRowBackground(Constants.Colors.background)
-                        .listRowSeparator(.visible)
+                        .listRowBackground(Constants.Colors.rowBackground)
                     }
                     if let url = Constants.faqURL {
                         Link(destination: url) {
                             settingsRow(icon: "questionmark.circle.fill", iconBg: .orange, title: "FAQ")
                         }
                         .foregroundColor(.primary)
-                        .listRowBackground(Constants.Colors.background)
-                        .listRowSeparator(.visible)
+                        .listRowBackground(Constants.Colors.rowBackground)
                     }
                 } header: { Text("We're open-source — learn more").textCase(.uppercase) }
 
@@ -161,11 +153,9 @@ struct SettingsView: View {
                     } label: {
                         settingsRow(icon: "trash.fill", iconBg: .red, title: "Delete all data")
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                 } footer: {
                     Text("This will permanently delete all your tokens and settings. This cannot be undone.")
-                        .font(.caption)
                 }
 
                 // MARK: - Footer

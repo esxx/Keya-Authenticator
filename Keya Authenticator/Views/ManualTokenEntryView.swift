@@ -50,7 +50,7 @@ struct ManualTokenEntryView: View {
                 TextField("e.g. AWS, GitHub, Google...", text: $viewModel.issuer)
                     .textContentType(.organizationName)
                     .padding(12)
-                    .background(Constants.Colors.background)
+                    .background(Constants.Colors.rowBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.separator).opacity(0.3), lineWidth: 0.5))
             }
@@ -61,7 +61,7 @@ struct ManualTokenEntryView: View {
                     .textContentType(.emailAddress)
                     .autocapitalization(.none)
                     .padding(12)
-                    .background(Constants.Colors.background)
+                    .background(Constants.Colors.rowBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.separator).opacity(0.3), lineWidth: 0.5))
             }
@@ -73,7 +73,7 @@ struct ManualTokenEntryView: View {
                     .autocapitalization(.none)
                     .font(.system(.body, design: .monospaced))
                     .padding(12)
-                    .background(Constants.Colors.background)
+                    .background(Constants.Colors.rowBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(secretBorderColor, lineWidth: 0.5))
                 if !viewModel.secret.isEmpty {
@@ -167,7 +167,7 @@ struct ManualTokenEntryView: View {
                             }
                         }
                         .padding(10)
-                        .background(Constants.Colors.background)
+                        .background(Constants.Colors.rowBackground)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(
                             Color(.separator).opacity(0.3),
@@ -183,7 +183,7 @@ struct ManualTokenEntryView: View {
                     ))
                     .keyboardType(.numberPad)
                     .padding(10)
-                    .background(Constants.Colors.background)
+                    .background(Constants.Colors.rowBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(.separator).opacity(0.3), lineWidth: 0.5))
                 }

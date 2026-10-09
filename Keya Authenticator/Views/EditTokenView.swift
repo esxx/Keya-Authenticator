@@ -19,18 +19,15 @@ struct EditTokenView: View {
                     LabeledContent("Service") {
                         TextField("Issuer", text: $viewModel.issuer).multilineTextAlignment(.trailing)
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                     LabeledContent("Account") {
                         TextField("Name", text: $viewModel.name).multilineTextAlignment(.trailing)
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                     LabeledContent("Group") {
                         TextField("Optional group label", text: $viewModel.groupName).multilineTextAlignment(.trailing)
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                     LabeledContent("Website") {
                         TextField("example.com", text: $viewModel.website)
                             .multilineTextAlignment(.trailing)
@@ -38,14 +35,12 @@ struct EditTokenView: View {
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                     Toggle(isOn: $viewModel.isFavorite) {
                         Label("Favorite", systemImage: viewModel.isFavorite ? "star.fill" : "star")
                             .foregroundColor(viewModel.isFavorite ? .yellow : .primary)
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                 } header: {
                     Text("Account").textCase(.uppercase)
                 } footer: {
@@ -56,33 +51,28 @@ struct EditTokenView: View {
                     LabeledContent("Type") {
                         Text(viewModel.tokenTypeDisplayName).foregroundColor(.secondary)
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                     Picker("Algorithm", selection: $viewModel.algorithm) {
                         ForEach(Algorithm.allCases, id: \.self) { Text($0.displayName).tag($0) }
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                     Picker("Digits", selection: $viewModel.digits) {
                         Text("6").tag(6)
                         Text("8").tag(8)
                     }
-                    .listRowBackground(Constants.Colors.background)
-                    .listRowSeparator(.visible)
+                    .listRowBackground(Constants.Colors.rowBackground)
                     if viewModel.originalToken.type == .totp {
                         LabeledContent("Period") {
                             TextField("30", text: $viewModel.period).keyboardType(.numberPad)
                                 .multilineTextAlignment(.trailing)
                         }
-                        .listRowBackground(Constants.Colors.background)
-                        .listRowSeparator(.visible)
+                        .listRowBackground(Constants.Colors.rowBackground)
                     } else {
                         LabeledContent("Counter") {
                             TextField("0", text: $viewModel.counter).keyboardType(.numberPad)
                                 .multilineTextAlignment(.trailing)
                         }
-                        .listRowBackground(Constants.Colors.background)
-                        .listRowSeparator(.visible)
+                        .listRowBackground(Constants.Colors.rowBackground)
                     }
                 } header: {
                     Text("Settings").textCase(.uppercase)
@@ -93,14 +83,11 @@ struct EditTokenView: View {
                         .frame(minHeight: 80)
                         .font(.body)
                         .scrollContentBackground(.hidden)
-                        .listRowBackground(Constants.Colors.background)
-                        .listRowSeparator(.visible)
-                    Text("Notes are stored securely in the iOS Keychain")
-                        .font(.caption2).foregroundColor(.secondary)
-                        .listRowBackground(Constants.Colors.background)
-                        .listRowSeparator(.visible)
+                        .listRowBackground(Constants.Colors.rowBackground)
                 } header: {
                     Text("Notes").textCase(.uppercase)
+                } footer: {
+                    Text("Notes are stored securely in the iOS Keychain")
                 }
 
                 Section {
@@ -109,8 +96,7 @@ struct EditTokenView: View {
                             .font(.system(.caption, design: .monospaced))
                             .foregroundColor(.secondary)
                             .accessibilityHidden(true)
-                            .listRowBackground(Constants.Colors.background)
-                            .listRowSeparator(.visible)
+                            .listRowBackground(Constants.Colors.rowBackground)
                         Button {
                             ClipboardManager.shared.copyToClipboard(viewModel.secretDisplay, autoClearDelay: 30)
                             ClipboardManager.shared.provideHapticFeedback(.success)
@@ -126,31 +112,28 @@ struct EditTokenView: View {
                             try? await Task.sleep(for: .seconds(1.5))
                             secretCopied = false
                         }
-                        .listRowBackground(Constants.Colors.background)
-                        .listRowSeparator(.visible)
+                        .listRowBackground(Constants.Colors.rowBackground)
                         Button {
                             secretRevealed = false
                         } label: {
                             Label("Hide secret key", systemImage: "eye.slash")
                         }
                         .foregroundColor(.secondary)
-                        .listRowBackground(Constants.Colors.background)
-                        .listRowSeparator(.visible)
+                        .listRowBackground(Constants.Colors.rowBackground)
                     } else {
                         Button {
                             showRevealSheet = true
                         } label: {
                             Label("Reveal secret key", systemImage: "eye")
                         }
-                        .listRowBackground(Constants.Colors.background)
-                        .listRowSeparator(.visible)
-                        Text("Your PIN is required to view the secret key")
-                            .font(.caption2).foregroundColor(.secondary)
-                            .listRowBackground(Constants.Colors.background)
-                            .listRowSeparator(.visible)
+                        .listRowBackground(Constants.Colors.rowBackground)
                     }
                 } header: {
                     Text("Secret key").textCase(.uppercase)
+                } footer: {
+                    if !secretRevealed {
+                        Text("Your PIN is required to view the secret key")
+                    }
                 }
             }
             .scrollContentBackground(.hidden)

@@ -70,7 +70,7 @@ struct AddTokenView: View {
                             title: "Enter the secret key manually"
                         ) { showManual = true }
                     }
-                    .background(Constants.Colors.background)
+                    .background(Constants.Colors.rowBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .padding(.horizontal, 16)
                 }

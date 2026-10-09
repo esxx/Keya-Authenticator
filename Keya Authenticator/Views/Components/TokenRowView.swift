@@ -117,14 +117,7 @@ struct TokenRowView: View {
                 codeRow(at: t)
             }
         }
-        .padding(.horizontal, 14)
         .padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 6 : 2)
-        .background(Constants.Colors.background)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color(.separator).opacity(0.3), lineWidth: 0.5)
-        )
         .onChange(of: currentCode(at: t)) { _, _ in
             if settings.hideCodesByDefault {
                 cancelRehide()

@@ -100,7 +100,7 @@ struct TipJarView: View {
             }
         }
         .disabled(tipStore.isPurchasing)
-        .listRowBackground(Constants.Colors.background)
+        .listRowBackground(Constants.Colors.rowBackground)
     }
 
     // MARK: - Thank you

@@ -79,8 +79,7 @@ struct TokenTransferView: View {
             }
             .disabled(viewModel.isExporting || !viewModel.hasTokens)
             .foregroundColor(viewModel.isExporting || !viewModel.hasTokens ? .gray : .blue)
-            .listRowBackground(Constants.Colors.background)
-            .listRowSeparator(.visible)
+            .listRowBackground(Constants.Colors.rowBackground)
             .alert("Unencrypted export", isPresented: $showPlaintextConfirm) {
                 Button("Export", role: .destructive) {
                     viewModel.exportFilename = viewModel.defaultExportFilename
@@ -100,8 +99,7 @@ struct TokenTransferView: View {
             }
             .disabled(!viewModel.hasTokens)
             .foregroundColor(viewModel.hasTokens ? .blue : .gray)
-            .listRowBackground(Constants.Colors.background)
-            .listRowSeparator(.visible)
+            .listRowBackground(Constants.Colors.rowBackground)
 
             Button {
                 viewModel.showMigrationQR = true
@@ -110,8 +108,7 @@ struct TokenTransferView: View {
             }
             .disabled(!viewModel.hasTokens)
             .foregroundColor(viewModel.hasTokens ? .blue : .gray)
-            .listRowBackground(Constants.Colors.background)
-            .listRowSeparator(.visible)
+            .listRowBackground(Constants.Colors.rowBackground)
 
             if let err = viewModel.exportError {
                 Text(err).font(.caption).foregroundColor(.red)
@@ -122,7 +119,7 @@ struct TokenTransferView: View {
                     "Some tokens couldn't be read and won't be included in this backup (\(viewModel.unreadableTokenCount))."
                 )
                 .font(.caption).foregroundColor(.orange)
-                .listRowBackground(Constants.Colors.background)
+                .listRowBackground(Constants.Colors.rowBackground)
             }
         } header: {
             Text("Export").textCase(.uppercase)
@@ -143,24 +140,21 @@ struct TokenTransferView: View {
                 title: "Plaintext JSON is unencrypted",
                 detail: "Store in a secure location such as an encrypted disk or password manager"
             )
-            .listRowBackground(Constants.Colors.background)
-            .listRowSeparator(.visible)
+            .listRowBackground(Constants.Colors.rowBackground)
             noteRow(
                 icon: "lock.fill",
                 color: .green,
                 title: "Encrypted JSON is recommended",
                 detail: "AES-256-GCM with PBKDF2. Password is required to export — keep it safe."
             )
-            .listRowBackground(Constants.Colors.background)
-            .listRowSeparator(.visible)
+            .listRowBackground(Constants.Colors.rowBackground)
             noteRow(
                 icon: "arrow.triangle.2.circlepath",
                 color: .blue,
                 title: "QR code export uses Google Authenticator format",
                 detail: "otpauth-migration:// — compatible with Google Authenticator, Aegis, 2FAS, Raivo..."
             )
-            .listRowBackground(Constants.Colors.background)
-            .listRowSeparator(.visible)
+            .listRowBackground(Constants.Colors.rowBackground)
         } header: { Text("Notes").textCase(.uppercase) }
     }
 
@@ -410,16 +404,16 @@ struct EncryptedExportPasswordSheet: View {
         Form {
             Section {
                 SecureField("Password", text: $password)
-                    .listRowBackground(Constants.Colors.background)
+                    .listRowBackground(Constants.Colors.rowBackground)
                 SecureField("Confirm", text: $confirmPassword)
-                    .listRowBackground(Constants.Colors.background)
+                    .listRowBackground(Constants.Colors.rowBackground)
                 if !password.isEmpty, !confirmPassword.isEmpty, !passwordsMatch {
                     Text("Passwords don't match").font(.caption).foregroundColor(.red)
-                        .listRowBackground(Constants.Colors.background)
+                        .listRowBackground(Constants.Colors.rowBackground)
                 }
                 if let err = errorMessage {
                     Text(err).font(.caption).foregroundColor(.red)
-                        .listRowBackground(Constants.Colors.background)
+                        .listRowBackground(Constants.Colors.rowBackground)
                 }
             } header: {
                 Text("Set password").textCase(.uppercase)
@@ -427,7 +421,6 @@ struct EncryptedExportPasswordSheet: View {
                 Text(
                     "Your tokens will be encrypted with AES-256-GCM. You'll need this password to import the backup."
                 )
-                .font(.caption2)
             }
         }
         .scrollContentBackground(.hidden)
@@ -479,16 +472,15 @@ struct EncryptedImportPasswordSheet: View {
         Form {
             Section {
                 SecureField("Password", text: $password)
-                    .listRowBackground(Constants.Colors.background)
+                    .listRowBackground(Constants.Colors.rowBackground)
                 if let err = errorMessage {
                     Text(err).font(.caption).foregroundColor(.red)
-                        .listRowBackground(Constants.Colors.background)
+                        .listRowBackground(Constants.Colors.rowBackground)
                 }
             } header: {
                 Text("Enter the password for this backup").textCase(.uppercase)
             } footer: {
                 Text("The backup is encrypted with AES-256-GCM. Enter the password used when it was exported.")
-                    .font(.caption2)
             }
         }
         .scrollContentBackground(.hidden)

@@ -22,6 +22,7 @@ enum Constants {
     // MARK: - Colors
 
     enum Colors {
-        static let background = Color("AppBackground")
+        static let background = Color(uiColor: .systemGroupedBackground)
+        static let rowBackground = Color(uiColor: .secondarySystemGroupedBackground)
     }
 }
