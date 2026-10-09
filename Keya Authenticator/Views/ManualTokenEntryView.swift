@@ -1,4 +1,3 @@
-import PhotosUI
 import SwiftUI
 
 // MARK: - Manual Token Entry View
@@ -6,10 +5,6 @@ import SwiftUI
 struct ManualTokenEntryView: View {
     @Bindable var viewModel: AddTokenViewModel
     var onDismissAttempt: () -> Void = {}
-
-    @State private var showingScanner = false
-    @State private var showingGalleryPicker = false
-    @State private var selectedPhoto: PhotosPickerItem? = nil
 
     @State private var showAdvanced = false
     @State private var periodText = ""
@@ -42,23 +37,6 @@ struct ManualTokenEntryView: View {
                 } else {
                     Button("Add") { viewModel.createToken() }.disabled(!canAdd)
                 }
-            }
-        }
-        .sheet(isPresented: $showingScanner) {
-            QRScannerView { result in
-                viewModel.processQRScanResult(result)
-                showingScanner = false
-            }
-        }
-        .photosPicker(
-            isPresented: $showingGalleryPicker,
-            selection: $selectedPhoto,
-            matching: .images
-        )
-        .onChange(of: selectedPhoto) { _, newItem in
-            guard let item = newItem else { return }
-            Task { await viewModel.loadGalleryPhotoIntoForm(item)
-                selectedPhoto = nil
             }
         }
     }

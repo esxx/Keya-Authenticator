@@ -180,11 +180,9 @@ struct EditTokenView: View {
                     Button("Done") { save() }.fontWeight(.medium).disabled(viewModel.name.isEmpty || viewModel.isSaving)
                 }
             }
-            .sheet(isPresented: $showRevealSheet) {
-                PINAuthSheet(authenticationManager: authenticationManager) {
+            .navigationDestination(isPresented: $showRevealSheet) {
+                PINPrompt(authenticationManager: authenticationManager) {
                     secretRevealed = true
-                    showRevealSheet = false
-                } onCancel: {
                     showRevealSheet = false
                 }
             }

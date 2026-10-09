@@ -16,7 +16,7 @@ struct AppLockSettingsView: View {
 
     enum PINSetupMode { case setNew, changeExisting }
 
-    struct PINSetupPresentation: Identifiable {
+    struct PINSetupPresentation: Identifiable, Hashable {
         let id = UUID()
         let mode: PINSetupMode
     }
@@ -94,11 +94,14 @@ struct AppLockSettingsView: View {
         } message: {
             Text(biometricErrorMessage ?? "")
         }
-        .sheet(item: $pinSetupPresentation, onDismiss: {
-            newPIN = ""
-            confirmPIN = ""
-            pinErrorMessage = nil
-        }, content: { presentation in
+        .onChange(of: pinSetupPresentation) { _, presentation in
+            if presentation == nil {
+                newPIN = ""
+                confirmPIN = ""
+                pinErrorMessage = nil
+            }
+        }
+        .navigationDestination(item: $pinSetupPresentation) { presentation in
             PINSetupSheet(
                 mode: presentation.mode,
                 authenticationManager: authenticationManager,
@@ -118,13 +121,11 @@ struct AppLockSettingsView: View {
                 }
                 pinSetupPresentation = nil
             }
-        })
-        .sheet(isPresented: $showingPINVerify) {
-            PINAuthSheet(authenticationManager: authenticationManager) {
+        }
+        .navigationDestination(isPresented: $showingPINVerify) {
+            PINPrompt(authenticationManager: authenticationManager) {
                 showingPINVerify = false
                 settings.isAuthenticationEnabled = false
-            } onCancel: {
-                showingPINVerify = false
             }
         }
     }

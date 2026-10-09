@@ -8,55 +8,45 @@ struct PINSetupSheet: View {
     @Binding var errorMessage: String?
     let onComplete: (_ success: Bool, _ biometricChanged: Bool) -> Void
 
-    @Environment(\.dismiss) private var dismiss
-
     var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    SecureField("New PIN", text: $newPIN)
-                        .keyboardType(.numberPad)
-                    SecureField("Confirm", text: $confirmPIN)
-                        .keyboardType(.numberPad)
+        Form {
+            Section {
+                SecureField("New PIN", text: $newPIN)
+                    .keyboardType(.numberPad)
+                SecureField("Confirm", text: $confirmPIN)
+                    .keyboardType(.numberPad)
 
-                    if !newPIN.isEmpty, !confirmPIN.isEmpty, newPIN != confirmPIN {
-                        Text("PINs don't match")
-                            .font(.caption)
-                            .foregroundColor(.red)
-                    }
-                    if !newPIN.isEmpty,
-                       newPIN.count != AuthenticationManager.pinLength || !newPIN.allSatisfy(\.isNumber)
-                    {
-                        Text("PIN must be 6 digits")
-                            .font(.caption)
-                            .foregroundColor(.orange)
-                    }
-                } header: {
-                    Text(mode == .changeExisting ? "Change PIN" : "Set PIN").textCase(.uppercase)
+                if !newPIN.isEmpty, !confirmPIN.isEmpty, newPIN != confirmPIN {
+                    Text("PINs don't match")
+                        .font(.caption)
+                        .foregroundColor(.red)
                 }
+                if !newPIN.isEmpty,
+                   newPIN.count != AuthenticationManager.pinLength || !newPIN.allSatisfy(\.isNumber)
+                {
+                    Text("PIN must be 6 digits")
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                }
+            } header: {
+                Text(mode == .changeExisting ? "Change PIN" : "Set PIN").textCase(.uppercase)
+            }
 
-                if let errorMessage {
-                    Section {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                            .font(.caption)
-                    }
+            if let errorMessage {
+                Section {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
                 }
             }
-            .scrollContentBackground(.hidden)
-            .background(Constants.Colors.background)
-            .navigationTitle(mode == .changeExisting ? "Change PIN" : "Set PIN")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", role: .cancel) {
-                        onComplete(false, false)
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: savePIN).disabled(isSaveDisabled)
-                }
+        }
+        .scrollContentBackground(.hidden)
+        .background(Constants.Colors.background)
+        .navigationTitle(mode == .changeExisting ? "Change PIN" : "Set PIN")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save", action: savePIN).disabled(isSaveDisabled)
             }
         }
     }
@@ -80,7 +70,6 @@ struct PINSetupSheet: View {
                 )
                 await MainActor.run {
                     onComplete(true, biometricChanged)
-                    dismiss()
                 }
             } catch {
                 await MainActor.run {

@@ -96,7 +96,7 @@ class KeyaUITestCase: XCTestCase {
 
     func backButton(to title: String) -> XCUIElement {
         app.navigationBars.buttons.matching(
-            NSPredicate(format: "identifier == 'BackButton' OR label == 'Back' OR label == %@", title)
+            NSPredicate(format: "identifier == 'BackButton' AND label == %@", title)
         ).firstMatch
     }
 

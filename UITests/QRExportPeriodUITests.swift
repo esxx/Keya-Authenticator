@@ -22,10 +22,8 @@ final class QRExportPeriodUITests: KeyaUITestCase {
         XCTAssertTrue(button(containing: "Share QR code").exists, "The 30-second token must still be exported")
 
         let bar = app.navigationBars["Export as QR code"]
-        XCTAssertFalse(bar.buttons["Done"].exists, app.debugDescription)
-        let close = bar.buttons["Close"]
-        XCTAssertTrue(close.exists, app.debugDescription)
-        close.tap()
+        XCTAssertFalse(bar.buttons["Close"].exists, "The QR export is a step inside Export\n\(app.debugDescription)")
+        backButton(to: "Export (Backup)").tap()
         XCTAssertTrue(button(containing: "Export as QR code").waitForExistence(timeout: 5), app.debugDescription)
     }
 }

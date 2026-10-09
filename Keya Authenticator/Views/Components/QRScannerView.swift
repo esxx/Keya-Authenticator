@@ -5,10 +5,7 @@ import SwiftUI
 
 struct QRScannerView: View {
     let onResult: (Result<String, Error>) -> Void
-    var isEmbedded: Bool = false
     var isActive: Bool = true
-
-    @Environment(\.dismiss) private var dismiss
 
     @State private var errorMessage: String?
     @StateObject private var cameraManager = CameraManager()
@@ -16,28 +13,10 @@ struct QRScannerView: View {
     @State private var isUncovered = true
 
     var body: some View {
-        if isEmbedded {
-            scannerContent
-        } else {
-            NavigationStack {
-                scannerContent
-                    .navigationTitle("Scan")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            Button("Cancel") {
-                                cameraManager.stop()
-                                dismiss()
-                            }
-                            .foregroundColor(.white)
-                        }
-                    }
-                    .toolbarBackground(.hidden, for: .navigationBar)
-            }
-        }
+        scannerContent
     }
 
-    // MARK: - Scanner content (shared)
+    // MARK: - Scanner content
 
     private var scannerContent: some View {
         ZStack {
@@ -130,11 +109,7 @@ struct QRScannerView: View {
             || code.isValidOTPSecret
         {
             onResult(.success(code))
-            if isEmbedded {
-                cameraManager.resumeScanning()
-            } else {
-                dismiss()
-            }
+            cameraManager.resumeScanning()
         } else {
             errorMessage = String(localized: "Invalid QR code")
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {

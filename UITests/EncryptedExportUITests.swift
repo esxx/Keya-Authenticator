@@ -24,7 +24,7 @@ final class EncryptedExportUITests: KeyaUITestCase {
         confirm.typeText("testpass1")
 
         let bar = app.navigationBars["Export as encrypted JSON"]
-        XCTAssertTrue(bar.buttons["Cancel"].exists, "Cancel belongs in the toolbar\n\(app.debugDescription)")
+        XCTAssertTrue(backButton(to: "Export (Backup)").exists, "The password step is inside Export\n\(app.debugDescription)")
         let export = bar.buttons["Export"]
         XCTAssertTrue(export.waitForExistence(timeout: 3), "Export belongs in the toolbar\n\(app.debugDescription)")
         export.tap()

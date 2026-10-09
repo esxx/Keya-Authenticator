@@ -24,7 +24,7 @@ struct AddTokenView: View {
                     } else if case let .failure(err) = result {
                         viewModel.errorMessage = err.localizedDescription
                     }
-                }, isEmbedded: true, isActive: !(showManual || showGallery || showFiles))
+                }, isActive: !(showManual || showGallery || showFiles))
                     .frame(maxWidth: .infinity)
                     .aspectRatio(1.33, contentMode: .fit)
                     .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -117,7 +117,7 @@ struct AddTokenView: View {
             ) { result in
                 viewModel.handleFileImport(result)
             }
-            .sheet(isPresented: $viewModel.showEncryptedImportSheet) {
+            .navigationDestination(isPresented: $viewModel.showEncryptedImportSheet) {
                 if let encData = viewModel.pendingEncryptedData {
                     EncryptedImportPasswordSheet(
                         exportImportManager: viewModel.importManager,
@@ -125,6 +125,11 @@ struct AddTokenView: View {
                     ) { result in
                         viewModel.handleEncryptedImportResult(result)
                     }
+                }
+            }
+            .onChange(of: viewModel.showEncryptedImportSheet) { _, isShowing in
+                if !isShowing, viewModel.pendingEncryptedData != nil {
+                    viewModel.handleEncryptedImportResult(nil)
                 }
             }
             .onAppear { viewModel.onTokenAdded = onTokenAdded }

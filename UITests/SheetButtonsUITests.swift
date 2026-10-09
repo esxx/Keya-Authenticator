@@ -64,9 +64,10 @@ final class SheetButtonsUITests: KeyaUITestCase {
 
         let bar = app.navigationBars["Change PIN"]
         XCTAssertTrue(bar.waitForExistence(timeout: 5), app.debugDescription)
-        XCTAssertTrue(bar.buttons["Cancel"].exists, app.debugDescription)
+        XCTAssertTrue(backButton(to: "App lock").exists, "Change PIN is a step inside App lock\n\(app.debugDescription)")
+        XCTAssertFalse(bar.buttons["Cancel"].exists, app.debugDescription)
         XCTAssertTrue(bar.buttons["Save"].exists, app.debugDescription)
-        bar.buttons["Cancel"].tap()
-        XCTAssertTrue(waitForDisappearance(bar), app.debugDescription)
+        backButton(to: "App lock").tap()
+        XCTAssertTrue(change.waitForExistence(timeout: 5), app.debugDescription)
     }
 }

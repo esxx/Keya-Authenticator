@@ -272,52 +272,12 @@ final class AddTokenViewModel {
         persistImported(migrated.tokens)
     }
 
-    // MARK: - QR — manual form (ManualTokenEntryView: populates form fields)
-
-    func processQRScanResult(_ result: Result<String, Error>) {
-        switch result {
-        case let .success(qr):
-            errorMessage = nil
-            if TokenIntake.hasScheme(qr, TokenIntake.migrationScheme) {
-                importMigration(qr)
-            } else if let params = TokenIntake.parameters(fromOTPAuth: qr) {
-                name = params.name
-                issuer = params.issuer ?? ""
-                secret = params.secret
-                tokenType = params.type
-                algorithm = params.algorithm
-                digits = params.digits
-                if let p = params.period {
-                    period = p
-                }
-                if let c = params.counter {
-                    counter = c
-                }
-            } else {
-                secret = qr
-            }
-        case let .failure(err):
-            errorMessage = err.localizedDescription
-        }
-    }
-
     // MARK: - Gallery photo (AddTokenView: persist result)
 
     func importGalleryPhoto(_ item: PhotosPickerItem) async {
         switch await extractQRFromPhoto(item) {
         case let .success(qr):
             await MainActor.run { handleScannedQR(qr) }
-        case let .failure(err):
-            await MainActor.run { errorMessage = err.localizedDescription }
-        }
-    }
-
-    // MARK: - Gallery photo (ManualTokenEntryView: populate form)
-
-    func loadGalleryPhotoIntoForm(_ item: PhotosPickerItem) async {
-        switch await extractQRFromPhoto(item) {
-        case let .success(qr):
-            await MainActor.run { processQRScanResult(.success(qr)) }
         case let .failure(err):
             await MainActor.run { errorMessage = err.localizedDescription }
         }

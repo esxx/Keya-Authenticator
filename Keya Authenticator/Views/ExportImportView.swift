@@ -26,7 +26,6 @@ struct ExportDocument: FileDocument {
 
 struct TokenTransferView: View {
     @Bindable var viewModel: ExportImportViewModel
-    @Environment(\.dismiss) private var dismiss
     @State private var showPlaintextConfirm = false
     @State private var showNoTokensAlert = false
 
@@ -46,7 +45,7 @@ struct TokenTransferView: View {
             defaultFilename: viewModel.exportFilename.isEmpty ? viewModel.defaultExportFilename : viewModel
                 .exportFilename
         ) { viewModel.handleExportResult($0) }
-        .sheet(isPresented: $viewModel.showEncryptedExportSheet) {
+        .navigationDestination(isPresented: $viewModel.showEncryptedExportSheet) {
             EncryptedExportPasswordSheet(exportImportManager: viewModel.exportImportManager) { data in
                 viewModel.exportFilename = viewModel.defaultEncryptedExportFilename
                 viewModel.exportData = data
@@ -54,7 +53,7 @@ struct TokenTransferView: View {
                 viewModel.showExportPicker = true
             }
         }
-        .sheet(isPresented: $viewModel.showMigrationQR) {
+        .navigationDestination(isPresented: $viewModel.showMigrationQR) {
             MigrationQRExportView(exportImportManager: viewModel.exportImportManager)
         }
         .alert("Export successful", isPresented: $viewModel.showExportSuccess) {
@@ -199,7 +198,6 @@ struct TokenTransferView: View {
 
 struct MigrationQRExportView: View {
     let exportImportManager: ExportImportManager
-    @Environment(\.dismiss) private var dismiss
 
     @State private var qrImages: [UIImage] = []
     @State private var currentPage = 0
@@ -209,33 +207,26 @@ struct MigrationQRExportView: View {
     @State private var imagePendingShare: UIImage?
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if isLoading {
-                    ProgressView("Generating QR codes…")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let errorMessage {
-                    ContentUnavailableView(
-                        "Cannot export",
-                        systemImage: "exclamationmark.triangle",
-                        description: Text(errorMessage)
-                    )
-                } else {
-                    qrCarousel
-                }
+        Group {
+            if isLoading {
+                ProgressView("Generating QR codes…")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let errorMessage {
+                ContentUnavailableView(
+                    "Cannot export",
+                    systemImage: "exclamationmark.triangle",
+                    description: Text(errorMessage)
+                )
+            } else {
+                qrCarousel
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Constants.Colors.background)
-            .navigationTitle("Export as QR code")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    CloseButton { dismiss() }
-                }
-            }
-            .task { await generateMigrationQRs() }
-            .confirmingSecretShare($imagePendingShare)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Constants.Colors.background)
+        .navigationTitle("Export as QR code")
+        .navigationBarTitleDisplayMode(.inline)
+        .task { await generateMigrationQRs() }
+        .confirmingSecretShare($imagePendingShare)
     }
 
     private var qrCarousel: some View {
@@ -415,7 +406,6 @@ struct EncryptedExportPasswordSheet: View {
     @State private var confirmPassword = ""
     @State private var isExporting = false
     @State private var errorMessage: String? = nil
-    @Environment(\.dismiss) private var dismiss
 
     private var passwordsMatch: Bool {
         password == confirmPassword
@@ -426,44 +416,39 @@ struct EncryptedExportPasswordSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    SecureField("Password", text: $password)
+        Form {
+            Section {
+                SecureField("Password", text: $password)
+                    .listRowBackground(Constants.Colors.background)
+                SecureField("Confirm", text: $confirmPassword)
+                    .listRowBackground(Constants.Colors.background)
+                if !password.isEmpty, !confirmPassword.isEmpty, !passwordsMatch {
+                    Text("Passwords don't match").font(.caption).foregroundColor(.red)
                         .listRowBackground(Constants.Colors.background)
-                    SecureField("Confirm", text: $confirmPassword)
-                        .listRowBackground(Constants.Colors.background)
-                    if !password.isEmpty, !confirmPassword.isEmpty, !passwordsMatch {
-                        Text("Passwords don't match").font(.caption).foregroundColor(.red)
-                            .listRowBackground(Constants.Colors.background)
-                    }
-                    if let err = errorMessage {
-                        Text(err).font(.caption).foregroundColor(.red)
-                            .listRowBackground(Constants.Colors.background)
-                    }
-                } header: {
-                    Text("Set password").textCase(.uppercase)
-                } footer: {
-                    Text(
-                        "Your tokens will be encrypted with AES-256-GCM. You'll need this password to import the backup."
-                    )
-                    .font(.caption2)
                 }
+                if let err = errorMessage {
+                    Text(err).font(.caption).foregroundColor(.red)
+                        .listRowBackground(Constants.Colors.background)
+                }
+            } header: {
+                Text("Set password").textCase(.uppercase)
+            } footer: {
+                Text(
+                    "Your tokens will be encrypted with AES-256-GCM. You'll need this password to import the backup."
+                )
+                .font(.caption2)
             }
-            .scrollContentBackground(.hidden)
-            .background(Constants.Colors.background)
-            .navigationTitle("Export as encrypted JSON")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", role: .cancel) { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    if isExporting {
-                        ProgressView().accessibilityLabel("Encrypting…")
-                    } else {
-                        Button("Export") { doExport() }.disabled(!canExport)
-                    }
+        }
+        .scrollContentBackground(.hidden)
+        .background(Constants.Colors.background)
+        .navigationTitle("Export as encrypted JSON")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                if isExporting {
+                    ProgressView().accessibilityLabel("Encrypting…")
+                } else {
+                    Button("Export") { doExport() }.disabled(!canExport)
                 }
             }
         }
@@ -498,42 +483,33 @@ struct EncryptedImportPasswordSheet: View {
     @State private var password = ""
     @State private var isDecrypting = false
     @State private var errorMessage: String? = nil
-    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    SecureField("Password", text: $password)
+        Form {
+            Section {
+                SecureField("Password", text: $password)
+                    .listRowBackground(Constants.Colors.background)
+                if let err = errorMessage {
+                    Text(err).font(.caption).foregroundColor(.red)
                         .listRowBackground(Constants.Colors.background)
-                    if let err = errorMessage {
-                        Text(err).font(.caption).foregroundColor(.red)
-                            .listRowBackground(Constants.Colors.background)
-                    }
-                } header: {
-                    Text("Enter the password for this backup").textCase(.uppercase)
-                } footer: {
-                    Text("The backup is encrypted with AES-256-GCM. Enter the password used when it was exported.")
-                        .font(.caption2)
                 }
+            } header: {
+                Text("Enter the password for this backup").textCase(.uppercase)
+            } footer: {
+                Text("The backup is encrypted with AES-256-GCM. Enter the password used when it was exported.")
+                    .font(.caption2)
             }
-            .scrollContentBackground(.hidden)
-            .background(Constants.Colors.background)
-            .navigationTitle("Encrypted JSON import")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", role: .cancel) {
-                        onComplete(nil)
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    if isDecrypting {
-                        ProgressView().accessibilityLabel("Decrypting…")
-                    } else {
-                        Button("Import") { doImport() }.disabled(password.isEmpty)
-                    }
+        }
+        .scrollContentBackground(.hidden)
+        .background(Constants.Colors.background)
+        .navigationTitle("Encrypted JSON import")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                if isDecrypting {
+                    ProgressView().accessibilityLabel("Decrypting…")
+                } else {
+                    Button("Import") { doImport() }.disabled(password.isEmpty)
                 }
             }
         }
@@ -551,7 +527,6 @@ struct EncryptedImportPasswordSheet: View {
                 }.value
                 let result = try exportImportManager.parseTokens(from: plaintext)
                 onComplete(result)
-                dismiss()
             } catch ExportImportError.wrongPassword {
                 isDecrypting = false
                 errorMessage = ExportImportError.wrongPassword.localizedDescription
