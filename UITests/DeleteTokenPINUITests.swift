@@ -30,9 +30,6 @@ final class DeleteTokenPINUITests: KeyaUITestCase {
         let pinSwitch = app.switches["PIN"]
         XCTAssertTrue(pinSwitch.waitForExistence(timeout: 5), app.debugDescription)
         pinSwitch.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
-        XCTAssertTrue(app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 5), app.debugDescription)
-        enterPIN()
-        XCTAssertTrue(pinSwitch.waitForExistence(timeout: 5), app.debugDescription)
         XCTAssertEqual(pinSwitch.value as? String, "0", "App lock is off\n\(app.debugDescription)")
         backButton(to: "Settings").tap()
         app.buttons["Close"].tap()

@@ -6,7 +6,6 @@ struct AppLockSettingsView: View {
     @Bindable var settings: AppSettings
 
     @State private var pinSetupPresentation: PINSetupPresentation?
-    @State private var showingPINVerify = false
     @State private var newPIN = ""
     @State private var confirmPIN = ""
     @State private var pinErrorMessage: String?
@@ -122,12 +121,6 @@ struct AppLockSettingsView: View {
                 pinSetupPresentation = nil
             }
         }
-        .navigationDestination(isPresented: $showingPINVerify) {
-            PINPrompt(authenticationManager: authenticationManager) {
-                showingPINVerify = false
-                settings.isAuthenticationEnabled = false
-            }
-        }
     }
 
     // MARK: - Bindings
@@ -154,11 +147,7 @@ struct AppLockSettingsView: View {
                         settings.isAuthenticationEnabled = true
                     }
                 } else {
-                    if KeychainManager.isPINSet() {
-                        showingPINVerify = true
-                    } else {
-                        settings.isAuthenticationEnabled = false
-                    }
+                    settings.isAuthenticationEnabled = false
                 }
             }
         )

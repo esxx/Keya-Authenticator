@@ -1,22 +1,22 @@
 import XCTest
 
 final class NestedSheetsUITests: KeyaUITestCase {
-    func testTurningPINOffAsksForPINInPlace() throws {
+    func testTurningPINOffNeedsOnlyTheEntrancePIN() throws {
         try reachMainScreen()
         openSettings(scrollingTo: "App lock")
         button(containing: "App lock").tap()
-        if app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 3) {
-            enterPIN()
-        }
+        XCTAssertTrue(app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 5),
+                      "App lock asks for the PIN at the entrance\n\(app.debugDescription)")
+        enterPIN()
+
         let pinSwitch = app.switches["PIN"]
         XCTAssertTrue(pinSwitch.waitForExistence(timeout: 5), app.debugDescription)
         pinSwitch.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
 
-        XCTAssertTrue(app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 5), app.debugDescription)
-        XCTAssertTrue(backButton(to: "App lock").exists, "The PIN is asked inside App lock\n\(app.debugDescription)")
-        XCTAssertFalse(app.buttons["Cancel"].exists, app.debugDescription)
-        backButton(to: "App lock").tap()
-        XCTAssertTrue(app.buttons["Change PIN"].waitForExistence(timeout: 5), "Back leaves the PIN on")
+        XCTAssertFalse(app.staticTexts["Enter PIN to unlock"].waitForExistence(timeout: 3),
+                       "No second PIN after the entrance\n\(app.debugDescription)")
+        XCTAssertEqual(pinSwitch.value as? String, "0", "App lock is off\n\(app.debugDescription)")
+        XCTAssertFalse(app.buttons["Change PIN"].exists, app.debugDescription)
     }
 
     func testRevealSecretAsksForPINInPlace() throws {
