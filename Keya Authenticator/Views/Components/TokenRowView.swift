@@ -89,6 +89,11 @@ struct TokenRowView: View {
         return try? token.generateCode(time: t.addingTimeInterval(Double(period)))
     }
 
+    static func showsNextCode(at t: Date, period: Int) -> Bool {
+        let length = Double(period)
+        return length - t.timeIntervalSince1970.truncatingRemainder(dividingBy: length) <= 10
+    }
+
     private func totpProgress(at t: Date) -> Double {
         guard token.type == .totp, let p = token.period else { return 0 }
         let ts = t.timeIntervalSince1970
@@ -254,7 +259,9 @@ struct TokenRowView: View {
                     .tracking(1)
                     .foregroundStyle(.primary)
 
-                    if totpProgress(at: t) > 0.80, let next = nextCode(at: t) {
+                    if let period = token.period, Self.showsNextCode(at: t, period: period),
+                       let next = nextCode(at: t)
+                    {
                         HStack(spacing: 7) {
                             Text("next", comment: "Label for the upcoming OTP code")
                                 .font(.subheadline)
