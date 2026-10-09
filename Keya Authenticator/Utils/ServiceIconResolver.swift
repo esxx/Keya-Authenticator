@@ -268,9 +268,30 @@ enum ServiceIconResolver {
 
     // MARK: - Catalog
 
-    private static let catalog: [String: ServiceInfo] = {
+    private static let minimumTextContrast = 4.5
+
+    private static func darkenedForWhiteText(hex: UInt32) -> Color {
+        var red = Double((hex >> 16) & 0xFF) / 255
+        var green = Double((hex >> 8) & 0xFF) / 255
+        var blue = Double(hex & 0xFF) / 255
+        while 1.05 / (relativeLuminance(red: red, green: green, blue: blue) + 0.05) < minimumTextContrast {
+            red *= 0.98
+            green *= 0.98
+            blue *= 0.98
+        }
+        return Color(red: red, green: green, blue: blue)
+    }
+
+    private static func relativeLuminance(red: Double, green: Double, blue: Double) -> Double {
+        func linear(_ value: Double) -> Double {
+            value <= 0.04045 ? value / 12.92 : pow((value + 0.055) / 1.055, 2.4)
+        }
+        return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue)
+    }
+
+    static let catalog: [String: ServiceInfo] = {
         func w(hex: UInt32) -> ServiceInfo {
-            ServiceInfo(brandColor: Color(hex: hex), foregroundColor: .white.opacity(0.9))
+            ServiceInfo(brandColor: darkenedForWhiteText(hex: hex), foregroundColor: .white)
         }
         func b(hex: UInt32) -> ServiceInfo {
             ServiceInfo(brandColor: Color(hex: hex), foregroundColor: Color(hex: 0x1A1A1A))
@@ -394,7 +415,7 @@ enum ServiceIconResolver {
             "cloudflare": b(hex: 0xF48120),
             "digitalocean": w(hex: 0x0080FF),
             "heroku": w(hex: 0x430098),
-            "vercel": b(hex: 0x000000),
+            "vercel": w(hex: 0x000000),
             "netlify": w(hex: 0x00C7B7),
             "gitlab": w(hex: 0xFC6D26),
             "docker": w(hex: 0x2496ED),

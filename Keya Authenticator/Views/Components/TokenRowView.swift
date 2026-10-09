@@ -108,6 +108,10 @@ struct TokenRowView: View {
             avatarView
                 .frame(width: avatarSize, height: avatarSize)
                 .clipShape(RoundedRectangle(cornerRadius: avatarSize * 0.25, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: avatarSize * 0.25, style: .continuous)
+                        .strokeBorder(Color(.separator), lineWidth: 0.5)
+                )
 
             VStack(alignment: .leading, spacing: 4) {
                 nameRow
