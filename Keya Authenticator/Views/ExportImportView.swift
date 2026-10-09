@@ -27,7 +27,6 @@ struct ExportDocument: FileDocument {
 struct TokenTransferView: View {
     @Bindable var viewModel: ExportImportViewModel
     @State private var showPlaintextConfirm = false
-    @State private var showNoTokensAlert = false
 
     var body: some View {
         Form {
@@ -68,9 +67,6 @@ struct TokenTransferView: View {
     private var exportSection: some View {
         Section {
             Button {
-                guard viewModel.hasTokens else { showNoTokensAlert = true
-                    return
-                }
                 showPlaintextConfirm = true
             } label: {
                 if viewModel.isExporting {
@@ -81,8 +77,8 @@ struct TokenTransferView: View {
                     Label("Export as JSON", systemImage: "doc.text")
                 }
             }
-            .disabled(viewModel.isExporting)
-            .foregroundColor(viewModel.isExporting ? .gray : .blue)
+            .disabled(viewModel.isExporting || !viewModel.hasTokens)
+            .foregroundColor(viewModel.isExporting || !viewModel.hasTokens ? .gray : .blue)
             .listRowBackground(Constants.Colors.background)
             .listRowSeparator(.visible)
             .alert("Unencrypted export", isPresented: $showPlaintextConfirm) {
@@ -98,33 +94,24 @@ struct TokenTransferView: View {
             }
 
             Button {
-                guard viewModel.hasTokens else { showNoTokensAlert = true
-                    return
-                }
                 viewModel.showEncryptedExportSheet = true
             } label: {
                 Label("Export as encrypted JSON", systemImage: "lock.doc")
             }
-            .foregroundColor(.blue)
+            .disabled(!viewModel.hasTokens)
+            .foregroundColor(viewModel.hasTokens ? .blue : .gray)
             .listRowBackground(Constants.Colors.background)
             .listRowSeparator(.visible)
 
             Button {
-                guard viewModel.hasTokens else { showNoTokensAlert = true
-                    return
-                }
                 viewModel.showMigrationQR = true
             } label: {
                 Label("Export as QR code", systemImage: "qrcode")
             }
-            .foregroundColor(.blue)
+            .disabled(!viewModel.hasTokens)
+            .foregroundColor(viewModel.hasTokens ? .blue : .gray)
             .listRowBackground(Constants.Colors.background)
             .listRowSeparator(.visible)
-            .alert("Nothing to export", isPresented: $showNoTokensAlert) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("Add some tokens first before exporting a backup")
-            }
 
             if let err = viewModel.exportError {
                 Text(err).font(.caption).foregroundColor(.red)
@@ -139,6 +126,10 @@ struct TokenTransferView: View {
             }
         } header: {
             Text("Export").textCase(.uppercase)
+        } footer: {
+            if !viewModel.hasTokens {
+                Text("Add some tokens first before exporting a backup")
+            }
         }
     }
 
