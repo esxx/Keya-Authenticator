@@ -327,6 +327,28 @@ struct MainContentView: View {
                 )
             }.tint(.yellow)
         }
+        .contextMenu {
+            Button { viewModel.copyCodeToClipboard(from: token) } label: {
+                Label("Copy", systemImage: "doc.on.doc")
+            }
+            Button { viewModel.toggleFavorite(token) } label: {
+                Label(
+                    token.isFavorite ? "Unfavorite" : "Favorite",
+                    systemImage: token.isFavorite ? "star.slash" : "star"
+                )
+            }
+            Divider()
+            Button { viewModel.selectedTokenForEdit = token } label: {
+                Label("Edit token", systemImage: "pencil")
+            }
+            Button { requestPINForExport(token) } label: {
+                Label("QR code", systemImage: "qrcode")
+            }
+            Divider()
+            Button(role: .destructive) { requestDelete(token) } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
     }
 
     // MARK: - Empty state
