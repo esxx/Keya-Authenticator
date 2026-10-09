@@ -59,7 +59,7 @@ struct EditTokenView: View {
                     .listRowBackground(Constants.Colors.background)
                     .listRowSeparator(.visible)
                     Picker("Algorithm", selection: $viewModel.algorithm) {
-                        ForEach(Algorithm.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                        ForEach(Algorithm.allCases, id: \.self) { Text($0.displayName).tag($0) }
                     }
                     .listRowBackground(Constants.Colors.background)
                     .listRowSeparator(.visible)

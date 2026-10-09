@@ -4,6 +4,14 @@ enum Algorithm: String, Codable, CaseIterable {
     case sha1 = "SHA1"
     case sha256 = "SHA256"
     case sha512 = "SHA512"
+
+    var displayName: String {
+        switch self {
+        case .sha1: return "SHA-1"
+        case .sha256: return "SHA-256"
+        case .sha512: return "SHA-512"
+        }
+    }
 }
 
 enum TokenType: String, Codable {

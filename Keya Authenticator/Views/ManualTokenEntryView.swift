@@ -127,30 +127,29 @@ struct ManualTokenEntryView: View {
         VStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Type").font(.caption).foregroundColor(.secondary)
-                HStack(spacing: 8) {
-                    chipButton("TOTP", selected: viewModel.tokenType == .totp) { viewModel.tokenType = .totp }
-                    chipButton("HOTP", selected: viewModel.tokenType == .hotp) { viewModel.tokenType = .hotp }
+                Picker("Type", selection: $viewModel.tokenType) {
+                    Text(TokenType.totp.displayName).tag(TokenType.totp)
+                    Text(TokenType.hotp.displayName).tag(TokenType.hotp)
                 }
+                .pickerStyle(.segmented)
+                .labelsHidden()
             }
-            HStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Algorithm").font(.caption).foregroundColor(.secondary)
-                    HStack(spacing: 6) {
-                        chipButton("SHA-1", selected: viewModel.algorithm == .sha1) { viewModel.algorithm = .sha1 }
-                        chipButton("SHA-256", selected: viewModel.algorithm == .sha256) { viewModel.algorithm = .sha256
-                        }
-                        chipButton("SHA-512", selected: viewModel.algorithm == .sha512) { viewModel.algorithm = .sha512
-                        }
-                    }
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Algorithm").font(.caption).foregroundColor(.secondary)
+                Picker("Algorithm", selection: $viewModel.algorithm) {
+                    ForEach(Algorithm.allCases, id: \.self) { Text($0.displayName).tag($0) }
                 }
-                Spacer()
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Digits").font(.caption).foregroundColor(.secondary)
-                    HStack(spacing: 6) {
-                        chipButton("6", selected: viewModel.digits == 6) { viewModel.digits = 6 }
-                        chipButton("8", selected: viewModel.digits == 8) { viewModel.digits = 8 }
-                    }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Digits").font(.caption).foregroundColor(.secondary)
+                Picker("Digits", selection: $viewModel.digits) {
+                    Text("6").tag(6)
+                    Text("8").tag(8)
                 }
+                .pickerStyle(.segmented)
+                .labelsHidden()
             }
             if viewModel.tokenType == .totp {
                 VStack(alignment: .leading, spacing: 6) {
@@ -190,19 +189,6 @@ struct ManualTokenEntryView: View {
                 }
             }
         }
-    }
-
-    private func chipButton(_ title: String, selected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title).font(.caption.weight(.medium))
-                .padding(.horizontal, 12).padding(.vertical, 7)
-                .background(selected ? Color.blue.opacity(0.1) : Constants.Colors.background)
-                .foregroundColor(selected ? .blue : .secondary)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(RoundedRectangle(cornerRadius: 8)
-                    .stroke(selected ? Color.blue.opacity(0.3) : Color(.separator).opacity(0.3), lineWidth: 0.5))
-        }
-        .buttonStyle(.plain)
     }
 }
 
