@@ -80,6 +80,20 @@ struct TokenRowView: View {
         !settings.hideCodesByDefault || isRevealed
     }
 
+    static func accessibilityCodeValue(code: String?, isVisible: Bool, secondsLeft: Int?) -> String {
+        guard isVisible else { return String(localized: "Code hidden") }
+        guard let code else { return "" }
+        let digits = code.map(String.init).joined(separator: " ")
+        guard let secondsLeft else { return digits }
+        return "\(digits), \(String(localized: "\(secondsLeft) seconds left"))"
+    }
+
+    private func secondsLeft(at t: Date) -> Int? {
+        guard token.type == .totp, let period = token.period else { return nil }
+        let length = Double(period)
+        return Int((length - t.timeIntervalSince1970.truncatingRemainder(dividingBy: length)).rounded(.up))
+    }
+
     private func currentCode(at t: Date) -> String? {
         try? token.generateCode(time: t)
     }
@@ -143,7 +157,13 @@ struct TokenRowView: View {
             let issuerPart = displayIssuer.map { "\($0), " } ?? ""
             return "\(issuerPart)\(token.name)"
         }())
-        .accessibilityHint("Tap to copy")
+        .accessibilityValue(Self.accessibilityCodeValue(
+            code: currentCode(at: t),
+            isVisible: codeVisible,
+            secondsLeft: secondsLeft(at: t)
+        ))
+        .accessibilityHint(codeVisible ? "Tap to copy" : "Tap to reveal your authentication code")
+        .accessibilityAddTraits(.isButton)
         .onTapGesture {
             if !codeVisible {
                 withAnimation(.spring(duration: 0.25)) { isRevealed = true }
@@ -243,9 +263,7 @@ struct TokenRowView: View {
                         if let code = currentCode(at: t) {
                             Text(formatCode(code))
                                 .contentTransition(.numericText())
-                                .accessibilityLabel("Authentication code")
-                                .accessibilityValue("")
-                                .accessibilityHint(codeVisible ? "Double-tap to copy" : "")
+                                .accessibilityHidden(true)
                         } else {
                             Text(token.digits == 6 ? "••• •••" : "•••• ••••")
                                 .foregroundStyle(.quaternary)
@@ -275,9 +293,7 @@ struct TokenRowView: View {
                 Text(token.digits == 6 ? "••• •••" : "•••• ••••")
                     .font(.system(.title2, design: .monospaced).weight(.medium))
                     .foregroundStyle(.quaternary)
-                    .accessibilityLabel("Tap to reveal code")
-                    .accessibilityHint("Tap to reveal your authentication code")
-                    .accessibilityAddTraits(.isButton)
+                    .accessibilityHidden(true)
             }
 
             Spacer(minLength: 6)
