@@ -1,5 +1,6 @@
 import Accessibility
 import PhotosUI
+import StoreKit
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -26,6 +27,8 @@ struct ExportDocument: FileDocument {
 // MARK: - TokenTransferView
 
 struct TokenTransferView: View {
+    @ScaledMetric(relativeTo: .subheadline) private var noteIconColumn: CGFloat = 20
+    @Environment(\.requestReview) private var requestReview
     @Bindable var viewModel: ExportImportViewModel
     @State private var showPlaintextConfirm = false
 
@@ -57,9 +60,27 @@ struct TokenTransferView: View {
             MigrationQRExportView(exportImportManager: viewModel.exportImportManager)
         }
         .alert("Export successful", isPresented: $viewModel.showExportSuccess) {
-            Button("OK", role: .cancel) { viewModel.exportData = nil }
+            Button("OK", role: .cancel) {
+                viewModel.exportData = nil
+                requestReviewAfterExport()
+            }
         } message: {
             Text("Your tokens have been saved to a JSON file")
+        }
+    }
+
+    private func requestReviewAfterExport() {
+        let settings = viewModel.settings
+        guard ReviewPrompt.shouldRequest(
+            activeDays: settings.activeDayCount,
+            tokenCount: viewModel.tokenStore.tokens.count,
+            currentVersion: Constants.appVersion,
+            lastPromptedVersion: settings.lastReviewPromptVersion
+        ) else { return }
+        settings.lastReviewPromptVersion = Constants.appVersion
+        Task {
+            guard await (try? Task.sleep(for: .seconds(2))) != nil else { return }
+            requestReview()
         }
     }
 
@@ -167,9 +188,9 @@ struct TokenTransferView: View {
     ) -> some View {
         HStack(alignment: .top, spacing: 10) {
             Image(systemName: icon)
-                .font(.system(size: 14))
+                .font(.system(size: noteIconColumn * 14 / 20))
                 .foregroundColor(color)
-                .frame(width: 20, alignment: .center)
+                .frame(width: noteIconColumn, alignment: .center)
                 .padding(.top, 1)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).font(.caption.weight(.medium))

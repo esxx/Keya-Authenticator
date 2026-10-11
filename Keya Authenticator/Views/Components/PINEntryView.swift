@@ -10,6 +10,7 @@ struct PINEntryView: View {
 
     @State private var shakeOffset: CGFloat = 0
     @AccessibilityFocusState private var isEntryFocused: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let length = AuthenticationManager.pinLength
 
@@ -61,6 +62,7 @@ struct PINEntryView: View {
     }
 
     private func shake() {
+        guard !reduceMotion else { return }
         withAnimation(.default) { shakeOffset = 10 }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { withAnimation(.default) { shakeOffset = -10 } }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { withAnimation(.default) { shakeOffset = 6 } }

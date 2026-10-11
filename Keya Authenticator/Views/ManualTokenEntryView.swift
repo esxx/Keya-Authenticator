@@ -3,6 +3,8 @@ import SwiftUI
 // MARK: - Manual Token Entry View
 
 struct ManualTokenEntryView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @ScaledMetric(relativeTo: .caption2) private var chevronSize: CGFloat = 11
     @Bindable var viewModel: AddTokenViewModel
     var onDismissAttempt: () -> Void = {}
 
@@ -92,7 +94,7 @@ struct ManualTokenEntryView: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: chevronSize, weight: .medium))
                         .rotationEffect(.degrees(showAdvanced ? 90 : 0))
                     Text("Advanced options").font(.subheadline)
                 }
@@ -102,7 +104,7 @@ struct ManualTokenEntryView: View {
             .padding(.top, 4)
 
             if showAdvanced {
-                advancedOptions.transition(.opacity.combined(with: .move(edge: .top)))
+                advancedOptions.transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .top)))
             }
 
             if let err = viewModel.errorMessage {

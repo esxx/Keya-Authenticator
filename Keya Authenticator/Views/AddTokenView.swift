@@ -5,6 +5,8 @@ import UniformTypeIdentifiers
 // MARK: - Add Token View (2FAS-style: live scanner + other methods)
 
 struct AddTokenView: View {
+    @ScaledMetric(relativeTo: .body) private var optionIconColumn: CGFloat = 52
+    @ScaledMetric(relativeTo: .caption) private var chevronSize: CGFloat = 12
     @Bindable var viewModel: AddTokenViewModel
     let onTokenAdded: () -> Void
 
@@ -17,65 +19,67 @@ struct AddTokenView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                QRScannerView(onResult: { result in
-                    if case let .success(qr) = result {
-                        viewModel.handleScannedQR(qr)
-                    } else if case let .failure(err) = result {
-                        viewModel.errorMessage = err.localizedDescription
-                    }
-                }, isActive: !(showManual || showGallery || showFiles))
-                    .frame(maxWidth: .infinity)
-                    .aspectRatio(1.33, contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(Color.primary.opacity(0.08), lineWidth: 1)
-                    )
-                    .padding(.horizontal, 16)
-
-                if let err = viewModel.errorMessage {
-                    Text(err)
-                        .font(.caption)
-                        .foregroundColor(.red)
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8)
-                        .transition(.opacity)
-                }
-
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("Other methods?")
-                        .font(.headline)
-                        .padding(.horizontal, 16)
-                        .padding(.top, 24)
-                        .padding(.bottom, 8)
-
-                    VStack(spacing: 0) {
-                        methodRow(
-                            icon: "folder.fill",
-                            title: "Import from Files",
-                            subtitle: "JSON from Aegis, 2FAS, Raivo, LastPass or Keya Authenticator"
-                        ) {
-                            showFiles = true
+            ScrollView {
+                VStack(spacing: 0) {
+                    QRScannerView(onResult: { result in
+                        if case let .success(qr) = result {
+                            viewModel.handleScannedQR(qr)
+                        } else if case let .failure(err) = result {
+                            viewModel.errorMessage = err.localizedDescription
                         }
-                        Divider().padding(.leading, 52)
-                        methodRow(
-                            icon: "photo.on.rectangle.fill",
-                            title: "Import from Photo Library",
-                            subtitle: "QR code screenshots"
-                        ) { showGallery = true }
-                        Divider().padding(.leading, 52)
-                        methodRow(
-                            icon: "keyboard.fill",
-                            title: "Enter the secret key manually"
-                        ) { showManual = true }
-                    }
-                    .background(Constants.Colors.rowBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                    .padding(.horizontal, 16)
-                }
+                    }, isActive: !(showManual || showGallery || showFiles))
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(1.33, contentMode: .fit)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+                        )
+                        .padding(.horizontal, 16)
 
-                Spacer()
+                    if let err = viewModel.errorMessage {
+                        Text(err)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 8)
+                            .transition(.opacity)
+                    }
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("Other methods?")
+                            .font(.headline)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 24)
+                            .padding(.bottom, 8)
+
+                        VStack(spacing: 0) {
+                            methodRow(
+                                icon: "folder.fill",
+                                title: "Import from Files",
+                                subtitle: "JSON from Aegis, 2FAS, Raivo, LastPass or Keya Authenticator"
+                            ) {
+                                showFiles = true
+                            }
+                            Divider().padding(.leading, optionIconColumn)
+                            methodRow(
+                                icon: "photo.on.rectangle.fill",
+                                title: "Import from Photo Library",
+                                subtitle: "QR code screenshots"
+                            ) { showGallery = true }
+                            Divider().padding(.leading, optionIconColumn)
+                            methodRow(
+                                icon: "keyboard.fill",
+                                title: "Enter the secret key manually"
+                            ) { showManual = true }
+                        }
+                        .background(Constants.Colors.rowBackground)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .padding(.horizontal, 16)
+                    }
+
+                    Spacer()
+                }
             }
             .background(Constants.Colors.background.ignoresSafeArea())
             .animation(.easeInOut(duration: 0.2), value: viewModel.errorMessage)
@@ -182,9 +186,9 @@ struct AddTokenView: View {
         Button(action: action) {
             HStack(spacing: 0) {
                 Image(systemName: icon)
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.system(size: optionIconColumn * 15 / 52, weight: .medium))
                     .foregroundColor(.blue)
-                    .frame(width: 52, alignment: .center)
+                    .frame(width: optionIconColumn, alignment: .center)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.body)
@@ -197,7 +201,7 @@ struct AddTokenView: View {
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: chevronSize, weight: .semibold))
                     .foregroundColor(Color(.tertiaryLabel))
                     .padding(.trailing, 16)
             }

@@ -12,6 +12,9 @@ final class AppSettings {
         static let lockGracePeriod = "lockGracePeriod"
         static let backupNudgeCount = "backupNudgeCount"
         static let lastBackupDate = "lastBackupDate"
+        static let activeDayCount = "activeDayCount"
+        static let lastActiveDay = "lastActiveDay"
+        static let lastReviewPromptVersion = "lastReviewPromptVersion"
     }
 
     // MARK: - Security (Keychain-backed — tamper-resistant on jailbroken devices)
@@ -81,6 +84,26 @@ final class AppSettings {
 
     var lastBackupDate: Date? {
         didSet { UserDefaults.standard.set(lastBackupDate, forKey: Keys.lastBackupDate) }
+    }
+
+    var activeDayCount: Int = 0 {
+        didSet { UserDefaults.standard.set(activeDayCount, forKey: Keys.activeDayCount) }
+    }
+
+    var lastActiveDay: Date? {
+        didSet { UserDefaults.standard.set(lastActiveDay, forKey: Keys.lastActiveDay) }
+    }
+
+    var lastReviewPromptVersion: String? {
+        didSet { UserDefaults.standard.set(lastReviewPromptVersion, forKey: Keys.lastReviewPromptVersion) }
+    }
+
+    func recordActiveDay(on date: Date) {
+        if let lastActiveDay, Calendar.current.isDate(lastActiveDay, inSameDayAs: date) {
+            return
+        }
+        activeDayCount += 1
+        lastActiveDay = date
     }
 
     // MARK: - Init
@@ -155,6 +178,9 @@ final class AppSettings {
         )
         backupNudgeCount = ud.integer(forKey: Keys.backupNudgeCount)
         lastBackupDate = ud.object(forKey: Keys.lastBackupDate) as? Date
+        activeDayCount = ud.integer(forKey: Keys.activeDayCount)
+        lastActiveDay = ud.object(forKey: Keys.lastActiveDay) as? Date
+        lastReviewPromptVersion = ud.string(forKey: Keys.lastReviewPromptVersion)
         isPersisting = false
 
         if useBiometricAuthentication != sec.useBiometricAuthentication || lockGracePeriod != sec.lockGracePeriod {
@@ -179,7 +205,7 @@ final class AppSettings {
             Keys.hideCodesByDefault,
             Keys.appTheme,
             Keys.biometricActivated, Keys.lockGracePeriod, Keys.backupNudgeCount,
-            Keys.lastBackupDate,
+            Keys.lastBackupDate, Keys.activeDayCount, Keys.lastActiveDay, Keys.lastReviewPromptVersion,
         ]
         keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
         registerDefaults()

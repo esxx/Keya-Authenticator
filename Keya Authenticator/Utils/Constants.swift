@@ -18,11 +18,13 @@ enum Constants {
     static let privacyPolicyURL = URL(string: "https://esxx.github.io/Keya-Authenticator/privacy.html")
     static let termsOfServiceURL = URL(string: "https://esxx.github.io/Keya-Authenticator/terms.html")
     static let faqURL = URL(string: "https://esxx.github.io/Keya-Authenticator/faq.html")
+    static let writeReviewURL = URL(string: "https://apps.apple.com/app/id6764358712?action=write-review")
 
     // MARK: - Colors
 
     enum Colors {
         static let background = Color(uiColor: .systemGroupedBackground)
         static let rowBackground = Color(uiColor: .secondarySystemGroupedBackground)
+        static let confirmationGreen = Color(red: 35 / 255, green: 136 / 255, blue: 61 / 255)
     }
 }

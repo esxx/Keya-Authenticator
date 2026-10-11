@@ -2,6 +2,8 @@ import StoreKit
 import SwiftUI
 
 struct TipJarView: View {
+    @ScaledMetric(relativeTo: .largeTitle) private var headerSymbolSize: CGFloat = 44
+    @ScaledMetric(relativeTo: .largeTitle) private var thanksSymbolSize: CGFloat = 64
     @State private var tipStore = TipStore()
     @Environment(\.dismiss) private var dismiss
 
@@ -38,7 +40,7 @@ struct TipJarView: View {
             Section {
                 VStack(spacing: 12) {
                     Image(systemName: "heart.fill")
-                        .font(.system(size: 44))
+                        .font(.system(size: headerSymbolSize))
                         .foregroundStyle(.pink)
                     Text(
                         "Keya Authenticator is free and open-source with no ads, no tracking, and no subscription. If it gives you peace of mind, a small tip means a lot."
@@ -109,7 +111,7 @@ struct TipJarView: View {
         VStack(spacing: 24) {
             Spacer()
             Image(systemName: "heart.fill")
-                .font(.system(size: 64))
+                .font(.system(size: thanksSymbolSize))
                 .foregroundStyle(.pink)
             Text("Thank you!")
                 .font(.title.bold())

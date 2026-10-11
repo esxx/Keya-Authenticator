@@ -2,11 +2,14 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct MainContentView: View {
+    @ScaledMetric(relativeTo: .caption) private var toastIconSize: CGFloat = 13
+    @ScaledMetric(relativeTo: .largeTitle) private var emptySearchIconSize: CGFloat = 32
     @Bindable var viewModel: MainContentViewModel
     var onResetRequested: (() throws -> Void)?
 
     @Environment(\.editMode) private var editMode
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var showingPINAuthForExport = false
     @State private var tokenPendingPINAuth: Token? = nil
@@ -161,7 +164,10 @@ struct MainContentView: View {
                         tokenAwaitingDeletePIN = nil
                     }
                 })
-                .onAppear { viewModel.loadTokens() }
+                .onAppear {
+                    viewModel.loadTokens()
+                    viewModel.settings.recordActiveDay(on: Date())
+                }
                 .destructiveActionSheet(
                     isPresented: Binding(
                         get: { viewModel.tokenPendingDelete != nil },
@@ -195,15 +201,15 @@ struct MainContentView: View {
         .overlay(alignment: .top) {
             if viewModel.showCopyToast {
                 HStack(spacing: 6) {
-                    Image(systemName: "checkmark.circle.fill").font(.system(size: 13))
+                    Image(systemName: "checkmark.circle.fill").font(.system(size: toastIconSize))
                     Text("Copied").font(.caption.weight(.medium))
                 }
                 .foregroundColor(.white)
                 .padding(.horizontal, 16).padding(.vertical, 9)
-                .background(Color.green)
+                .background(Constants.Colors.confirmationGreen)
                 .clipShape(Capsule())
                 .padding(.top, 12)
-                .transition(.move(edge: .top).combined(with: .opacity))
+                .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
                 .zIndex(100)
             }
         }
@@ -235,7 +241,7 @@ struct MainContentView: View {
                     Section {
                         VStack(spacing: 10) {
                             Image(systemName: "magnifyingglass")
-                                .font(.system(size: 32, weight: .light))
+                                .font(.system(size: emptySearchIconSize, weight: .light))
                                 .foregroundColor(.secondary)
                             Text("No results for \"\(viewModel.searchText)\"")
                                 .font(.subheadline.weight(.medium))

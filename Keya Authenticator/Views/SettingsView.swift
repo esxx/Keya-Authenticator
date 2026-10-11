@@ -2,6 +2,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct SettingsView: View {
+    @ScaledMetric(relativeTo: .body) private var iconBox: CGFloat = 28
     @Bindable var tokenStore: TokenStore
     @Bindable var authenticationManager: AuthenticationManager
     @Bindable var settings: AppSettings
@@ -139,6 +140,13 @@ struct SettingsView: View {
                         .foregroundColor(.primary)
                         .listRowBackground(Constants.Colors.rowBackground)
                     }
+                    if let url = Constants.writeReviewURL {
+                        Link(destination: url) {
+                            settingsRow(icon: "star.fill", iconBg: .pink, title: "Rate Keya")
+                        }
+                        .foregroundColor(.primary)
+                        .listRowBackground(Constants.Colors.rowBackground)
+                    }
                 } header: { Text("We're open-source — learn more").textCase(.uppercase) }
 
                 // MARK: - Danger Zone
@@ -230,11 +238,11 @@ struct SettingsView: View {
     ) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 13, weight: .medium))
+                .font(.system(size: iconBox * 13 / 28, weight: .medium))
                 .foregroundColor(iconColor)
-                .frame(width: 28, height: 28)
+                .frame(width: iconBox, height: iconBox)
                 .background(iconBg)
-                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: iconBox * 6 / 28, style: .continuous))
             Text(title).font(.body)
             if let detail {
                 Spacer()
