@@ -90,6 +90,11 @@ struct TokenRowView: View {
         return "\(digits), \(String(localized: "\(secondsLeft) seconds left"))"
     }
 
+    static func secondsLeftLabel(_ seconds: Int, locale: Locale = .current) -> String {
+        Measurement(value: Double(seconds), unit: UnitDuration.seconds)
+            .formatted(Measurement<UnitDuration>.FormatStyle(width: .narrow, locale: locale))
+    }
+
     private func secondsLeft(at t: Date) -> Int? {
         guard token.type == .totp, let period = token.period else { return nil }
         let length = Double(period)
@@ -277,6 +282,16 @@ struct TokenRowView: View {
             : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: 8))
     }
 
+    @ViewBuilder
+    private func secondsLeftText(at t: Date) -> some View {
+        if codeVisible, let secondsLeft = secondsLeft(at: t) {
+            Text(Self.secondsLeftLabel(secondsLeft))
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+        }
+    }
+
     private func codeRow(at t: Date) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 0) {
             if codeVisible {
@@ -314,6 +329,9 @@ struct TokenRowView: View {
                         .minimumScaleFactor(0.6)
                         .accessibilityHidden(true)
                     }
+                    if dynamicTypeSize.isAccessibilitySize {
+                        secondsLeftText(at: t)
+                    }
                 }
             } else {
                 Text(token.digits == 6 ? "••• •••" : "•••• ••••")
@@ -323,6 +341,10 @@ struct TokenRowView: View {
             }
 
             Spacer(minLength: 6)
+
+            if !dynamicTypeSize.isAccessibilitySize {
+                secondsLeftText(at: t)
+            }
 
             if token.type == .hotp {
                 refreshButton

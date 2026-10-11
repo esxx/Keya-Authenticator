@@ -24,4 +24,10 @@ final class TokenRowAccessibilityTests: XCTestCase {
     func testMissingCodeHasNoValue() {
         XCTAssertEqual(TokenRowView.accessibilityCodeValue(code: nil, isVisible: true, secondsLeft: 12), "")
     }
+
+    func testSecondsLeftLabelIsShortAndLocalized() {
+        XCTAssertEqual(TokenRowView.secondsLeftLabel(12, locale: Locale(identifier: "en_US")), "12s")
+        XCTAssertNotEqual(TokenRowView.secondsLeftLabel(12, locale: Locale(identifier: "ru_RU")), "12s",
+                          "The unit follows the language")
+    }
 }
