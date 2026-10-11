@@ -34,6 +34,7 @@ struct MainContentView: View {
                             Image(systemName: "gearshape")
                                 .font(.system(size: 17, weight: .medium))
                         }
+                        .accessibilityLabel("Settings")
                     }
                     ToolbarItemGroup(placement: .bottomBar) {
                         Spacer()
@@ -287,6 +288,7 @@ struct MainContentView: View {
             .font(.caption.weight(.semibold))
             .foregroundColor(.secondary)
             .textCase(nil)
+            .accessibilityAddTraits(.isHeader)
     }
 
     private func sectionLabel(verbatim title: String) -> some View {
@@ -294,6 +296,7 @@ struct MainContentView: View {
             .font(.caption.weight(.semibold))
             .foregroundColor(.secondary)
             .textCase(nil)
+            .accessibilityAddTraits(.isHeader)
     }
 
     private func tokenRow(_ token: Token) -> some View {
