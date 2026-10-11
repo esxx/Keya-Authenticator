@@ -48,6 +48,7 @@ struct AuthenticationView: View {
             PINEntryView(
                 pin: $viewModel.pinText,
                 isFocused: $pinFocused,
+                prompt: String(localized: "Enter PIN to unlock"),
                 errorMessage: viewModel.errorMessage,
                 shakeTrigger: viewModel.pinAttempt.failureCount,
                 onComplete: { viewModel.authenticateWithPIN() }

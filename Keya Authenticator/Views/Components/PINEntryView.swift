@@ -3,11 +3,13 @@ import SwiftUI
 struct PINEntryView: View {
     @Binding var pin: String
     @Binding var isFocused: Bool
+    let prompt: String
     var errorMessage: String?
     var shakeTrigger: Int
     let onComplete: () -> Void
 
     @State private var shakeOffset: CGFloat = 0
+    @AccessibilityFocusState private var isEntryFocused: Bool
 
     private let length = AuthenticationManager.pinLength
 
@@ -24,8 +26,9 @@ struct PINEntryView: View {
             .offset(x: shakeOffset)
             .padding(.bottom, 12)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(String(localized: "PIN entry dots"))
+            .accessibilityLabel(prompt)
             .accessibilityValue(String(localized: "\(pin.count) of \(length) digits entered"))
+            .accessibilityFocused($isEntryFocused)
 
             if let errorMessage {
                 Text(errorMessage)
@@ -51,6 +54,10 @@ struct PINEntryView: View {
             }
         }
         .onChange(of: shakeTrigger) { _, _ in shake() }
+        .onChange(of: prompt) { _, _ in isEntryFocused = true }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { isEntryFocused = true }
+        }
     }
 
     private func shake() {

@@ -105,4 +105,37 @@ final class PINAttemptTests: XCTestCase {
         XCTAssertNotNil(attempt.submit(pin))
         XCTAssertNil(attempt.message)
     }
+
+    // MARK: - VoiceOver announcements
+
+    func testEveryFailedAttemptIsAnnouncedEvenWithTheSameMessage() {
+        var spoken: [String] = []
+        attempt.announce = { spoken.append($0) }
+        fail(times: 3)
+
+        let invalid = AuthenticationManager.AuthenticationError.invalidPIN.localizedDescription
+        XCTAssertEqual(spoken, [invalid, invalid, invalid])
+    }
+
+    func testLockoutIsAnnouncedOnceNotOnEveryTick() async throws {
+        var spoken: [String] = []
+        attempt.announce = { spoken.append($0) }
+        fail(times: 5)
+        let start = try XCTUnwrap(attempt.lockoutSecondsRemaining)
+
+        try await Task.sleep(for: .milliseconds(1300))
+
+        XCTAssertEqual(spoken.count, 5, "Four failures and the start of the lockout, no countdown ticks")
+        XCTAssertEqual(spoken.last, AuthenticationManager.lockoutMessage(seconds: start))
+    }
+
+    func testAnExistingLockoutShownOnAppearIsNotAnnounced() {
+        fail(times: 5)
+        let fresh = PINAttempt(authenticationManager: AuthenticationManager())
+        var spoken: [String] = []
+        fresh.announce = { spoken.append($0) }
+
+        XCTAssertTrue(fresh.showLockoutIfActive())
+        XCTAssertEqual(spoken, [])
+    }
 }

@@ -1,3 +1,4 @@
+import Accessibility
 import AVFoundation
 import Combine
 import SwiftUI
@@ -8,6 +9,7 @@ struct QRScannerView: View {
 
     @State private var errorMessage: String?
     @State private var cameraAccessDenied = false
+    @State private var lastRejectedCode: String?
     @StateObject private var cameraManager = CameraManager()
     @State private var isOnScreen = false
     @State private var isUncovered = true
@@ -89,8 +91,16 @@ struct QRScannerView: View {
         .onAppear {
             isOnScreen = true
             cameraManager.onCodeScanned = { code in handleScannedCode(code) }
-            cameraManager.onError = { error in errorMessage = error }
-            cameraManager.onAccessDenied = { cameraAccessDenied = true }
+            cameraManager.onError = { error in
+                errorMessage = error
+                AccessibilityNotification.Announcement(error).post()
+            }
+            cameraManager.onAccessDenied = {
+                cameraAccessDenied = true
+                AccessibilityNotification.Announcement(
+                    String(localized: "Camera access is required to scan QR codes. Enable it in Settings.")
+                ).post()
+            }
             cameraManager.start()
         }
         .onDisappear {
@@ -126,11 +136,16 @@ struct QRScannerView: View {
             || code.isValidOTPSecret
         {
             ClipboardManager.shared.provideHapticFeedback(.success)
+            lastRejectedCode = nil
             onResult(.success(code))
             cameraManager.resumeScanning()
         } else {
             ClipboardManager.shared.provideHapticFeedback(.error)
             errorMessage = String(localized: "Invalid QR code")
+            if code != lastRejectedCode {
+                lastRejectedCode = code
+                AccessibilityNotification.Announcement(String(localized: "Invalid QR code")).post()
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 errorMessage = nil
                 guard isOnScreen, isUncovered else { return }

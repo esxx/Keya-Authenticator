@@ -38,6 +38,7 @@ struct PINPrompt: View {
             PINEntryView(
                 pin: $pinText,
                 isFocused: $pinFocused,
+                prompt: String(localized: "Enter PIN to unlock"),
                 errorMessage: attempt.message,
                 shakeTrigger: attempt.failureCount,
                 onComplete: verify

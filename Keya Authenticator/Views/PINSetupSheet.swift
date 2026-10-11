@@ -1,3 +1,4 @@
+import Accessibility
 import SwiftUI
 
 struct PINSetupSheet: View {
@@ -74,6 +75,7 @@ struct PINSetupSheet: View {
             } catch {
                 await MainActor.run {
                     errorMessage = error.localizedDescription
+                    AccessibilityNotification.Announcement(error.localizedDescription).post()
                 }
             }
         }

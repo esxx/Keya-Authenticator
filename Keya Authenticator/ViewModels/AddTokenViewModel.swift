@@ -1,3 +1,4 @@
+import Accessibility
 import Foundation
 import PhotosUI
 import SwiftUI
@@ -57,7 +58,15 @@ final class AddTokenViewModel {
 
     // MARK: - Shared error + dismiss signal
 
-    var errorMessage: String?
+    var errorMessage: String? {
+        didSet {
+            if let errorMessage {
+                announce(errorMessage)
+            }
+        }
+    }
+
+    @ObservationIgnored var announce: (String) -> Void = { AccessibilityNotification.Announcement($0).post() }
     var shouldDismiss = false
 
     // MARK: - Callback (set by the presenting view before the sheet appears)

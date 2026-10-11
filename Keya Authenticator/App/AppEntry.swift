@@ -1,3 +1,4 @@
+import Accessibility
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -134,6 +135,7 @@ struct PINSetupView: View {
             PINEntryView(
                 pin: $pinText,
                 isFocused: $pinFocused,
+                prompt: step == .enter ? String(localized: "Create a 6-digit PIN") : String(localized: "Confirm"),
                 errorMessage: errorMessage,
                 shakeTrigger: shakeTrigger,
                 onComplete: advance
@@ -153,6 +155,12 @@ struct PINSetupView: View {
         }
     }
 
+    private func announceUrgently(_ message: String) {
+        var text = AttributedString(message)
+        text.accessibilitySpeechAnnouncementPriority = .high
+        AccessibilityNotification.Announcement(text).post()
+    }
+
     private func advance() {
         switch step {
         case .enter:
@@ -168,6 +176,7 @@ struct PINSetupView: View {
                     onComplete()
                 } catch {
                     errorMessage = String(localized: "Couldn't save your PIN. Please try again.")
+                    announceUrgently(String(localized: "Couldn't save your PIN. Please try again."))
                     shakeTrigger += 1
                     pinText = ""
                     firstPIN = ""
@@ -175,6 +184,7 @@ struct PINSetupView: View {
                 }
             } else {
                 errorMessage = String(localized: "PINs don't match")
+                announceUrgently(String(localized: "PINs don't match"))
                 shakeTrigger += 1
                 pinText = ""
                 firstPIN = ""

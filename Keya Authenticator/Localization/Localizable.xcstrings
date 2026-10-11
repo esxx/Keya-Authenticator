@@ -5705,40 +5705,6 @@
         }
       }
     },
-    "PIN entry dots" : {
-      "localizations" : {
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puntos de entrada del PIN"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Points de saisie du PIN"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PIN入力ドット"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PIN 입력 점"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pontos de entrada do PIN"
-          }
-        }
-      }
-    },
     "PIN must be 6 digits" : {
       "localizations" : {
         "es-419" : {

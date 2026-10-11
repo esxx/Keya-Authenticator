@@ -1,3 +1,4 @@
+import Accessibility
 import Foundation
 import SwiftUI
 
@@ -18,6 +19,7 @@ final class MainContentViewModel {
     var selectedTokenForEdit: Token?
     var selectedTokenForQR: Token?
     var showCopyToast = false
+    @ObservationIgnored var announce: (String) -> Void = { AccessibilityNotification.Announcement($0).post() }
     var tokenPendingDelete: Token?
     var showBackupNudge = false
     var showExportSheet = false
@@ -203,6 +205,7 @@ final class MainContentViewModel {
             ClipboardManager.shared.copyToClipboard(code, autoClearDelay: 30)
             ClipboardManager.shared.provideHapticFeedback(.success)
             showCopyToast = true
+            announce(String(localized: "Copied"))
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
                 self?.showCopyToast = false
             }

@@ -519,4 +519,20 @@ final class AddTokenViewModelTests: XCTestCase {
 
         XCTAssertFalse(viewModel.hasManualInput)
     }
+
+    // MARK: - VoiceOver announcements
+
+    func testEveryErrorIsAnnounced() {
+        var spoken: [String] = []
+        viewModel.announce = { spoken.append($0) }
+        fillValidTOTP()
+        viewModel.name = ""
+
+        viewModel.createToken()
+        viewModel.createToken()
+
+        let message = try? XCTUnwrap(viewModel.errorMessage)
+        XCTAssertEqual(spoken, [message, message].compactMap { $0 })
+        XCTAssertEqual(spoken.count, 2, "A repeated failure is announced again")
+    }
 }

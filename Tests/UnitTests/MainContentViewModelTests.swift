@@ -118,4 +118,15 @@ final class MainContentViewModelTests: XCTestCase {
         XCTAssertEqual(tokenStore.tokens.first?.isFavorite, false)
         XCTAssertEqual(try KeychainManager.loadAllTokens().first?.isFavorite, false)
     }
+
+    // MARK: - VoiceOver announcements
+
+    func testCopyingACodeAnnouncesCopied() {
+        var spoken: [String] = []
+        viewModel.announce = { spoken.append($0) }
+
+        viewModel.copyCodeToClipboard(from: makeToken(name: "Copy"))
+
+        XCTAssertEqual(spoken, [String(localized: "Copied")], "Announces the action, never the code")
+    }
 }

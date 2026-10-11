@@ -1,3 +1,4 @@
+import Accessibility
 import PhotosUI
 import SwiftUI
 import UniformTypeIdentifiers
@@ -285,6 +286,7 @@ struct MigrationQRExportView: View {
         let allTokens = exportImportManager.tokenStore.tokens
         guard !allTokens.isEmpty else {
             errorMessage = String(localized: "Nothing to export")
+            AccessibilityNotification.Announcement(String(localized: "Nothing to export")).post()
             isLoading = false
             return
         }
@@ -292,6 +294,7 @@ struct MigrationQRExportView: View {
         excludedCount = allTokens.count - tokens.count
         guard !tokens.isEmpty else {
             errorMessage = excludedNote
+            AccessibilityNotification.Announcement(excludedNote).post()
             isLoading = false
             return
         }
@@ -452,6 +455,7 @@ struct EncryptedExportPasswordSheet: View {
             } catch {
                 isExporting = false
                 errorMessage = error.localizedDescription
+                AccessibilityNotification.Announcement(error.localizedDescription).post()
             }
         }
     }
@@ -513,10 +517,12 @@ struct EncryptedImportPasswordSheet: View {
             } catch ExportImportError.wrongPassword {
                 isDecrypting = false
                 errorMessage = ExportImportError.wrongPassword.localizedDescription
+                AccessibilityNotification.Announcement(ExportImportError.wrongPassword.localizedDescription).post()
                 password = ""
             } catch {
                 isDecrypting = false
                 errorMessage = error.localizedDescription
+                AccessibilityNotification.Announcement(error.localizedDescription).post()
             }
         }
     }

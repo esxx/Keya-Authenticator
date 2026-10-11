@@ -1,3 +1,4 @@
+import Accessibility
 import Foundation
 
 @Observable
@@ -5,6 +6,11 @@ final class PINAttempt {
     private(set) var message: String?
     private(set) var failureCount = 0
     private(set) var lockoutSecondsRemaining: Int?
+    @ObservationIgnored var announce: (String) -> Void = { message in
+        var text = AttributedString(message)
+        text.accessibilitySpeechAnnouncementPriority = .high
+        AccessibilityNotification.Announcement(text).post()
+    }
 
     private let authenticationManager: AuthenticationManager
     private var countdown: Task<Void, Never>?
@@ -22,6 +28,7 @@ final class PINAttempt {
         } catch let error as AuthenticationManager.AuthenticationError {
             failureCount += 1
             if showLockoutIfActive() {
+                announceMessage()
                 return nil
             }
             if case .invalidPIN = error, let lockout = authenticationManager.lockoutAfterNextFailure() {
@@ -34,6 +41,7 @@ final class PINAttempt {
             message = (error as? LocalizedError)?.errorDescription
                 ?? String(localized: "PIN verification failed. Please try again.")
         }
+        announceMessage()
         return nil
     }
 
@@ -59,6 +67,12 @@ final class PINAttempt {
             }
         }
         return true
+    }
+
+    private func announceMessage() {
+        if let message {
+            announce(message)
+        }
     }
 
     func clearMessage() {

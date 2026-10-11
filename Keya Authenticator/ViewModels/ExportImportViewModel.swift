@@ -1,3 +1,4 @@
+import Accessibility
 import Foundation
 import SwiftUI
 
@@ -12,7 +13,15 @@ final class ExportImportViewModel {
     // MARK: - Published Properties
 
     var isExporting = false
-    var exportError: String?
+    var exportError: String? {
+        didSet {
+            if let exportError {
+                announce(exportError)
+            }
+        }
+    }
+
+    @ObservationIgnored var announce: (String) -> Void = { AccessibilityNotification.Announcement($0).post() }
     var exportData: Data?
     var showExportPicker = false
     var showMigrationQR = false

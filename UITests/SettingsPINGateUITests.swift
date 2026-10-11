@@ -13,9 +13,10 @@ final class SettingsPINGateUITests: KeyaUITestCase {
         openResetGate()
 
         app.typeText("1")
-        let dots = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "PIN entry dots")).firstMatch
-        XCTAssertTrue(dots.waitForExistence(timeout: 3), app.debugDescription)
-        XCTAssertEqual(dots.value as? String, "1 of 6 digits entered", "PIN dots must be announced to VoiceOver")
+        let dots = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label == %@ AND value == %@", "Enter PIN to unlock", "1 of 6 digits entered"))
+            .firstMatch
+        XCTAssertTrue(dots.waitForExistence(timeout: 3), "PIN dots must be announced to VoiceOver\n\(app.debugDescription)")
 
         app.typeText("23450")
         XCTAssertTrue(element(labelContaining: "Incorrect PIN").waitForExistence(timeout: 3), app.debugDescription)
