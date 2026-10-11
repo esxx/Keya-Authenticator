@@ -14,6 +14,7 @@ final class PINEntryAccessibilityUITests: KeyaUITestCase {
         XCTAssertTrue(pinEntry("Confirm").waitForExistence(timeout: 5),
                       "Confirm step: the PIN entry says what to enter\n\(app.debugDescription)")
         enterPIN()
+        XCTAssertTrue(app.buttons["Add"].waitForExistence(timeout: 5), app.debugDescription)
 
         openSettings(scrollingTo: "Export (backup)")
         button(containing: "Export (backup)").tap()

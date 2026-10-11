@@ -78,6 +78,10 @@ struct TokenRowView: View {
 
     // MARK: - Code helpers
 
+    private var accessibilityName: String {
+        (displayIssuer.map { "\($0), " } ?? "") + token.name
+    }
+
     private var codeVisible: Bool {
         !settings.hideCodesByDefault || isRevealed
     }
@@ -160,10 +164,7 @@ struct TokenRowView: View {
         }
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel({
-            let issuerPart = displayIssuer.map { "\($0), " } ?? ""
-            return "\(issuerPart)\(token.name)"
-        }())
+        .accessibilityLabel(Text(verbatim: accessibilityName))
         .accessibilityValue(Self.accessibilityCodeValue(
             code: currentCode(at: t),
             isVisible: codeVisible,
