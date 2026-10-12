@@ -51,6 +51,10 @@ struct MainContentView: View {
                         .accessibilityLabel("Add")
                     }
                 }
+                .onAppear { viewModel.refreshPasscodeNotice() }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                    viewModel.refreshPasscodeNotice()
+                }
                 .onChange(of: viewModel.searchText) { _, q in
                     if !q.isEmpty, editMode?.wrappedValue.isEditing == true {
                         editMode?.wrappedValue = .inactive
@@ -228,6 +232,19 @@ struct MainContentView: View {
 
     private var tokenList: some View {
         List {
+            if viewModel.showsPasscodeNotice {
+                Section {
+                    Label {
+                        Text("Set a device passcode in iOS Settings to keep your tokens protected.")
+                            .font(.subheadline)
+                    } icon: {
+                        Image(systemName: "lock.open")
+                            .foregroundStyle(.orange)
+                    }
+                    .accessibilityElement(children: .combine)
+                }
+                .listRowBackground(Constants.Colors.rowBackground)
+            }
             if viewModel.tokenStore.tokens.isEmpty {
                 Section {
                     emptyState.frame(maxWidth: .infinity)

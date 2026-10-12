@@ -10382,6 +10382,58 @@
         }
       }
     },
+    "Set a device passcode in iOS Settings to keep your tokens protected." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legen Sie in den iOS-Einstellungen einen Gerätecode fest, damit Ihre Tokens geschützt sind."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configura un código del dispositivo en Configuración de iOS para mantener protegidos tus tokens."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Définissez un code d'appareil dans les Réglages iOS pour protéger vos jetons."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "トークンを保護するため、iOSの「設定」でデバイスのパスコードを設定してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "토큰을 보호하려면 iOS 설정에서 기기 암호를 설정하세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Defina um código do dispositivo nos Ajustes do iOS para manter seus tokens protegidos."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Задайте код-пароль устройства в «Настройках» iOS, чтобы ваши токены были защищены."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请在 iOS“设置”中设置设备密码，以保护你的令牌。"
+          }
+        }
+      }
+    },
     "Set password" : {
       "localizations" : {
         "de" : {

@@ -256,6 +256,10 @@ final class LocalizationTests: XCTestCase {
                        "QRコードをスキャンするにはカメラへのアクセスが必要です。「設定」で許可してください。")
         XCTAssertEqual(localized("Camera access is required to scan QR codes. Enable it in Settings.", "ru"),
                        "Чтобы сканировать QR-коды, нужен доступ к камере. Разрешите его в «Настройках».")
+        XCTAssertEqual(localized("Set a device passcode in iOS Settings to keep your tokens protected.", "ja"),
+                       "トークンを保護するため、iOSの「設定」でデバイスのパスコードを設定してください。")
+        XCTAssertEqual(localized("Set a device passcode in iOS Settings to keep your tokens protected.", "ru"),
+                       "Задайте код-пароль устройства в «Настройках» iOS, чтобы ваши токены были защищены.")
         XCTAssertEqual(localized("Import from Files", "ja"), "「ファイル」からインポート")
         XCTAssertEqual(localized("Import from Files", "ru"), "Импорт из «Файлов»")
     }

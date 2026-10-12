@@ -71,6 +71,12 @@ final class MainContentViewModel {
 
     // MARK: - Initialization
 
+    var showsPasscodeNotice = false
+
+    func refreshPasscodeNotice() {
+        showsPasscodeNotice = !authenticationManager.isDevicePasscodeSet
+    }
+
     init(tokenStore: TokenStore, authenticationManager: AuthenticationManager, settings: AppSettings) {
         self.tokenStore = tokenStore
         self.authenticationManager = authenticationManager

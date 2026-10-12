@@ -41,6 +41,21 @@ final class AuthenticationManager {
         return false
     }
 
+    // MARK: - Device Passcode
+
+    var isDevicePasscodeSet: Bool {
+        #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-UITestNoDevicePasscode") {
+                return false
+            }
+        #endif
+        var err: NSError?
+        if LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: &err) {
+            return true
+        }
+        return (err as? LAError)?.code != .passcodeNotSet
+    }
+
     // MARK: - Biometric Fingerprint Tracking
 
     private func currentBiometricDomainState() -> Data? {
