@@ -10,6 +10,7 @@ struct AppEntry: App {
     @State private var appViewModel: AppCoordinator
     @State private var totpClock = TOTPClock()
     @State private var captureGuard = ScreenCaptureGuard()
+    @State private var privacyCover = PrivacyCoverWindow()
 
     init() {
         let tokenStore = TokenStore()
@@ -57,11 +58,6 @@ struct AppEntry: App {
                         onResetRequested: { try appViewModel.resetEverything() }
                     )
                 }
-
-                if appViewModel.showPrivacyOverlay || captureGuard.isCapturing {
-                    privacyOverlay
-                        .transition(.opacity)
-                }
             }
             .environment(totpClock)
             .preferredColorScheme(settings.appTheme.colorScheme)
@@ -73,29 +69,16 @@ struct AppEntry: App {
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                 appViewModel.showPrivacyOverlay = true
+                privacyCover.setVisible(true, colorScheme: settings.appTheme.colorScheme)
+            }
+            .onChange(of: appViewModel.showPrivacyOverlay || captureGuard.isCapturing, initial: true) { _, covered in
+                privacyCover.setVisible(covered, colorScheme: settings.appTheme.colorScheme)
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
                 appViewModel.handleAppBackground()
             }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
                 appViewModel.handleAppBecameActive()
-            }
-        }
-    }
-
-    // MARK: - Privacy overlay view
-
-    private var privacyOverlay: some View {
-        ZStack {
-            Constants.Colors.background.ignoresSafeArea()
-            VStack(spacing: 16) {
-                Image("AppIconImage")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 80, height: 80)
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                Text("app.name")
-                    .font(.title3.weight(.medium))
             }
         }
     }
