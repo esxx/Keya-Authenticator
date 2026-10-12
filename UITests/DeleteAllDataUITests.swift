@@ -50,6 +50,9 @@ final class DeleteAllDataUITests: KeyaUITestCase {
         failure.buttons["OK"].tap()
 
         XCTAssertFalse(app.staticTexts["Create a 6-digit PIN"].exists)
+        XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5),
+                      "OK returns to Settings\n\(app.debugDescription)")
+        XCTAssertFalse(app.staticTexts["Enter PIN to unlock"].exists, app.debugDescription)
         app.navigationBars["Settings"].buttons["Close"].tap()
         XCTAssertTrue(element(labelContaining: "UITestKeep").waitForExistence(timeout: 5),
                       "Tokens must stay after a failed reset\n\(app.debugDescription)")

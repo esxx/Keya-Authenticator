@@ -208,22 +208,23 @@ struct SettingsView: View {
                 }
             }
             .onChange(of: showingResetConfirmation) { _, isShowing in
-                if !isShowing {
+                if !isShowing, resetErrorMessage == nil {
                     showingResetPIN = false
                 }
             }
-            .alert("Something went wrong", isPresented: Binding(
-                get: { resetErrorMessage != nil },
-                set: {
-                    if !$0 {
-                        resetErrorMessage = nil
-                    }
+        }
+        .alert("Something went wrong", isPresented: Binding(
+            get: { resetErrorMessage != nil },
+            set: {
+                if !$0 {
+                    resetErrorMessage = nil
+                    showingResetPIN = false
                 }
-            )) {
-                Button("OK", role: .cancel) { resetErrorMessage = nil }
-            } message: {
-                Text(resetErrorMessage ?? "")
             }
+        )) {
+            Button("OK", role: .cancel) { resetErrorMessage = nil }
+        } message: {
+            Text(resetErrorMessage ?? "")
         }
     }
 
