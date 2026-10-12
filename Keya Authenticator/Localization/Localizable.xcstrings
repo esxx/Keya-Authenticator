@@ -11370,6 +11370,58 @@
         }
       }
     },
+    "The Face ID or Touch ID settings on this device changed. To use AutoFill again, open Keya and enter your PIN." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Face ID- oder Touch ID-Einstellungen auf diesem Gerät haben sich geändert. Um das automatische Ausfüllen wieder zu nutzen, öffnen Sie Keya und geben Sie Ihre PIN ein."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La configuración de Face ID o Touch ID de este dispositivo cambió. Para volver a usar Autorrelleno, abre Keya e ingresa tu PIN."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les réglages Face ID ou Touch ID de cet appareil ont changé. Pour utiliser à nouveau le remplissage automatique, ouvrez Keya et saisissez votre code PIN."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスのFace IDまたはTouch IDの設定が変更されました。自動入力をもう一度使うには、Keyaを開いてPINを入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기의 Face ID 또는 Touch ID 설정이 변경되었습니다. 자동 완성을 다시 사용하려면 Keya를 열고 PIN을 입력하세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os ajustes de Face ID ou Touch ID deste dispositivo mudaram. Para usar o Preenchimento Automático de novo, abra o Keya e digite seu PIN."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройки Face ID или Touch ID на этом устройстве изменились. Чтобы снова пользоваться автозаполнением, откройте Keya и введите PIN-код."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此设备上的面容 ID 或触控 ID 设置已更改。要再次使用自动填充，请打开 Keya 并输入 PIN 码。"
+          }
+        }
+      }
+    },
     "The file couldn't be read. Try selecting it again." : {
       "localizations" : {
         "de" : {

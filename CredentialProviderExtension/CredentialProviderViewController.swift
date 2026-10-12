@@ -10,6 +10,8 @@ private let keychainService = Constants.keychainService
 
 private let reservedAccounts = Token.reservedKeychainAccounts
 
+private let biometricBaselineAccount = "biometric_fingerprint"
+
 // MARK: - CredentialProviderViewController
 
 final class CredentialProviderViewController: ASCredentialProviderViewController {
@@ -25,6 +27,10 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     override func prepareOneTimeCodeCredentialList(
         for serviceIdentifiers: [ASCredentialServiceIdentifier]
     ) {
+        guard !biometricsChangedSinceConfirmation() else {
+            showBiometricChangeNotice()
+            return
+        }
         authenticateThenPresent(serviceIdentifiers: serviceIdentifiers)
     }
 
@@ -32,7 +38,8 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         for credentialRequest: any ASCredentialRequest
     ) {
         guard credentialRequest is ASOneTimeCodeCredentialRequest,
-              LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+              LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil),
+              !biometricsChangedSinceConfirmation()
         else {
             extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
             return
@@ -56,11 +63,36 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     override func prepareInterfaceToProvideCredential(
         for credentialRequest: any ASCredentialRequest
     ) {
+        guard !biometricsChangedSinceConfirmation() else {
+            showBiometricChangeNotice()
+            return
+        }
         if credentialRequest is ASOneTimeCodeCredentialRequest {
             authenticateThenDeliver(request: credentialRequest)
         } else {
             authenticateThenPresent(serviceIdentifiers: [])
         }
+    }
+
+    // MARK: - Biometric change
+
+    private func biometricsChangedSinceConfirmation() -> Bool {
+        let context = LAContext()
+        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil),
+              let current = context.domainState.biometry.stateHash
+        else { return false }
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: keychainService,
+            kSecAttrAccount as String: biometricBaselineAccount,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne,
+        ]
+        var result: AnyObject?
+        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
+              let stored = result as? Data
+        else { return false }
+        return stored != current
     }
 
     // MARK: - Authentication gate
@@ -201,13 +233,40 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
 
         let list = UIViewController()
         list.view = tv
-        list.navigationItem.leftBarButtonItem = UIBarButtonItem(
+        install(list)
+        self.tableView = tv
+    }
+
+    private func showBiometricChangeNotice() {
+        let label = UILabel()
+        label.text = String(
+            localized: "The Face ID or Touch ID settings on this device changed. To use AutoFill again, open Keya and enter your PIN."
+        )
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.font = .preferredFont(forTextStyle: .body)
+        label.adjustsFontForContentSizeCategory = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+
+        let notice = UIViewController()
+        notice.view.backgroundColor = .systemBackground
+        notice.view.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: notice.view.layoutMarginsGuide.leadingAnchor),
+            label.trailingAnchor.constraint(equalTo: notice.view.layoutMarginsGuide.trailingAnchor),
+            label.centerYAnchor.constraint(equalTo: notice.view.centerYAnchor),
+        ])
+        install(notice)
+    }
+
+    private func install(_ root: UIViewController) {
+        root.navigationItem.leftBarButtonItem = UIBarButtonItem(
             systemItem: .cancel,
             primaryAction: UIAction { [weak self] _ in
                 self?.extensionContext.cancelRequest(withError: ASExtensionError(.userCanceled))
             }
         )
-        let navigation = UINavigationController(rootViewController: list)
+        let navigation = UINavigationController(rootViewController: root)
 
         children.forEach {
             $0.willMove(toParent: nil)
@@ -220,7 +279,6 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         navigation.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         view.addSubview(navigation.view)
         navigation.didMove(toParent: self)
-        self.tableView = tv
     }
 
     // MARK: - Code delivery
