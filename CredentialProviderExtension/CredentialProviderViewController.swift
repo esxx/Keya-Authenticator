@@ -10,8 +10,6 @@ private let keychainService = Constants.keychainService
 
 private let reservedAccounts = Token.reservedKeychainAccounts
 
-private let biometricBaselineAccount = "biometric_fingerprint"
-
 // MARK: - CredentialProviderViewController
 
 final class CredentialProviderViewController: ASCredentialProviderViewController {
@@ -78,21 +76,20 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
 
     private func biometricsChangedSinceConfirmation() -> Bool {
         let context = LAContext()
-        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil),
-              let current = context.domainState.biometry.stateHash
-        else { return false }
+        let available = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: keychainService,
-            kSecAttrAccount as String: biometricBaselineAccount,
+            kSecAttrAccount as String: BiometricBaseline.keychainAccount,
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne,
         ]
         var result: AnyObject?
-        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
-              let stored = result as? Data
-        else { return false }
-        return stored != current
+        let stored = SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess ? result as? Data : nil
+        return BiometricBaseline.hasChanged(
+            stored: stored,
+            current: available ? context.domainState.biometry.stateHash : nil
+        )
     }
 
     // MARK: - Authentication gate

@@ -5,7 +5,7 @@ import Security
 // MARK: - Biometric Baseline Storage
 
 extension KeychainManager {
-    private static let biometricFingerprintAccount = "biometric_fingerprint"
+    private static let biometricFingerprintAccount = BiometricBaseline.keychainAccount
 
     static func saveBiometricFingerprint(_ fingerprint: Data) {
         let query: [String: Any] = [

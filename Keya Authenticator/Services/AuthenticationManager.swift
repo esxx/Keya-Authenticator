@@ -65,9 +65,10 @@ final class AuthenticationManager {
     }
 
     var hasBiometricFingerprintChanged: Bool {
-        guard let current = currentBiometricDomainState(),
-              let stored = KeychainManager.loadBiometricFingerprint() else { return false }
-        return stored != current
+        BiometricBaseline.hasChanged(
+            stored: KeychainManager.loadBiometricFingerprint(),
+            current: currentBiometricDomainState()
+        )
     }
 
     func updateBiometricFingerprint() {

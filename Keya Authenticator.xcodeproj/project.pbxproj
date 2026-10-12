@@ -20,6 +20,7 @@
 		5582814AD40C14339F295BB5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6BC041B186C747E42A70C1E /* Foundation.framework */; };
 		60B96A1AA119509909FE6B0E /* String+Base32.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2F0D9FF7FBBF6C430735AB4 /* String+Base32.swift */; };
 		AA10C0257A475000000B0001 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10C0257A475000000C0001 /* Constants.swift */; };
+		AA10C0257A475000000B0004 /* BiometricBaseline.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10C0257A475000000C0004 /* BiometricBaseline.swift */; };
 		AA10C0257A475000000B0002 /* BrandKeyword.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10C0257A475000000C0002 /* BrandKeyword.swift */; };
 		AA10C0257A475000000B0003 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AA10C0257A475000000C0003 /* Localizable.xcstrings */; };
 		B3F0832294C053088B69D05D /* CredentialProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E80C0A7B25F37BE473A01 /* CredentialProviderViewController.swift */; };
@@ -77,6 +78,7 @@
 		A56E80C0A7B25F37BE473A01 /* CredentialProviderViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CredentialProviderViewController.swift; sourceTree = "<group>"; };
 		A6BC041B186C747E42A70C1E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		AA10C0257A475000000C0001 /* Constants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = "Keya Authenticator/Utils/Constants.swift"; sourceTree = SOURCE_ROOT; };
+		AA10C0257A475000000C0004 /* BiometricBaseline.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BiometricBaseline.swift; path = "Keya Authenticator/Utils/BiometricBaseline.swift"; sourceTree = SOURCE_ROOT; };
 		AA10C0257A475000000C0002 /* BrandKeyword.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BrandKeyword.swift; path = "Keya Authenticator/Utils/BrandKeyword.swift"; sourceTree = SOURCE_ROOT; };
 		AA10C0257A475000000C0003 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; name = Localizable.xcstrings; path = "Keya Authenticator/Localization/Localizable.xcstrings"; sourceTree = SOURCE_ROOT; };
 		AF2B0B7D4EEB1C81FA9FB12D /* Data+OTP.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Data+OTP.swift"; path = "Keya Authenticator/Utils/Extensions/Data+OTP.swift"; sourceTree = SOURCE_ROOT; };
@@ -188,6 +190,7 @@
 				A2F0D9FF7FBBF6C430735AB4 /* String+Base32.swift */,
 				AF2B0B7D4EEB1C81FA9FB12D /* Data+OTP.swift */,
 				AA10C0257A475000000C0001 /* Constants.swift */,
+				AA10C0257A475000000C0004 /* BiometricBaseline.swift */,
 				AA10C0257A475000000C0002 /* BrandKeyword.swift */,
 				AA10C0257A475000000C0003 /* Localizable.xcstrings */,
 			);
@@ -469,6 +472,7 @@
 				60B96A1AA119509909FE6B0E /* String+Base32.swift in Sources */,
 				1438DA878722BB1E72CCE7D4 /* Data+OTP.swift in Sources */,
 				AA10C0257A475000000B0001 /* Constants.swift in Sources */,
+				AA10C0257A475000000B0004 /* BiometricBaseline.swift in Sources */,
 				AA10C0257A475000000B0002 /* BrandKeyword.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
