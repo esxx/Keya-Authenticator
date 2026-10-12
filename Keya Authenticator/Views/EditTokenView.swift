@@ -80,6 +80,7 @@ struct EditTokenView: View {
 
                 Section {
                     TextEditor(text: $viewModel.notes)
+                        .autocorrectionDisabled()
                         .frame(minHeight: 80)
                         .font(.body)
                         .scrollContentBackground(.hidden)

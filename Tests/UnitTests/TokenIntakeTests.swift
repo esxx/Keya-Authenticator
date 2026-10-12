@@ -79,4 +79,27 @@ final class TokenIntakeTests: XCTestCase {
     func testUndecodableMigrationReturnsNil() {
         XCTAssertNil(TokenIntake.tokens(fromMigration: "otpauth-migration://offline?data=%%%"))
     }
+
+    func testMigrationWithOversizedTypeFieldIsReadAsTOTP() throws {
+        let secretField: [UInt8] = [0x0A, 10] + Array("1234567890".utf8)
+        let typeField: [UInt8] = [0x30] + varint(UInt64(Int.max) + 1)
+        let parameters = secretField + typeField
+        let payload: [UInt8] = [0x0A] + varint(UInt64(parameters.count)) + parameters
+        let data = Data(payload).base64EncodedString().addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? ""
+
+        let result = try XCTUnwrap(TokenIntake.tokens(fromMigration: "otpauth-migration://offline?data=\(data)"))
+
+        XCTAssertEqual(result.tokens.map(\.type), [.totp])
+    }
+
+    private func varint(_ value: UInt64) -> [UInt8] {
+        var rest = value
+        var bytes: [UInt8] = []
+        repeat {
+            let low = UInt8(rest & 0x7F)
+            rest >>= 7
+            bytes.append(rest == 0 ? low : low | 0x80)
+        } while rest != 0
+        return bytes
+    }
 }

@@ -100,7 +100,7 @@ private extension String {
         var issuer: String?
         var algorithm: Algorithm = .sha1
         var digits = 6
-        var otpType = 2
+        var otpType: UInt64 = 2
         var counter: UInt64 = 0
         var pos = 0
 
@@ -137,7 +137,7 @@ private extension String {
                 digits = (val == 2) ? 8 : 6
             case (6, 0):
                 guard let val = protoReadVarint(data, pos: &pos) else { return nil }
-                otpType = Int(val)
+                otpType = val
             case (7, 0):
                 guard let val = protoReadVarint(data, pos: &pos) else { return nil }
                 counter = val

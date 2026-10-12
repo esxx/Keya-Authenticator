@@ -63,7 +63,7 @@ private struct KeyaBackupFile: Decodable {
                 supportedToken = nil
                 return
             }
-            supportedToken = try? Token(from: decoder)
+            supportedToken = (try? Token(from: decoder)).flatMap { $0.secret.count >= 10 ? $0 : nil }
         }
     }
 }

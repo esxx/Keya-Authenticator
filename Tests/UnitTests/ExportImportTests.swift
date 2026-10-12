@@ -480,9 +480,11 @@ final class ExportImportTests: XCTestCase {
 
     // MARK: - Keya backup entries
 
-    private func keyaEntry(digits: Int = 6, period: Int? = 30, type: String = "TOTP") -> [String: Any] {
+    private func keyaEntry(
+        digits: Int = 6, period: Int? = 30, type: String = "TOTP", secret: String = "JBSWY3DPEHPK3PXP"
+    ) -> [String: Any] {
         var entry: [String: Any] = [
-            "id": UUID().uuidString, "name": "user", "secret": "JBSWY3DPEHPK3PXP", "algorithm": "SHA1",
+            "id": UUID().uuidString, "name": "user", "secret": secret, "algorithm": "SHA1",
             "digits": digits, "type": type, "isFavorite": false,
             "createdAt": "2026-01-01T00:00:00Z", "updatedAt": "2026-01-01T00:00:00Z",
         ]
@@ -515,6 +517,16 @@ final class ExportImportTests: XCTestCase {
         XCTAssertEqual(result.tokens.count, 2)
         XCTAssertEqual(result.skipped, 2)
         XCTAssertEqual(Set(result.tokens.map(\.type)), [.totp, .hotp])
+    }
+
+    @MainActor
+    func testKeyaBackupSkipsSecretsShorterThanTenBytes() throws {
+        let data = try keyaBackup([keyaEntry(), keyaEntry(secret: "GEZDGNBV"), keyaEntry(secret: "")])
+
+        let result = try manager.parseTokens(from: data)
+
+        XCTAssertEqual(result.tokens.count, 1)
+        XCTAssertEqual(result.skipped, 2)
     }
 
     @MainActor

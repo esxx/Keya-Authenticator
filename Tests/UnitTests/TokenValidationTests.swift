@@ -18,6 +18,14 @@ final class TokenValidationTests: XCTestCase {
               digits: 6, type: .hotp, period: nil, counter: counter)
     }
 
+    // MARK: - HOTP counter
+
+    func testHOTPCounterWrapsAfterMaximum() {
+        var token = hotpToken(counter: .max)
+        token.incrementCounter()
+        XCTAssertEqual(token.counter, 0)
+    }
+
     // MARK: - Token generation smoke tests
 
     func testTOTPGeneratesValidCode() throws {

@@ -91,7 +91,7 @@ struct Token: Identifiable, Codable, Equatable {
 
     mutating func incrementCounter() {
         guard type == .hotp, let c = counter else { return }
-        counter = c + 1
+        counter = c &+ 1
         touch()
     }
 
