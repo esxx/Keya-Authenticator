@@ -35,7 +35,9 @@ struct PINEntryView: View {
                 Text(errorMessage)
                     .font(.caption)
                     .foregroundColor(.red)
+                    .multilineTextAlignment(.center)
                     .transition(.opacity)
+                    .padding(.horizontal)
                     .padding(.bottom, 4)
             }
 

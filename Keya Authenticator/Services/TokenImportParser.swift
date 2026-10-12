@@ -175,7 +175,7 @@ struct LastPassParser: TokenImportParser {
             }
 
             let issuer = entry["issuerName"] as? String
-            let name = (entry["userName"] as? String) ?? issuer ?? "Imported Token"
+            let name = (entry["userName"] as? String) ?? issuer ?? String(localized: "Imported Token")
             let digits = (entry["digits"] as? Int) ?? 6
             let period = (entry["timeStep"] as? Int) ?? 30
             let algorithm = algorithmFromString(entry["algorithm"] as? String)
@@ -210,7 +210,7 @@ struct AndOTPParser: TokenImportParser {
                 continue
             }
 
-            let name = (entry["label"] as? String) ?? "Imported Token"
+            let name = (entry["label"] as? String) ?? String(localized: "Imported Token")
             let issuer = entry["issuer"] as? String
             let digits = (entry["digits"] as? Int) ?? 6
             let period = (entry["period"] as? Int) ?? 30
@@ -263,7 +263,7 @@ struct RaivoParser: TokenImportParser {
             }
 
             let issuer = entry["issuer"] as? String
-            let name = (entry["account"] as? String) ?? issuer ?? "Imported Token"
+            let name = (entry["account"] as? String) ?? issuer ?? String(localized: "Imported Token")
             let digits = Int(entry["digits"] as? String ?? "") ?? 6
             let period = Int(entry["timer"] as? String ?? "") ?? 30
             let counter = UInt64(entry["counter"] as? String ?? "") ?? 0

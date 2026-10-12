@@ -96,7 +96,7 @@ private extension String {
         algorithm: Algorithm, digits: Int, period: Int?, counter: UInt64?
     )? {
         var secret: Data?
-        var name = "Imported Token"
+        var name = String(localized: "Imported Token")
         var issuer: String?
         var algorithm: Algorithm = .sha1
         var digits = 6

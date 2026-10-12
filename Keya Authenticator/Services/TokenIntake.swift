@@ -87,7 +87,7 @@ enum TokenIntake {
         }
         let issuer = parameters.issuer?.isEmpty == true ? nil : parameters.issuer
         return Token(
-            name: parameters.name.isEmpty ? (issuer ?? "Imported Token") : parameters.name,
+            name: parameters.name.isEmpty ? (issuer ?? String(localized: "Imported Token")) : parameters.name,
             issuer: issuer,
             secret: secret, algorithm: parameters.algorithm, digits: parameters.digits,
             type: parameters.type, period: period, counter: parameters.counter

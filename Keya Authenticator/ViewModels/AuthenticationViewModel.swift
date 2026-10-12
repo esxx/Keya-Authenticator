@@ -15,7 +15,7 @@ final class AuthenticationViewModel {
     var pinText = ""
     var biometricAvailable = false
     var biometricIcon = "faceid"
-    var biometricDisplayName = "Face ID"
+    var biometricDisplayName = String(localized: "Face ID")
 
     var errorMessage: String? {
         pinAttempt.message ?? otherMessage
@@ -27,6 +27,7 @@ final class AuthenticationViewModel {
 
     var onUnlock: (() -> Void)?
     var biometricChangedDetected = false
+    var biometricChangeNotice = BiometricChangeNotice.changed
 
     // MARK: - Initialization
 
@@ -62,6 +63,8 @@ final class AuthenticationViewModel {
         }
         ClipboardManager.shared.provideHapticFeedback(.success)
         if result == .successBiometricChanged {
+            biometricChangeNotice = BiometricChangeNotice(biometricsAvailable: authenticationManager
+                .isBiometricAvailable)
             settings.useBiometricAuthentication = false
             settings.biometricActivated = false
             authenticationManager.clearBiometricFingerprint()

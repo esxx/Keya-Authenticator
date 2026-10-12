@@ -21,7 +21,7 @@ final class AuthenticationManager {
     }()
 
     var biometricDisplayName: String {
-        Self.biometryType == .faceID ? "Face ID" : "Touch ID"
+        Self.biometryType == .faceID ? String(localized: "Face ID") : String(localized: "Touch ID")
     }
 
     var biometricIcon: String {

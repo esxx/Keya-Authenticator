@@ -96,12 +96,10 @@ struct AuthenticationView: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel(String(localized: "PIN unlock screen"))
-        .alert("Biometric database changed", isPresented: $showBiometricChangedAlert) {
+        .alert(viewModel.biometricChangeNotice.title, isPresented: $showBiometricChangedAlert) {
             Button("OK", role: .cancel) { onUnlock() }
         } message: {
-            Text(
-                "The Face ID / Touch ID database on this device has changed since your last login. Biometric unlock has been disabled as a security precaution. You can re-enable it in Settings → App lock once you've confirmed the change was made by you."
-            )
+            Text(viewModel.biometricChangeNotice.message)
         }
         .onChange(of: viewModel.biometricChangedDetected) { _, detected in
             guard detected else { return }
