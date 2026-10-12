@@ -21,20 +21,24 @@ struct AddTokenView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 0) {
-                    QRScannerView(onResult: { result in
-                        if case let .success(qr) = result {
-                            viewModel.handleScannedQR(qr)
-                        } else if case let .failure(err) = result {
-                            viewModel.errorMessage = err.localizedDescription
+                    Color.clear
+                        .aspectRatio(1, contentMode: .fit)
+                        .overlay {
+                            QRScannerView(onResult: { result in
+                                if case let .success(qr) = result {
+                                    viewModel.handleScannedQR(qr)
+                                } else if case let .failure(err) = result {
+                                    viewModel.errorMessage = err.localizedDescription
+                                }
+                            }, isActive: !(showManual || showGallery || showFiles))
                         }
-                    }, isActive: !(showManual || showGallery || showFiles))
-                        .frame(maxWidth: .infinity)
-                        .aspectRatio(1.33, contentMode: .fit)
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 16, style: .continuous)
                                 .stroke(Color.primary.opacity(0.08), lineWidth: 1)
                         )
+                        .accessibilityElement(children: .contain)
+                        .accessibilityIdentifier("qrScanner")
                         .padding(.horizontal, 16)
 
                     if let err = viewModel.errorMessage {

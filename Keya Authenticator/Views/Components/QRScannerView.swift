@@ -28,17 +28,16 @@ struct QRScannerView: View {
             ScannerOverlayView()
                 .ignoresSafeArea()
 
-            VStack {
-                Spacer()
+            VStack(spacing: 16) {
+                Spacer(minLength: 0)
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
                     .stroke(Color.white, lineWidth: 3)
-                    .frame(width: 260, height: 260)
+                    .aspectRatio(1, contentMode: .fit)
+                    .frame(maxWidth: 240, maxHeight: 240)
                     .overlay(alignment: .topLeading) { cornerAccent().padding(8) }
                     .overlay(alignment: .topTrailing) { cornerAccent().rotationEffect(.degrees(90)).padding(8) }
                     .overlay(alignment: .bottomLeading) { cornerAccent().rotationEffect(.degrees(270)).padding(8) }
                     .overlay(alignment: .bottomTrailing) { cornerAccent().rotationEffect(.degrees(180)).padding(8) }
-                    .offset(y: 40)
-                Spacer().frame(minHeight: 100)
 
                 VStack(spacing: 12) {
                     if cameraAccessDenied {
@@ -85,8 +84,9 @@ struct QRScannerView: View {
                         .clipShape(Capsule())
                     }
                 }
-                .padding(.bottom, 60)
+                Spacer(minLength: 0)
             }
+            .padding(.vertical, 16)
         }
         .onAppear {
             isOnScreen = true
