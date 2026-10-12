@@ -4,6 +4,8 @@ import UniformTypeIdentifiers
 
 @main
 struct AppEntry: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     @State private var tokenStore: TokenStore
     @State private var authenticationManager: AuthenticationManager
     @State private var settings: AppSettings
