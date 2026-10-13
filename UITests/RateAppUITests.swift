@@ -5,7 +5,9 @@ final class RateAppUITests: KeyaUITestCase {
         try reachMainScreen()
         openSettings(scrollingTo: "App lock")
 
-        let rate = app.links["Rate Keya"]
+        let rate = ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 26
+            ? app.links["Rate Keya"]
+            : app.buttons["Rate Keya"]
         for _ in 0 ..< 5 where !(rate.exists && rate.isHittable) {
             app.swipeUp()
         }

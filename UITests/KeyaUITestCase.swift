@@ -95,8 +95,9 @@ class KeyaUITestCase: XCTestCase {
     }
 
     func backButton(to title: String) -> XCUIElement {
-        app.navigationBars.buttons.matching(
-            NSPredicate(format: "identifier == 'BackButton' AND label == %@", title)
+        let backIdentifier = ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 26 ? "BackButton" : ""
+        return app.navigationBars.buttons.matching(
+            NSPredicate(format: "identifier == %@ AND label == %@", backIdentifier, title)
         ).firstMatch
     }
 
