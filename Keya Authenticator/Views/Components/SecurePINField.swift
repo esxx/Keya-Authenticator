@@ -23,10 +23,14 @@ struct SecurePINField: UIViewRepresentable {
         if uiView.text != text {
             uiView.text = text
         }
-        if isFocused, !uiView.isFirstResponder {
-            uiView.becomeFirstResponder()
-        } else if !isFocused, uiView.isFirstResponder {
-            uiView.resignFirstResponder()
+        guard isFocused != uiView.isFirstResponder else { return }
+        let focus = $isFocused
+        DispatchQueue.main.async {
+            if focus.wrappedValue, !uiView.isFirstResponder {
+                uiView.becomeFirstResponder()
+            } else if !focus.wrappedValue, uiView.isFirstResponder {
+                uiView.resignFirstResponder()
+            }
         }
     }
 
@@ -48,11 +52,15 @@ struct SecurePINField: UIViewRepresentable {
         }
 
         func textFieldDidBeginEditing(_ textField: UITextField) {
-            isFocused.wrappedValue = true
+            if !isFocused.wrappedValue {
+                isFocused.wrappedValue = true
+            }
         }
 
         func textFieldDidEndEditing(_ textField: UITextField) {
-            isFocused.wrappedValue = false
+            if isFocused.wrappedValue {
+                isFocused.wrappedValue = false
+            }
         }
     }
 }
