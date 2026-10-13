@@ -3,6 +3,8 @@ import SwiftUI
 
 @Observable
 final class EditTokenViewModel {
+    nonisolated deinit {}
+
     // MARK: - Dependencies
 
     let tokenStore: TokenStore

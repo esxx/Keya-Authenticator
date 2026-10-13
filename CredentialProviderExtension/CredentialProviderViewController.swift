@@ -13,6 +13,7 @@ private let reservedAccounts = Token.reservedKeychainAccounts
 // MARK: - CredentialProviderViewController
 
 final class CredentialProviderViewController: ASCredentialProviderViewController {
+    nonisolated deinit {}
 
     // MARK: Properties
 

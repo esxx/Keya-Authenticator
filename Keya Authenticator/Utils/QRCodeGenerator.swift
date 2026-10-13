@@ -4,6 +4,8 @@ import SwiftUI
 
 @MainActor
 final class QRCodeGenerator {
+    nonisolated deinit {}
+
     // MARK: - Cached Context
 
     private static let cachedContext = CIContext()

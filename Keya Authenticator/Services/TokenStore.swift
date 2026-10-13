@@ -37,6 +37,8 @@ enum TokenStoreError: LocalizedError, Equatable {
 
 @Observable
 final class TokenStore {
+    nonisolated deinit {}
+
     // MARK: - Properties
 
     private(set) var tokens: [Token] = []

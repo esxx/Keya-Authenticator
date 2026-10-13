@@ -2,6 +2,8 @@ import SwiftUI
 
 @Observable
 final class ClipboardManager {
+    nonisolated deinit {}
+
     static let shared = ClipboardManager()
 
     private init() {}

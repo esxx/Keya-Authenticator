@@ -52,6 +52,16 @@ if grep -rn --include="*.swift" "TODO\|FIXME" "Keya Authenticator/" 2>/dev/null 
     echo "WARN: TODO/FIXME found — review before shipping"
 fi
 
+# Every class declares its deinit (MainActor default isolation would otherwise infer an isolated one)
+while IFS= read -r -d '' file; do
+    classes=$(grep -cE '^[[:space:]]*(@[A-Za-z]+[[:space:]]+)*((public|private|fileprivate|internal|final|nonisolated)[[:space:]]+)*class[[:space:]]+[A-Z]' "$file" || true)
+    deinits=$(grep -cE '^[[:space:]]*((nonisolated|isolated)[[:space:]]+)?deinit\b' "$file" || true)
+    if [ "$classes" -gt "$deinits" ]; then
+        echo "FAIL: $file declares $classes class(es) but only $deinits deinit(s)"
+        FAIL=1
+    fi
+done < <(find "Keya Authenticator" CredentialProviderExtension -name "*.swift" -print0)
+
 if [ "$FAIL" -eq 0 ]; then
     echo ""
     echo "quality.sh PASSED"

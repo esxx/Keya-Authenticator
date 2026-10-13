@@ -4,6 +4,8 @@ import UniformTypeIdentifiers
 
 @Observable
 final class ExportImportManager {
+    nonisolated deinit {}
+
     // MARK: - Types
 
     struct ImportResult {

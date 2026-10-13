@@ -5,6 +5,8 @@ import SwiftUI
 
 @Observable
 final class AddTokenViewModel {
+    nonisolated deinit {}
+
     // MARK: - Dependencies
 
     let tokenStore: TokenStore

@@ -4,6 +4,8 @@ import SwiftUI
 
 @Observable
 final class AuthenticationViewModel {
+    nonisolated deinit {}
+
     // MARK: - Dependencies
 
     let authenticationManager: AuthenticationManager

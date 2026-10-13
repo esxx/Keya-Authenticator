@@ -4,6 +4,8 @@ import SwiftUI
 
 @Observable
 final class AuthenticationManager {
+    nonisolated deinit {}
+
     static let pinLength = 6
 
     // MARK: - Biometric Info

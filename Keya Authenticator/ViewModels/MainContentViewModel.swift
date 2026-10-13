@@ -4,6 +4,8 @@ import SwiftUI
 
 @Observable
 final class MainContentViewModel {
+    nonisolated deinit {}
+
     // MARK: - Dependencies
 
     let tokenStore: TokenStore

@@ -3,6 +3,8 @@ import StoreKit
 @Observable
 @MainActor
 final class TipStore {
+    nonisolated deinit {}
+
     private(set) var products: [Product] = []
     private(set) var isPurchasing = false
     private(set) var thankYouVisible = false

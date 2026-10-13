@@ -3,6 +3,8 @@ import Foundation
 
 @Observable
 final class PINAttempt {
+    nonisolated deinit {}
+
     private(set) var message: String?
     private(set) var failureCount = 0
     private(set) var lockoutSecondsRemaining: Int?

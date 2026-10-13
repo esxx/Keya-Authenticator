@@ -3,6 +3,8 @@ import UIKit
 
 @MainActor
 final class PrivacyCoverWindow {
+    nonisolated deinit {}
+
     private var window: UIWindow?
 
     func setVisible(_ visible: Bool, colorScheme: ColorScheme?) {

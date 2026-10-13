@@ -3,6 +3,8 @@ import SwiftUI
 
 @Observable
 final class AppSettings {
+    nonisolated deinit {}
+
     // MARK: - Keys
 
     private enum Keys {

@@ -39,6 +39,8 @@ struct SecurePINField: UIViewRepresentable {
     }
 
     final class Coordinator: NSObject, UITextFieldDelegate {
+        nonisolated deinit {}
+
         var text: Binding<String>
         var isFocused: Binding<Bool>
 

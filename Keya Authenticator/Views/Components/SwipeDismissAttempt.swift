@@ -6,6 +6,8 @@ struct SwipeDismissAttempt: UIViewControllerRepresentable {
     let onAttempt: () -> Void
 
     final class Proxy: NSObject, UIAdaptivePresentationControllerDelegate {
+        nonisolated deinit {}
+
         var onAttempt: () -> Void = {}
         var original: UIAdaptivePresentationControllerDelegate?
 

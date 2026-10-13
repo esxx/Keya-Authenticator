@@ -3,6 +3,8 @@ import SwiftUI
 
 @Observable
 final class QRExportViewModel {
+    nonisolated deinit {}
+
     // MARK: - Published Properties
 
     var qrImage: UIImage?

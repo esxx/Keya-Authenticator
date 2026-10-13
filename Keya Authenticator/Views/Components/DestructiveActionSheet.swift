@@ -9,6 +9,8 @@ struct DestructiveActionSheet: UIViewControllerRepresentable {
     let action: () -> Void
 
     final class Coordinator {
+        nonisolated deinit {}
+
         var isShowing = false
     }
 

@@ -170,6 +170,8 @@ struct ScannerOverlayView: UIViewRepresentable {
 // MARK: - Camera Manager
 
 final class CameraManager: NSObject, ObservableObject {
+    nonisolated deinit {}
+
     private let session = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "com.es.keya.camera")
     private let metadataDelegate = MetadataDelegate()
@@ -342,6 +344,8 @@ final class CameraManager: NSObject, ObservableObject {
 }
 
 final class MetadataDelegate: NSObject, AVCaptureMetadataOutputObjectsDelegate {
+    nonisolated deinit {}
+
     var onCodeScanned: ((String) -> Void)?
     var isPaused = false
     weak var session: AVCaptureSession?
@@ -386,6 +390,8 @@ struct CameraPreviewLayer: UIViewRepresentable {
 }
 
 final class CameraHostView: UIView {
+    nonisolated deinit {}
+
     override static var layerClass: AnyClass {
         AVCaptureVideoPreviewLayer.self
     }

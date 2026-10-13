@@ -3,6 +3,8 @@ import SwiftUI
 
 @Observable
 final class AppCoordinator {
+    nonisolated deinit {}
+
     // MARK: - Dependencies
 
     private let tokenStore: TokenStore
