@@ -3,18 +3,22 @@ set -euo pipefail
 
 SCHEME="Keya Authenticator"
 PROJECT="Keya Authenticator.xcodeproj"
-DESTINATION="platform=iOS Simulator,name=iPhone 16,OS=latest"
+DESTINATION="generic/platform=iOS Simulator"
 
 echo "==> Building (release config)…"
-xcodebuild \
-    -project "$PROJECT" \
-    -scheme "$SCHEME" \
-    -destination "$DESTINATION" \
-    -configuration Release \
-    CODE_SIGNING_REQUIRED=NO \
-    CODE_SIGN_IDENTITY="" \
-    build \
-    | xcpretty --color 2>/dev/null || true
+BUILD=(xcodebuild
+    -project "$PROJECT"
+    -scheme "$SCHEME"
+    -destination "$DESTINATION"
+    -configuration Release
+    CODE_SIGNING_REQUIRED=NO
+    CODE_SIGN_IDENTITY=""
+    build)
+if command -v xcpretty &>/dev/null; then
+    "${BUILD[@]}" | xcpretty --color
+else
+    "${BUILD[@]}"
+fi
 
 echo ""
 echo "==> SwiftLint…"
