@@ -436,7 +436,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftformat > /dev/null; then\n  swiftformat \"${SRCROOT}/Keya Authenticator\" --config \"${SRCROOT}/.swiftformat\" --quiet\nelse\n  echo \"warning: SwiftFormat not installed — run: brew install swiftformat\"\nfi\n";
+			shellScript = "if which swiftformat > /dev/null; then\n  swiftformat \"${SRCROOT}/Keya Authenticator\" --config \"${SRCROOT}/.swiftformat\" --lint --lenient\nelse\n  echo \"warning: SwiftFormat not installed — run: brew install swiftformat\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

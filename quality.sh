@@ -29,6 +29,14 @@ else
 fi
 
 echo ""
+echo "==> SwiftFormat…"
+if command -v swiftformat &>/dev/null; then
+    swiftformat "Keya Authenticator" --config .swiftformat --lint
+else
+    echo "  swiftformat not found, skipping (brew install swiftformat)"
+fi
+
+echo ""
 echo "==> Static checks…"
 
 FAIL=0
