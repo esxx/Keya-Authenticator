@@ -92,6 +92,8 @@
 		460FE1D72F71E10D00839783 /* Exceptions for "Keya Authenticator" folder in "Keya Authenticator" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"Keya Authenticator UI.xctestplan",
+				"Keya Authenticator.xctestplan",
 				Resources/Info.plist,
 			);
 			target = 460FE18A2F71DA2E00839783 /* Keya Authenticator */;
