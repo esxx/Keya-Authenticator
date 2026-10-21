@@ -158,11 +158,7 @@ extension KeychainManager {
         if status == errSecItemNotFound {
             return LockoutState(failedAttempts: 0, lockoutUntil: nil, lastFailedAttempt: nil)
         }
-        guard status == errSecSuccess else {
-            throw TokenError
-                .keychainError(String(localized: "Security state is temporarily unavailable. Please try again."))
-        }
-        guard let data = result as? Data else {
+        guard status == errSecSuccess, let data = result as? Data else {
             throw TokenError
                 .keychainError(String(localized: "Security state is temporarily unavailable. Please try again."))
         }

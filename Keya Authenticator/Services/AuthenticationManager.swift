@@ -191,8 +191,8 @@ final class AuthenticationManager {
     }
 
     func setPIN(_ pin: String, confirmPin: String, allowOverwrite: Bool = false) throws {
-        guard pin == confirmPin else { throw AuthenticationError.invalidPIN }
-        guard pin.count == Self.pinLength, pin.allSatisfy(\.isNumber) else { throw AuthenticationError.invalidPIN }
+        guard pin == confirmPin, pin.count == Self.pinLength,
+              pin.allSatisfy(\.isNumber) else { throw AuthenticationError.invalidPIN }
         try KeychainManager.savePIN(pin, allowOverwrite: allowOverwrite)
         saveCurrentBiometricBaselineIfNeeded()
     }
