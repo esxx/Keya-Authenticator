@@ -50,8 +50,9 @@
     <code>kSecAttrAccessibleWhenUnlockedThisDeviceOnly</code>. They cannot be
     read while the screen is locked and are not included in iCloud or iTunes
     backups.</li>
-    <li><strong>App settings</strong>: stored in UserDefaults (theme, sort
-    order, lock preferences). Contains no secrets.</li>
+    <li><strong>App settings</strong>: the theme and sort order are stored in UserDefaults,
+    while the App lock, Face ID and Auto-lock settings are stored in the Keychain.
+    Neither contains secrets.</li>
     <li><strong>PIN hash</strong>: stored in the Keychain using PBKDF2-HMAC-SHA256
     with 100,000 iterations. Your PIN is never stored in plaintext.</li>
   </ul>

@@ -48,8 +48,9 @@
     <li><strong>Secretos 2FA</strong>: almacenados en el llavero de iOS con
     <code>kSecAttrAccessibleWhenUnlockedThisDeviceOnly</code>. No se pueden leer con la pantalla
     bloqueada y no se incluyen en las copias de seguridad de iCloud o iTunes.</li>
-    <li><strong>Configuración de la app</strong>: almacenada en UserDefaults (tema, orden,
-    preferencias de bloqueo). No contiene secretos.</li>
+    <li><strong>Configuración de la app</strong>: el tema y el orden se guardan en UserDefaults,
+    y la configuración de Bloqueo de app, Face ID y Bloqueo automático, en el llavero.
+    Ninguno contiene secretos.</li>
     <li><strong>Hash del PIN</strong>: almacenado en el llavero usando PBKDF2-HMAC-SHA256 con
     100,000 iteraciones. Tu PIN nunca se almacena en texto plano.</li>
   </ul>

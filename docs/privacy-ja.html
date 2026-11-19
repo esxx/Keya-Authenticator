@@ -48,8 +48,8 @@
     <li><strong>2FAシークレット</strong>：<code>kSecAttrAccessibleWhenUnlockedThisDeviceOnly</code>を
     指定してiOS Keychainに保存されます。画面がロックされている間は読み取れず、iCloudや
     iTunesバックアップにも含まれません。</li>
-    <li><strong>アプリ設定</strong>：UserDefaultsに保存されます（テーマ、並び順、ロック設定）。
-    シークレットは含まれません。</li>
+    <li><strong>アプリ設定</strong>：テーマと並び順はUserDefaultsに、アプリロック、Face ID、自動ロックの
+    設定はKeychainに保存されます。いずれにもシークレットは含まれません。</li>
     <li><strong>PINハッシュ</strong>：100,000回の反復を用いたPBKDF2-HMAC-SHA256でKeychainに
     保存されます。PINは平文では保存されません。</li>
   </ul>

@@ -48,8 +48,8 @@
     <li><strong>2FA 비밀 키</strong>: <code>kSecAttrAccessibleWhenUnlockedThisDeviceOnly</code>로
     iOS 키체인에 저장됩니다. 화면이 잠긴 상태에서는 읽을 수 없으며 iCloud 또는 iTunes
     백업에 포함되지 않습니다.</li>
-    <li><strong>앱 설정</strong>: UserDefaults에 저장됩니다 (테마, 정렬 순서, 잠금 설정).
-    비밀 키를 포함하지 않습니다.</li>
+    <li><strong>앱 설정</strong>: 테마와 정렬 순서는 UserDefaults에, 앱 잠금, Face ID, 자동 잠금
+    설정은 키체인에 저장됩니다. 어느 쪽에도 비밀 키는 포함되지 않습니다.</li>
     <li><strong>PIN 해시</strong>: 100,000회 반복의 PBKDF2-HMAC-SHA256을 사용하여 키체인에
     저장됩니다. PIN은 평문으로 저장되지 않습니다.</li>
   </ul>

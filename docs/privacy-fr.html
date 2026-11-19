@@ -48,8 +48,9 @@
     <li><strong>Secrets 2FA</strong> : stockés dans le trousseau iOS avec
     <code>kSecAttrAccessibleWhenUnlockedThisDeviceOnly</code>. Ils ne peuvent pas être lus
     lorsque l'écran est verrouillé et ne sont pas inclus dans les sauvegardes iCloud ou iTunes.</li>
-    <li><strong>Réglages de l'application</strong> : stockés dans UserDefaults (thème, ordre de tri,
-    préférences de verrouillage). Ne contient aucun secret.</li>
+    <li><strong>Réglages de l'application</strong> : le thème et l'ordre de tri sont stockés dans
+    UserDefaults, et les réglages Verrouillage de l'app, Face ID et Verrouillage automatique dans le
+    trousseau. Aucun ne contient de secret.</li>
     <li><strong>Hachage du code PIN</strong> : stocké dans le trousseau à l'aide de PBKDF2-HMAC-SHA256
     avec 100 000 itérations. Votre code PIN n'est jamais stocké en clair.</li>
   </ul>

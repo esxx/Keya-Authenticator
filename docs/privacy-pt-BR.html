@@ -48,8 +48,9 @@
     <li><strong>Segredos 2FA</strong>: armazenados no Keychain do iOS com
     <code>kSecAttrAccessibleWhenUnlockedThisDeviceOnly</code>. Não podem ser lidos com a tela
     bloqueada e não são incluídos nos backups do iCloud ou iTunes.</li>
-    <li><strong>Configurações do app</strong>: armazenadas no UserDefaults (tema, ordem de
-    classificação, preferências de bloqueio). Não contém segredos.</li>
+    <li><strong>Configurações do app</strong>: o tema e a ordem de classificação ficam no
+    UserDefaults, e os ajustes de Bloqueio do app, Face ID e Bloqueio automático ficam no Keychain.
+    Nenhum deles contém segredos.</li>
     <li><strong>Hash do PIN</strong>: armazenado no Keychain usando PBKDF2-HMAC-SHA256 com
     100.000 iterações. Seu PIN nunca é armazenado em texto simples.</li>
   </ul>
