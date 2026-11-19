@@ -146,16 +146,21 @@ final class AddTokenViewModel {
         self.tokenStore = tokenStore
         self.settings = settings
         importManager = ExportImportManager(tokenStore: tokenStore)
-        if let uri = prefillURI, let p = TokenIntake.parameters(fromOTPAuth: uri) {
-            tokenType = p.type
-            name = p.name
-            issuer = p.issuer ?? ""
-            secret = p.secret
-            algorithm = p.algorithm
-            digits = p.digits
-            period = p.period ?? 30
-            counter = p.counter ?? 0
+        if let prefillURI {
+            applyPrefill(prefillURI)
         }
+    }
+
+    func applyPrefill(_ uri: String) {
+        guard let p = TokenIntake.parameters(fromOTPAuth: uri) else { return }
+        tokenType = p.type
+        name = p.name
+        issuer = p.issuer ?? ""
+        secret = p.secret
+        algorithm = p.algorithm
+        digits = p.digits
+        period = p.period ?? 30
+        counter = p.counter ?? 0
     }
 
     // MARK: - Token Creation (manual form)
@@ -249,7 +254,7 @@ final class AddTokenViewModel {
         return true
     }
 
-    // MARK: - QR — live scanner (AddTokenView: persists immediately)
+    // MARK: - QR: live scanner (AddTokenView: persists immediately)
 
     func handleScannedQR(_ string: String) {
         errorMessage = nil

@@ -12,6 +12,7 @@ struct DestructiveActionSheet: UIViewControllerRepresentable {
         nonisolated deinit {}
 
         var isShowing = false
+        weak var sheet: UIAlertController?
     }
 
     func makeCoordinator() -> Coordinator {
@@ -22,7 +23,16 @@ struct DestructiveActionSheet: UIViewControllerRepresentable {
         UIViewController()
     }
 
+    static func dismantleUIViewController(_ controller: UIViewController, coordinator: Coordinator) {
+        coordinator.sheet?.dismiss(animated: false)
+    }
+
     func updateUIViewController(_ controller: UIViewController, context: Context) {
+        if !isPresented, context.coordinator.isShowing {
+            context.coordinator.isShowing = false
+            context.coordinator.sheet?.dismiss(animated: false)
+            return
+        }
         guard isPresented, !context.coordinator.isShowing else { return }
         context.coordinator.isShowing = true
 
@@ -40,6 +50,7 @@ struct DestructiveActionSheet: UIViewControllerRepresentable {
         })
 
         DispatchQueue.main.async {
+            guard coordinator.isShowing else { return }
             let window = controller.view.window ?? UIApplication.shared.connectedScenes
                 .compactMap { $0 as? UIWindowScene }
                 .flatMap(\.windows)
@@ -52,6 +63,7 @@ struct DestructiveActionSheet: UIViewControllerRepresentable {
             while let next = top.presentedViewController {
                 top = next
             }
+            coordinator.sheet = sheet
             top.present(sheet, animated: true)
         }
     }

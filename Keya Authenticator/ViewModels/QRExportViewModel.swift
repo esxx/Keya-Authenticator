@@ -37,8 +37,4 @@ final class QRExportViewModel {
     var tokenIssuer: String? {
         token.issuer
     }
-
-    var displayName: String {
-        token.displayName
-    }
 }

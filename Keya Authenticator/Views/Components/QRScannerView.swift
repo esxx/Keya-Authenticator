@@ -132,9 +132,7 @@ struct QRScannerView: View {
         if TokenIntake.hasScheme(code, TokenIntake.otpAuthScheme) || TokenIntake.hasScheme(
             code,
             TokenIntake.migrationScheme
-        )
-            || code.isValidOTPSecret
-        {
+        ) {
             ClipboardManager.shared.provideHapticFeedback(.success)
             lastRejectedCode = nil
             onResult(.success(code))

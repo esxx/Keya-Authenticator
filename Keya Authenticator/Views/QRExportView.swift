@@ -35,8 +35,14 @@ struct QRExportView: View {
                                     .stroke(Color(.separator).opacity(0.2), lineWidth: 0.5)
                             )
                     } else {
-                        ProgressView()
-                            .frame(width: 240, height: 240)
+                        Label(
+                            "This QR code couldn't be created. You can copy the link below instead.",
+                            systemImage: "exclamationmark.triangle"
+                        )
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .frame(width: 240, height: 240)
                     }
 
                     if !viewModel.otpauthURI.isEmpty {

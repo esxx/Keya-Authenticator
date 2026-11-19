@@ -129,4 +129,13 @@ final class MainContentViewModelTests: XCTestCase {
 
         XCTAssertEqual(spoken, [String(localized: "Copied")], "Announces the action, never the code")
     }
+
+    func testCopyFailureReportsErrorInsteadOfCopying() {
+        let broken = Token(name: "Broken", secret: Data(), algorithm: .sha1, digits: 6, type: .totp, period: 30)
+
+        viewModel.copyCodeToClipboard(from: broken)
+
+        XCTAssertNotNil(viewModel.operationErrorMessage)
+        XCTAssertFalse(viewModel.showCopyToast)
+    }
 }

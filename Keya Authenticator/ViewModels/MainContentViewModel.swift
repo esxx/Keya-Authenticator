@@ -209,14 +209,20 @@ final class MainContentViewModel {
     // MARK: - Copy to Clipboard
 
     func copyCodeToClipboard(from token: Token) {
-        if let code = try? token.generateCode() {
-            ClipboardManager.shared.copyToClipboard(code, autoClearDelay: 30)
-            ClipboardManager.shared.provideHapticFeedback(.success)
-            showCopyToast = true
-            announce(String(localized: "Copied"))
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-                self?.showCopyToast = false
-            }
+        let code: String
+        do {
+            code = try token.generateCode()
+        } catch {
+            ClipboardManager.shared.provideHapticFeedback(.error)
+            operationErrorMessage = error.localizedDescription
+            return
+        }
+        ClipboardManager.shared.copyToClipboard(code, autoClearDelay: 30)
+        ClipboardManager.shared.provideHapticFeedback(.success)
+        showCopyToast = true
+        announce(String(localized: "Copied"))
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+            self?.showCopyToast = false
         }
     }
 

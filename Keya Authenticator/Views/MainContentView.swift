@@ -72,6 +72,11 @@ struct MainContentView: View {
                         addTokenViewModel = nil
                     }
                 }
+                .onChange(of: viewModel.pendingOTPAuthURI) { _, uri in
+                    guard let uri, viewModel.showingAddSheet, let addTokenViewModel else { return }
+                    addTokenViewModel.applyPrefill(uri)
+                    viewModel.pendingOTPAuthURI = nil
+                }
                 .sheet(isPresented: $viewModel.showingAddSheet, onDismiss: { viewModel.addSheetDismissed() }, content: {
                     if let addTokenViewModel {
                         AddTokenView(
@@ -224,7 +229,8 @@ struct MainContentView: View {
         guard let token = viewModel.tokenPendingDelete else {
             return String(localized: "This will permanently delete this token. This cannot be undone.")
         }
-        let label = [token.issuer, token.name].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " – ")
+        let parts = [token.issuer, token.name].compactMap { $0 }.filter { !$0.isEmpty }
+        let label = parts.count == 2 ? "\(parts[0]) (\(parts[1]))" : parts.joined()
         return String(localized: "This will permanently delete \(label). This cannot be undone.")
     }
 

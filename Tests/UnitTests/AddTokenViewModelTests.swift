@@ -535,4 +535,17 @@ final class AddTokenViewModelTests: XCTestCase {
         XCTAssertEqual(spoken, [message, message].compactMap { $0 })
         XCTAssertEqual(spoken.count, 2, "A repeated failure is announced again")
     }
+
+    // MARK: - Link prefill
+
+    func testApplyPrefillFillsAlreadyOpenForm() {
+        viewModel.name = "Typed"
+        viewModel.applyPrefill("otpauth://totp/GitHub:alice?secret=\(validSecret)&issuer=GitHub&digits=8&period=60")
+
+        XCTAssertEqual(viewModel.name, "alice")
+        XCTAssertEqual(viewModel.issuer, "GitHub")
+        XCTAssertEqual(viewModel.secret, validSecret)
+        XCTAssertEqual(viewModel.digits, 8)
+        XCTAssertEqual(viewModel.period, 60)
+    }
 }
