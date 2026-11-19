@@ -24,6 +24,7 @@ struct DestructiveActionSheet: UIViewControllerRepresentable {
     }
 
     static func dismantleUIViewController(_ controller: UIViewController, coordinator: Coordinator) {
+        coordinator.isShowing = false
         coordinator.sheet?.dismiss(animated: false)
     }
 
@@ -48,9 +49,10 @@ struct DestructiveActionSheet: UIViewControllerRepresentable {
             coordinator.isShowing = false
             binding.wrappedValue = false
         })
+        coordinator.sheet = sheet
 
         DispatchQueue.main.async {
-            guard coordinator.isShowing else { return }
+            guard coordinator.isShowing, coordinator.sheet === sheet else { return }
             let window = controller.view.window ?? UIApplication.shared.connectedScenes
                 .compactMap { $0 as? UIWindowScene }
                 .flatMap(\.windows)
@@ -63,8 +65,11 @@ struct DestructiveActionSheet: UIViewControllerRepresentable {
             while let next = top.presentedViewController {
                 top = next
             }
-            coordinator.sheet = sheet
-            top.present(sheet, animated: true)
+            top.present(sheet, animated: true) {
+                if !coordinator.isShowing || coordinator.sheet !== sheet {
+                    sheet.dismiss(animated: false)
+                }
+            }
         }
     }
 }

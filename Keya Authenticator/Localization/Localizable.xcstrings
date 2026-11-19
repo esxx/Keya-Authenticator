@@ -4,6 +4,58 @@
     "" : {
 
     },
+    "The code for this token couldn't be generated. Check its settings in Edit token." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für diesen Token konnte kein Code erzeugt werden. Prüfen Sie seine Einstellungen unter „Token bearbeiten“."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo generar el código de este token. Revisa su configuración en Editar token."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de générer le code de ce jeton. Vérifiez ses réglages dans « Modifier le jeton »."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このトークンのコードを生成できませんでした。「トークンを編集」で設定を確認してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 토큰의 코드를 생성할 수 없습니다. 토큰 편집에서 설정을 확인하세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível gerar o código deste token. Confira os ajustes em Editar token."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось получить код для этого токена. Проверьте его настройки в разделе «Изменить токен»."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法生成此令牌的验证码。请在“编辑令牌”中检查其设置。"
+          }
+        }
+      }
+    },
     "This QR code couldn't be created. You can copy the link below instead." : {
       "localizations" : {
         "de" : {

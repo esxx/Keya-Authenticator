@@ -214,7 +214,9 @@ final class MainContentViewModel {
             code = try token.generateCode()
         } catch {
             ClipboardManager.shared.provideHapticFeedback(.error)
-            operationErrorMessage = error.localizedDescription
+            operationErrorMessage = String(
+                localized: "The code for this token couldn't be generated. Check its settings in Edit token."
+            )
             return
         }
         ClipboardManager.shared.copyToClipboard(code, autoClearDelay: 30)
