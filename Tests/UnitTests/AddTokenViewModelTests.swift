@@ -548,4 +548,22 @@ final class AddTokenViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.digits, 8)
         XCTAssertEqual(viewModel.period, 60)
     }
+
+    func testPrefillCountsOnlyParsedLinks() {
+        XCTAssertEqual(viewModel.prefillCount, 0)
+        viewModel.applyPrefill("https://example.com")
+        XCTAssertEqual(viewModel.prefillCount, 0, "A link that is not otpauth changes nothing")
+
+        viewModel.applyPrefill("otpauth://totp/GitHub:alice?secret=\(validSecret)&issuer=GitHub")
+        XCTAssertEqual(viewModel.prefillCount, 1)
+        XCTAssertEqual(
+            AddTokenViewModel(
+                tokenStore: tokenStore,
+                settings: settings,
+                prefillURI: "otpauth://totp/A:b?secret=\(validSecret)"
+            ).prefillCount,
+            1,
+            "A sheet opened from a link starts on the filled form"
+        )
+    }
 }

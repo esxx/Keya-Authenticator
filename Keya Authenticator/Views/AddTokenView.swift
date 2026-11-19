@@ -111,6 +111,11 @@ struct AddTokenView: View {
                     }
                 }
             }
+            .onChange(of: viewModel.prefillCount, initial: true) { _, count in
+                if count > 0 {
+                    showManual = true
+                }
+            }
             .photosPicker(isPresented: $showGallery, selection: $selectedPhoto, matching: .images)
             .onChange(of: selectedPhoto) { _, newItem in
                 guard let item = newItem else { return }

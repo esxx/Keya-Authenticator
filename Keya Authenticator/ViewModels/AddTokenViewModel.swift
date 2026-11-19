@@ -23,6 +23,7 @@ final class AddTokenViewModel {
     var period: Int = 30
     var counter: UInt64 = 0
     var tokenType: TokenType = .totp
+    private(set) var prefillCount = 0
     var groupName: String?
     var isFavorite = false
     var isAddingToken = false
@@ -153,6 +154,7 @@ final class AddTokenViewModel {
 
     func applyPrefill(_ uri: String) {
         guard let p = TokenIntake.parameters(fromOTPAuth: uri) else { return }
+        prefillCount += 1
         tokenType = p.type
         name = p.name
         issuer = p.issuer ?? ""

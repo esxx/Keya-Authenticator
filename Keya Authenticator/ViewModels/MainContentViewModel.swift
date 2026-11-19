@@ -148,6 +148,9 @@ final class MainContentViewModel {
     }
 
     func openAddSheet(prefillURI uri: String) {
+        if !showingAddSheet {
+            captureSnapshotBeforeAdd()
+        }
         pendingOTPAuthURI = uri
         showingAddSheet = true
     }

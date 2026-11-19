@@ -138,4 +138,17 @@ final class MainContentViewModelTests: XCTestCase {
         XCTAssertNotNil(viewModel.operationErrorMessage)
         XCTAssertFalse(viewModel.showCopyToast)
     }
+
+    func testOpeningFromALinkHighlightsOnlyTheTokenAddedNow() throws {
+        let existing = makeToken(name: "Existing")
+        try tokenStore.add([existing])
+
+        viewModel.openAddSheet(prefillURI: "otpauth://totp/New:new?secret=JBSWY3DPEHPK3PXP")
+        let added = makeToken(name: "Added")
+        try tokenStore.add([added])
+        viewModel.trackNewTokens()
+
+        XCTAssertTrue(viewModel.isTokenNew(added))
+        XCTAssertFalse(viewModel.isTokenNew(existing), "A token from before the link is not marked new")
+    }
 }
