@@ -167,14 +167,14 @@ struct TokenTransferView: View {
                 icon: "lock.fill",
                 color: .green,
                 title: "Encrypted JSON is recommended",
-                detail: "AES-256-GCM with PBKDF2. Password is required to export — keep it safe."
+                detail: "AES-256-GCM with PBKDF2. Export requires a password, so keep it somewhere safe."
             )
             .listRowBackground(Constants.Colors.rowBackground)
             noteRow(
                 icon: "arrow.triangle.2.circlepath",
                 color: .blue,
                 title: "QR code export uses Google Authenticator format",
-                detail: "otpauth-migration:// — compatible with Google Authenticator, Aegis, 2FAS, Raivo..."
+                detail: "otpauth-migration:// (compatible with Google Authenticator, Aegis, 2FAS, Raivo...)"
             )
             .listRowBackground(Constants.Colors.rowBackground)
         } header: { Text("Notes").textCase(.uppercase) }

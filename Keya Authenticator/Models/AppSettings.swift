@@ -19,7 +19,7 @@ final class AppSettings {
         static let lastReviewPromptVersion = "lastReviewPromptVersion"
     }
 
-    // MARK: - Security (Keychain-backed — tamper-resistant on jailbroken devices)
+    // MARK: - Security (Keychain-backed, tamper-resistant on jailbroken devices)
 
     var isAuthenticationEnabled: Bool = false {
         didSet { persistSecuritySettings() }

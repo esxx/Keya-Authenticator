@@ -137,7 +137,7 @@ final class KeychainMigrationTests: XCTestCase {
 
         let loaded = try KeychainManager.loadAllTokens()
         XCTAssertEqual(loaded.count, 0,
-                       "Migration must be skipped when sentinel is already set — " +
+                       "Migration must be skipped when sentinel is already set, because " +
                        "running it would have found 0 tokens and left the store empty")
     }
 

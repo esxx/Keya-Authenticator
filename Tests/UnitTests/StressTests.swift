@@ -599,7 +599,7 @@ final class ExportImportFormatStressTests: XCTestCase {
         XCTAssertThrowsError(try manager.parseTokens(from: json))
     }
 
-    // MARK: Round-trip — 50 tokens of mixed type
+    // MARK: Round-trip with 50 tokens of mixed type
 
     func testLargeRoundTripMixedTypes() throws {
         var tokens: [Token] = []

@@ -98,7 +98,7 @@ final class ServiceIconResolverTests: XCTestCase {
     func testResolve_yahooEmailWithNoIssuer_returnsNilIcon() {
         XCTAssertNil(
             ServiceIconResolver.resolve(issuer: nil, name: "alice@yahoo.com"),
-            "Yahoo has no icon catalog entry — resolve should return nil"
+            "Yahoo has no icon catalog entry, so resolve should return nil"
         )
     }
 

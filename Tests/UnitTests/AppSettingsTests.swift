@@ -37,7 +37,7 @@ final class AppSettingsTests: XCTestCase {
 
         XCTAssertFalse(
             settings.useBiometricAuthentication,
-            "useBiometricAuthentication must be false when biometricActivated is absent — " +
+            "useBiometricAuthentication must be false when biometricActivated is absent: " +
             "stale Keychain value from before reinstall must not activate Face ID silently"
         )
         XCTAssertFalse(

@@ -4,6 +4,110 @@
     "" : {
 
     },
+    "This QR code couldn't be created. You can copy the link below instead." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser QR-Code konnte nicht erstellt werden. Sie können stattdessen den Link unten kopieren."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo crear este código QR. En su lugar, puedes copiar el enlace de abajo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de créer ce QR code. Vous pouvez copier le lien ci-dessous à la place."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このQRコードを作成できませんでした。代わりに下のリンクをコピーできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 QR 코드를 만들 수 없습니다. 대신 아래 링크를 복사할 수 있습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível criar este QR code. Em vez disso, você pode copiar o link abaixo."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось создать QR-код. Вместо него можно скопировать ссылку ниже."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法生成此二维码。你可以改为复制下方的链接。"
+          }
+        }
+      }
+    },
+    "Tips aren't available right now. Check your internet connection and try again later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trinkgelder sind gerade nicht verfügbar. Prüfen Sie Ihre Internetverbindung und versuchen Sie es später noch einmal."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las propinas no están disponibles en este momento. Revisa tu conexión a internet e inténtalo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les pourboires ne sont pas disponibles pour le moment. Vérifiez votre connexion Internet et réessayez plus tard."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在チップを利用できません。インターネット接続を確認して、しばらくしてからもう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금은 팁을 보낼 수 없습니다. 인터넷 연결을 확인한 후 나중에 다시 시도하세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As gorjetas não estão disponíveis no momento. Verifique sua conexão com a internet e tente novamente mais tarde."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сейчас поддержать приложение не получится. Проверьте подключение к интернету и попробуйте позже."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂时无法打赏。请检查网络连接，稍后再试。"
+          }
+        }
+      }
+    },
     "·" : {
 
     },
@@ -1411,7 +1515,7 @@
         }
       }
     },
-    "AES-256-GCM with PBKDF2. Password is required to export — keep it safe." : {
+    "AES-256-GCM with PBKDF2. Export requires a password, so keep it somewhere safe." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1419,40 +1523,34 @@
             "value" : "AES-256-GCM mit PBKDF2. Für den Export benötigen Sie ein Passwort, bewahren Sie es sicher auf."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AES-256-GCM with PBKDF2. Password is required to export — keep it safe."
-          }
-        },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AES-256-GCM con PBKDF2. Se requiere contraseña para exportar — manténgala segura."
+            "value" : "AES-256-GCM con PBKDF2. Para exportar necesitas una contraseña, así que guárdala en un lugar seguro."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AES-256-GCM avec PBKDF2. Un mot de passe est requis pour l'export — gardez-le en lieu sûr."
+            "value" : "AES-256-GCM avec PBKDF2. L'export nécessite un mot de passe, alors conservez-le en lieu sûr."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "PBKDF2を使用したAES-256-GCM。エクスポートにはパスワードが必要です — 安全に保管してください。"
+            "value" : "PBKDF2を使用したAES-256-GCM。エクスポートにはパスワードが必要です。安全な場所に保管してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "PBKDF2를 사용한 AES-256-GCM. 내보내기에 비밀번호가 필요합니다 — 안전하게 보관하세요"
+            "value" : "PBKDF2를 사용한 AES-256-GCM. 내보내려면 비밀번호가 필요하니 안전하게 보관하세요."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "AES-256-GCM com PBKDF2. Uma senha é necessária para exportar — mantenha-a em segurança"
+            "value" : "AES-256-GCM com PBKDF2. Para exportar, você precisa de uma senha, então guarde-a em um lugar seguro."
           }
         },
         "ru" : {
@@ -8440,7 +8538,7 @@
         }
       }
     },
-    "otpauth-migration:// — compatible with Google Authenticator, Aegis, 2FAS, Raivo..." : {
+    "otpauth-migration:// (compatible with Google Authenticator, Aegis, 2FAS, Raivo...)" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8451,31 +8549,31 @@
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "otpauth-migration:// — compatible con Google Authenticator, Aegis, 2FAS, Raivo..."
+            "value" : "otpauth-migration:// (compatible con Google Authenticator, Aegis, 2FAS, Raivo...)"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "otpauth-migration:// — compatible avec Google Authenticator, Aegis, 2FAS, Raivo..."
+            "value" : "otpauth-migration:// (compatible avec Google Authenticator, Aegis, 2FAS, Raivo...)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "otpauth-migration:// — Google Authenticator、Aegis、2FAS、Raivo...と互換性あり"
+            "value" : "otpauth-migration://（Google Authenticator、Aegis、2FAS、Raivo などに対応）"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "otpauth-migration:// — Google Authenticator, Aegis, 2FAS, Raivo...와 호환"
+            "value" : "otpauth-migration:// (Google Authenticator, Aegis, 2FAS, Raivo 등과 호환)"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "otpauth-migration:// — compatível com Google Authenticator, Aegis, 2FAS, Raivo..."
+            "value" : "otpauth-migration:// (compatível com Google Authenticator, Aegis, 2FAS, Raivo...)"
           }
         },
         "ru" : {
@@ -12938,7 +13036,7 @@
         }
       }
     },
-    "We're open-source — learn more" : {
+    "We're open-source. Learn more" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12949,31 +13047,31 @@
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Somos open-source — más información"
+            "value" : "Somos de código abierto. Más información"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous sommes open-source — en savoir plus"
+            "value" : "Nous sommes open source. En savoir plus"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "オープンソースです — 詳細を見る"
+            "value" : "オープンソースです。詳細を見る"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오픈 소스입니다 — 더 알아보기"
+            "value" : "오픈 소스입니다. 더 알아보기"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Somos open-source — saiba mais"
+            "value" : "Nosso código é aberto. Saiba mais"
           }
         },
         "ru" : {

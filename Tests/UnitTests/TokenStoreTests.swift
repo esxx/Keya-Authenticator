@@ -261,7 +261,7 @@ final class TokenStoreTests: XCTestCase {
         XCTAssertTrue(store.tokens.contains { $0.id == updatedExisting.id },
                       "The pre-existing token must still be present")
         XCTAssertTrue(store.tokens.contains { $0.id == importedNewer.id },
-                      "The imported token must also be present — both coexist until the user decides")
+                      "The imported token must also be present; both coexist until the user decides")
     }
 
     func testDeleteThenReaddIsNotFavorite() throws {

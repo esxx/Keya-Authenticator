@@ -147,7 +147,7 @@ struct SettingsView: View {
                         .foregroundColor(.primary)
                         .listRowBackground(Constants.Colors.rowBackground)
                     }
-                } header: { Text("We're open-source — learn more").textCase(.uppercase) }
+                } header: { Text("We're open-source. Learn more").textCase(.uppercase) }
 
                 // MARK: - Danger Zone
 
