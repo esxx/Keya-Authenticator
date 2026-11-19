@@ -169,6 +169,23 @@ final class AuthenticationManagerTests: XCTestCase {
         }
     }
 
+    func testCorruptPINDataThrowsKeychainError() {
+        let addQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: KeychainManager.service,
+            kSecAttrAccount as String: "app_pin",
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+            kSecValueData as String: Data([0xDE, 0xAD, 0xBE, 0xEF]),
+        ]
+        XCTAssertEqual(SecItemAdd(addQuery as CFDictionary, nil), errSecSuccess)
+
+        XCTAssertThrowsError(try KeychainManager.verifyPIN("123456")) { error in
+            guard case TokenError.keychainError = error else {
+                return XCTFail("Expected TokenError.keychainError for corrupt PIN data, got \(error)")
+            }
+        }
+    }
+
     // MARK: - setPIN validation
 
     func testSetPINMismatchThrows() {

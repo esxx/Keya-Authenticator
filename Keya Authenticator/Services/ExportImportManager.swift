@@ -1,6 +1,5 @@
 import Foundation
 import Security
-import UniformTypeIdentifiers
 
 @Observable
 final class ExportImportManager {
@@ -90,18 +89,6 @@ private struct ExportData: Codable {
     let version: Int
     let timestamp: Date
     let tokens: [Token]
-}
-
-// MARK: - ExportFormat Implementation
-
-extension ExportImportManager {
-    enum ExportFormat: Hashable {
-        case plaintext
-
-        var contentType: UTType {
-            .json
-        }
-    }
 }
 
 // MARK: - ExportImportError

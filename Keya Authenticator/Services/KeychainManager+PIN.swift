@@ -74,12 +74,13 @@ extension KeychainManager {
         guard status == errSecSuccess else {
             throw TokenError.keychainError(String(localized: "PIN verification failed. Please try again."))
         }
-        guard let data = result as? Data else {
+        guard let data = result as? Data,
+              let pinData = try? JSONDecoder().decode(PINData.self, from: data)
+        else {
             throw TokenError
                 .keychainError(String(localized: "Your PIN data appears to be corrupted. Please reset your PIN."))
         }
 
-        let pinData = try JSONDecoder().decode(PINData.self, from: data)
         let candidateHash = try derivePINHash(pin: pin, salt: pinData.salt, iterations: pinData.iterations)
         return constantTimeCompare(candidateHash, pinData.hash)
     }

@@ -78,8 +78,10 @@ nonisolated enum EncryptionService {
             )
             let symmetricKey = SymmetricKey(data: key)
 
+            guard let sealedBox = try? AES.GCM.SealedBox(combined: container.ciphertext) else {
+                throw ExportImportError.invalidFileFormat
+            }
             do {
-                let sealedBox = try AES.GCM.SealedBox(combined: container.ciphertext)
                 return try AES.GCM.open(sealedBox, using: symmetricKey)
             } catch {
                 throw ExportImportError.wrongPassword

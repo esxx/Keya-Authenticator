@@ -369,6 +369,24 @@ final class ExportImportTests: XCTestCase {
         }
     }
 
+    func testTruncatedCiphertextIsInvalidFormatNotWrongPassword() throws {
+        let truncated = EncryptedExportFile(
+            version: 2,
+            encryption: "AES-256-GCM",
+            kdf: "PBKDF2-HMAC-SHA256",
+            iterations: 100_000,
+            salt: Data(repeating: 1, count: 32),
+            ciphertext: Data([1, 2, 3, 4, 5])
+        )
+        let encoder = JSONEncoder()
+        encoder.dataEncodingStrategy = .base64
+        let data = try encoder.encode(truncated)
+
+        XCTAssertThrowsError(try EncryptionService.decrypt(data, password: "any-password")) { error in
+            XCTAssertEqual(error as? ExportImportError, .invalidFileFormat)
+        }
+    }
+
     func testEncryptedEmptyVaultThrows() throws {
         XCTAssertThrowsError(try EncryptionService.encrypt(manager.exportVault(), password: "any")) { error in
             guard let exportError = error as? ExportImportError else {
