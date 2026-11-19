@@ -45,17 +45,18 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         }
         evaluate(policy: .deviceOwnerAuthenticationWithBiometrics) { [weak self] granted in
             guard let self, granted else { return }
-            guard let tokens = self.loadTokens() else {
-                self.extensionContext.cancelRequest(withError: ASExtensionError(.failed))
+            guard let tokens = loadTokens() else {
+                extensionContext.cancelRequest(withError: ASExtensionError(.failed))
                 return
             }
             let recordID = credentialRequest.credentialIdentity.recordIdentifier
             guard let token = tokens.first(where: { $0.id.uuidString == recordID }),
-                  let code = try? token.generateCode() else {
-                self.extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
+                  let code = try? token.generateCode()
+            else {
+                extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
                 return
             }
-            self.complete(with: code)
+            complete(with: code)
         }
     }
 
@@ -98,36 +99,37 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     private func authenticateThenPresent(serviceIdentifiers: [ASCredentialServiceIdentifier]) {
         evaluate { [weak self] granted in
             guard let self, granted else { return }
-            guard let tokens = self.loadTokens() else {
-                self.extensionContext.cancelRequest(withError: ASExtensionError(.failed))
+            guard let tokens = loadTokens() else {
+                extensionContext.cancelRequest(withError: ASExtensionError(.failed))
                 return
             }
-            self.allTokens = tokens
-            let matches = self.matching(self.allTokens, for: serviceIdentifiers)
-            self.displayedTokens = matches.isEmpty ? self.allTokens : matches
-            self.showTableView()
+            allTokens = tokens
+            let matches = matching(allTokens, for: serviceIdentifiers)
+            displayedTokens = matches.isEmpty ? allTokens : matches
+            showTableView()
         }
     }
 
     private func authenticateThenDeliver(request: any ASCredentialRequest) {
         evaluate { [weak self] granted in
             guard let self, granted else { return }
-            guard let tokens = self.loadTokens() else {
-                self.extensionContext.cancelRequest(withError: ASExtensionError(.failed))
+            guard let tokens = loadTokens() else {
+                extensionContext.cancelRequest(withError: ASExtensionError(.failed))
                 return
             }
-            self.allTokens = tokens
+            allTokens = tokens
 
             let identity = request.credentialIdentity
-            let recorded = self.allTokens.filter { $0.id.uuidString == identity.recordIdentifier }
-            let candidates = recorded.isEmpty ? self.matching(self.allTokens, for: [identity.serviceIdentifier]) : recorded
+            let recorded = allTokens.filter { $0.id.uuidString == identity.recordIdentifier }
+            let candidates = recorded.isEmpty ? matching(allTokens, for: [identity.serviceIdentifier]) : recorded
 
             if candidates.count == 1, let token = candidates.first,
-               let code = try? token.generateCode() {
-                self.complete(with: code)
+               let code = try? token.generateCode()
+            {
+                complete(with: code)
             } else {
-                self.displayedTokens = candidates.isEmpty ? self.allTokens : candidates
-                self.showTableView()
+                displayedTokens = candidates.isEmpty ? allTokens : candidates
+                showTableView()
             }
         }
     }
@@ -190,7 +192,8 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         var bestByContent: [String: Token] = [:]
         for token in tokens {
             if let existing = bestByContent[token.contentKey],
-               existing.updatedAt >= token.updatedAt {
+               existing.updatedAt >= token.updatedAt
+            {
                 continue
             }
             bestByContent[token.contentKey] = token
@@ -210,7 +213,8 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         let keywords = hosts.map { BrandKeyword.extract(fromHost: $0) }
         return tokens.filter { token in
             if let website = token.website,
-               hosts.contains(where: { $0 == website || $0.hasSuffix("." + website) }) {
+               hosts.contains(where: { $0 == website || $0.hasSuffix("." + website) })
+            {
                 return true
             }
             return keywords.contains { BrandKeyword.matches(issuer: token.issuer, name: token.name, keyword: $0) }
@@ -232,7 +236,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         let list = UIViewController()
         list.view = tv
         install(list)
-        self.tableView = tv
+        tableView = tv
     }
 
     private func showBiometricChangeNotice() {
@@ -266,10 +270,10 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
         )
         let navigation = UINavigationController(rootViewController: root)
 
-        children.forEach {
-            $0.willMove(toParent: nil)
-            $0.view.removeFromSuperview()
-            $0.removeFromParent()
+        for child in children {
+            child.willMove(toParent: nil)
+            child.view.removeFromSuperview()
+            child.removeFromParent()
         }
         view.subviews.forEach { $0.removeFromSuperview() }
         addChild(navigation)
@@ -290,7 +294,6 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
 // MARK: - UITableViewDataSource
 
 extension CredentialProviderViewController: UITableViewDataSource {
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         displayedTokens.count
     }
@@ -314,11 +317,13 @@ extension CredentialProviderViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 
 extension CredentialProviderViewController: UITableViewDelegate {
-
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let token = displayedTokens[indexPath.row]
-        guard let code = try? token.generateCode() else { return }
+        guard let code = try? token.generateCode() else {
+            extensionContext.cancelRequest(withError: ASExtensionError(.failed))
+            return
+        }
         complete(with: code)
     }
 }
