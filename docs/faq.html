@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FAQ — Keya Authenticator</title>
+  <title>FAQ | Keya Authenticator</title>
   <meta name="description" content="Frequently asked questions about Keya Authenticator." />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -54,7 +54,7 @@
     <details>
       <summary>Does it work without an internet connection?</summary>
       <div class="faq-answer">
-        Yes — completely. TOTP codes are generated mathematically from your secret
+        Yes, completely. TOTP codes are generated mathematically from your secret
         and the current time. No network connection is ever needed, and the app has
         no network entitlements at all.
       </div>
@@ -80,7 +80,7 @@
       <summary>What happens if I lose my phone?</summary>
       <div class="faq-answer">
         <strong>Your codes are gone unless you have a backup.</strong> This is by
-        design — the strict Keychain protection that keeps your secrets safe also
+        design: the strict Keychain protection that keeps your secrets safe also
         means they cannot be silently copied. Use <strong>Settings → Export (Backup)</strong>
         regularly and store the backup file somewhere safe (encrypted external drive,
         password manager, etc.).
@@ -117,7 +117,7 @@
       <summary>How do I transfer tokens to a new iPhone?</summary>
       <div class="faq-answer">
         Go to <strong>Settings → Export (Backup)</strong> and create an encrypted
-        backup. Save the file to Files, AirDrop it to your new phone, then open ES
+        backup. Save the file to Files, AirDrop it to your new phone, then open Keya
         Authenticator on the new device and import the backup.
         Alternatively, export individual tokens as QR codes and scan them on the
         new device.
@@ -141,7 +141,7 @@
           <li>Google Authenticator (migration QR codes)</li>
           <li>Aegis (JSON export)</li>
           <li>2FAS (JSON export)</li>
-          <li>Raivo (JSON export)</li>
+          <li>Raivo (the JSON file from its encrypted ZIP export; extract the archive on a computer first)</li>
           <li>LastPass Authenticator</li>
           <li>Keya Authenticator encrypted or plaintext JSON backups</li>
           <li>Any plain <code>otpauth://</code> URI or QR code</li>
@@ -153,7 +153,7 @@
       <summary>Is the encrypted backup format open?</summary>
       <div class="faq-answer">
         Yes. Backups use AES-256-GCM encryption with a PBKDF2-HMAC-SHA256 derived
-        key (100,000 iterations). The format is documented in the source code and
+        key (600,000 iterations). The format is documented in the source code and
         can be decrypted with any standard cryptographic tool given the password.
       </div>
     </details>
@@ -202,7 +202,7 @@
     <li><a href="faq.html">FAQ</a></li>
     <li><a href="https://github.com/esxx/Keya-Authenticator">GitHub</a></li>
   </ul>
-  <p>© 2026 Eldar SHAIDULLIN — Licensed under GPL v3</p>
+  <p>© 2026 Eldar SHAIDULLIN · Licensed under GPL v3</p>
 </footer>
 
 </body>
