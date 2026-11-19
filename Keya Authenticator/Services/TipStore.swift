@@ -8,8 +8,8 @@ final class TipStore {
     private(set) var products: [Product] = []
     private(set) var isPurchasing = false
     private(set) var thankYouVisible = false
-
-    private var transactionListener: Task<Void, Never>?
+    private(set) var loadFailed = false
+    var purchaseErrorMessage: String?
 
     static let productIDs = [
         "ee.exx.KeyaAuthenticator.tip.small",
@@ -17,23 +17,24 @@ final class TipStore {
         "ee.exx.KeyaAuthenticator.tip.large",
     ]
 
-    init() {
-        transactionListener = Task { @MainActor in
-            for await result in Transaction.updates {
-                if case let .verified(transaction) = result {
-                    await transaction.finish()
-                    thankYouVisible = true
-                }
+    static func finishTransactionUpdates() async {
+        for await result in Transaction.updates {
+            if case let .verified(transaction) = result {
+                await transaction.finish()
             }
         }
     }
 
     func load() async {
         guard products.isEmpty else { return }
+        loadFailed = false
         do {
             let fetched = try await Product.products(for: Self.productIDs)
             products = fetched.sorted { $0.price < $1.price }
-        } catch {}
+            loadFailed = products.isEmpty
+        } catch {
+            loadFailed = true
+        }
     }
 
     func purchase(_ product: Product) async {
@@ -48,6 +49,9 @@ final class TipStore {
                 await transaction.finish()
                 thankYouVisible = true
             }
-        } catch {}
+        } catch StoreKitError.userCancelled {
+        } catch {
+            purchaseErrorMessage = error.localizedDescription
+        }
     }
 }

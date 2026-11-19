@@ -31,6 +31,18 @@ struct TipJarView: View {
         .navigationTitle("Support development")
         .navigationBarTitleDisplayMode(.inline)
         .task { await tipStore.load() }
+        .alert("Something went wrong", isPresented: Binding(
+            get: { tipStore.purchaseErrorMessage != nil },
+            set: {
+                if !$0 {
+                    tipStore.purchaseErrorMessage = nil
+                }
+            }
+        )) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(tipStore.purchaseErrorMessage ?? "")
+        }
     }
 
     // MARK: - Tip list
@@ -55,7 +67,15 @@ struct TipJarView: View {
             .listRowBackground(Color.clear)
 
             Section {
-                if tipStore.products.isEmpty {
+                if tipStore.loadFailed {
+                    Text("Tips aren't available right now. Check your internet connection and try again later.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .listRowBackground(Color.clear)
+                } else if tipStore.products.isEmpty {
                     HStack {
                         Spacer()
                         ProgressView()
