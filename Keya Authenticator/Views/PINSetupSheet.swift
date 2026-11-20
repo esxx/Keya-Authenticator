@@ -14,7 +14,7 @@ struct PINSetupSheet: View {
             Section {
                 SecureField("New PIN", text: $newPIN)
                     .keyboardType(.numberPad)
-                SecureField("Confirm", text: $confirmPIN)
+                SecureField("Confirm PIN", text: $confirmPIN)
                     .keyboardType(.numberPad)
 
                 if !newPIN.isEmpty, !confirmPIN.isEmpty, newPIN != confirmPIN {

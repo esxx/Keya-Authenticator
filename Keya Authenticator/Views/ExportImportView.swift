@@ -429,7 +429,7 @@ struct EncryptedExportPasswordSheet: View {
             Section {
                 SecureField("Password", text: $password)
                     .listRowBackground(Constants.Colors.rowBackground)
-                SecureField("Confirm", text: $confirmPassword)
+                SecureField("Confirm password", text: $confirmPassword)
                     .listRowBackground(Constants.Colors.rowBackground)
                 if !password.isEmpty, !confirmPassword.isEmpty, !passwordsMatch {
                     Text("Passwords don't match").font(.caption).foregroundColor(.red)

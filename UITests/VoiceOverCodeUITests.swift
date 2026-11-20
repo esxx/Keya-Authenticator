@@ -15,7 +15,7 @@ final class VoiceOverCodeUITests: KeyaUITestCase {
                        "The visible code must not be a separate VoiceOver element inside the row\n\(app.debugDescription)")
 
         openSettings(scrollingTo: "App lock")
-        let hide = app.switches["Hide tokens"]
+        let hide = app.switches["Hide codes"]
         XCTAssertTrue(hide.waitForExistence(timeout: 5), app.debugDescription)
         hide.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
         app.buttons["Close"].tap()

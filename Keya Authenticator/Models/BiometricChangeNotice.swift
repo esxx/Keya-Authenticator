@@ -19,7 +19,7 @@ nonisolated enum BiometricChangeNotice: Equatable {
         switch self {
         case .changed:
             String(
-                localized: "The Face ID / Touch ID database on this device has changed since your last login. Biometric unlock has been disabled as a security precaution. You can re-enable it in Settings → App lock once you've confirmed the change was made by you."
+                localized: "The Face ID / Touch ID database on this device has changed since you last unlocked Keya. Biometric unlock has been disabled as a security precaution. You can re-enable it in Settings → App lock once you've confirmed the change was made by you."
             )
         case .unavailable:
             String(

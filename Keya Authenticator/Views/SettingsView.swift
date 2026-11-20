@@ -54,7 +54,7 @@ struct SettingsView: View {
                     .listRowBackground(Constants.Colors.rowBackground)
 
                     Toggle(isOn: $settings.hideCodesByDefault) {
-                        settingsRow(icon: "eye.slash.fill", iconBg: .gray, title: "Hide tokens")
+                        settingsRow(icon: "eye.slash.fill", iconBg: .gray, title: "Hide codes")
                     }
                     .listRowBackground(Constants.Colors.rowBackground)
 
@@ -78,7 +78,7 @@ struct SettingsView: View {
                     if let date = settings.lastBackupDate {
                         Text("Last export (backup): \(date.formatted(date: .abbreviated, time: .shortened))")
                     } else {
-                        Text("Backup your tokens regularly to avoid losing access to your accounts")
+                        Text("Back up your tokens regularly to avoid losing access to your accounts")
                     }
                 }
 

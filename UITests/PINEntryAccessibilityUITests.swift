@@ -11,7 +11,7 @@ final class PINEntryAccessibilityUITests: KeyaUITestCase {
         XCTAssertTrue(pinEntry("Create a 6-digit PIN").waitForExistence(timeout: 5),
                       "First run: the PIN entry says what to enter\n\(app.debugDescription)")
         enterPIN()
-        XCTAssertTrue(pinEntry("Confirm").waitForExistence(timeout: 5),
+        XCTAssertTrue(pinEntry("Confirm PIN").waitForExistence(timeout: 5),
                       "Confirm step: the PIN entry says what to enter\n\(app.debugDescription)")
         enterPIN()
         XCTAssertTrue(app.buttons["Add"].waitForExistence(timeout: 5), app.debugDescription)

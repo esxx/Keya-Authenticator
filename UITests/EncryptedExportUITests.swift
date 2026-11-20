@@ -19,7 +19,7 @@ final class EncryptedExportUITests: KeyaUITestCase {
         XCTAssertTrue(password.waitForExistence(timeout: 5), app.debugDescription)
         password.tap()
         password.typeText("testpass1")
-        let confirm = app.secureTextFields["Confirm"]
+        let confirm = app.secureTextFields["Confirm password"]
         confirm.tap()
         confirm.typeText("testpass1")
 

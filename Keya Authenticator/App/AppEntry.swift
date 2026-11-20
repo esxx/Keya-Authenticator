@@ -118,7 +118,7 @@ struct PINSetupView: View {
             PINEntryView(
                 pin: $pinText,
                 isFocused: $pinFocused,
-                prompt: step == .enter ? String(localized: "Create a 6-digit PIN") : String(localized: "Confirm"),
+                prompt: step == .enter ? String(localized: "Create a 6-digit PIN") : String(localized: "Confirm PIN"),
                 errorMessage: errorMessage,
                 shakeTrigger: shakeTrigger,
                 onComplete: advance
